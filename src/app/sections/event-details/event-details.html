@@ -1,0 +1,65 @@
+<section id="eventos" class="section event-details-section">
+  <div class="container">
+    <div class="section-header" scrollAnimate animClass="fade-up">
+      <span class="label-accent">El Gran Día</span>
+      <h2>Detalles del Evento</h2>
+      <div class="ornament-divider">
+        <div class="line"></div>
+        <div class="diamond"></div>
+        <div class="diamond-center">✦</div>
+        <div class="diamond"></div>
+        <div class="line right"></div>
+      </div>
+      <p class="subtitle">Todo lo que necesitas saber para acompañarnos en este día tan especial</p>
+    </div>
+
+    <!-- Timeline -->
+    <div class="timeline">
+      @for (event of events; track event.id; let i = $index) {
+        <div class="timeline-item" scrollAnimate animClass="fade-up" [animDelay]="i * 150">
+          <div class="timeline-connector">
+            <div class="timeline-dot">
+              <span class="event-icon">{{ event.icon }}</span>
+            </div>
+            @if (!$last) {
+              <div class="timeline-line"></div>
+            }
+          </div>
+
+          <div class="card event-card">
+            <div class="event-header">
+              <div>
+                <span class="label-accent">{{ event.type }}</span>
+                <h3 class="event-title">{{ event.title }}</h3>
+              </div>
+              <div class="dress-badge" [style.background]="event.dressColor + '18'" [style.color]="event.dressColor" [style.border-color]="event.dressColor + '40'">
+                👗 {{ event.dressCode }}
+              </div>
+            </div>
+
+            <div class="event-meta">
+              <div class="meta-item">
+                <span class="meta-icon">🕐</span>
+                <span>{{ event.time }}</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-icon">📍</span>
+                <span>{{ event.venue }}</span>
+              </div>
+              <div class="meta-item meta-address">
+                <span class="meta-icon">🗺️</span>
+                <span>{{ event.address }}</span>
+              </div>
+            </div>
+
+            <p class="event-description">{{ event.description }}</p>
+
+            <a [href]="event.mapsUrl" target="_blank" rel="noopener" class="btn btn-teal map-btn" [id]="'btn-maps-' + event.id">
+              Ver en Google Maps →
+            </a>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

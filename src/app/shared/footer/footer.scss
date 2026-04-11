@@ -1,0 +1,66 @@
+.footer {
+  background: linear-gradient(180deg, #1a0a0a 0%, #0d0505 100%);
+  padding: 60px 0 40px;
+  text-align: center;
+}
+
+.footer-ornament {
+  margin-bottom: 28px;
+
+  .ornament-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    .line {
+      width: 80px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(187,187,187,0.4));
+
+      &.right { background: linear-gradient(90deg, rgba(187,187,187,0.4), transparent); }
+    }
+
+    .diamond {
+      width: 5px;
+      height: 5px;
+      background: var(--color-primary);
+      transform: rotate(45deg);
+    }
+
+    .diamond-center {
+      color: var(--color-primary);
+      font-size: 0.9rem;
+    }
+  }
+}
+
+.footer-names {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.footer-date {
+  font-family: var(--font-editorial);
+  font-size: 1rem;
+  color: var(--color-muted);
+  letter-spacing: 0.1em;
+  font-style: italic;
+  margin-bottom: 20px;
+}
+
+.footer-tagline {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: rgba(170,170,170,0.5);
+  letter-spacing: 0.08em;
+
+  .heart {
+    color: var(--color-secondary);
+    font-size: 0.9rem;
+  }
+}

@@ -1,0 +1,58 @@
+<section id="hero" class="hero">
+  <!-- Floating petals -->
+  <div class="petals" aria-hidden="true">
+    @for (i of [1,2,3,4,5,6,7,8,9,10,11,12]; track i) {
+      <div class="petal" [style.--i]="i"></div>
+    }
+  </div>
+
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content container">
+    <div class="hero-tag">
+      <span class="label-accent" style="color: rgba(255,255,255,0.6)">con la alegría de anunciaros que</span>
+    </div>
+
+    <h1 class="hero-names">
+      <span class="name">Pablo</span>
+      <span class="ampersand-hero">&</span>
+      <span class="name">Daniela</span>
+    </h1>
+
+    <div class="hero-divider">
+      <div class="line-divider"></div>
+      <span class="diamond-hero">✦</span>
+      <div class="line-divider"></div>
+    </div>
+
+    <p class="hero-date">4 de Abril de 2027</p>
+    <p class="hero-location">Madrid, España</p>
+
+    <!-- Countdown -->
+    <div class="countdown">
+      @for (unit of countdown(); track unit.label) {
+        <div class="countdown-unit">
+          <span class="countdown-value">{{ unit.value | number:'2.0-0' }}</span>
+          <span class="countdown-label">{{ unit.label }}</span>
+        </div>
+        @if (!$last) {
+          <span class="countdown-sep">:</span>
+        }
+      }
+    </div>
+
+    <div class="hero-actions">
+      <button class="btn btn-primary" (click)="scrollToRsvp()" id="btn-hero-rsvp">
+        ✉ Confirmar Asistencia
+      </button>
+      <button class="btn btn-outline hero-btn-outline" (click)="scrollToEvents()" id="btn-hero-events">
+        Ver detalles del evento
+      </button>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="scroll-indicator" (click)="scrollToEvents()" aria-hidden="true">
+    <div class="scroll-arrow"></div>
+  </div>
+</section>

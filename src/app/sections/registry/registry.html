@@ -1,0 +1,63 @@
+<section id="registro" class="section registry-section">
+  <div class="container">
+    <div class="section-header" scrollAnimate animClass="fade-up">
+      <span class="label-accent">Lista de Bodas</span>
+      <h2>Vuestra Generosidad</h2>
+      <div class="ornament-divider">
+        <div class="line"></div>
+        <div class="diamond"></div>
+        <div class="diamond-center">✦</div>
+        <div class="diamond"></div>
+        <div class="line right"></div>
+      </div>
+      <p class="subtitle">
+        Vuestro regalo más importante es vuestra presencia. Si aun así queréis tener un detalle con nosotros, aquí encontraréis una cuenta bancaria para hacer una transferencia.
+      </p>
+    </div>
+
+    <div class="registry-grid">
+      @for (item of items; track item.id; let i = $index) {
+        <div class="registry-card card" [class.highlight]="item.highlight"
+             scrollAnimate animClass="fade-up" [animDelay]="i * 120">
+          <div class="registry-icon">{{ item.icon }}</div>
+          <h3 class="registry-title">{{ item.title }}</h3>
+          <p class="registry-desc">{{ item.description }}</p>
+
+          @if (item.id === 'transfer') {
+            <button class="btn btn-primary" (click)="toggleBank()" id="btn-registry-bank">
+              {{ showBank ? 'Ocultar datos' : item.cta }} ↓
+            </button>
+
+            @if (showBank) {
+              <div class="bank-details">
+                <div class="bank-row">
+                  <span class="bank-label">Titular</span>
+                  <span class="bank-value">{{ bankDetails.titular }}</span>
+                </div>
+                <div class="bank-row iban-row">
+                  <span class="bank-label">IBAN</span>
+                  <span class="bank-value iban">{{ bankDetails.iban }}</span>
+                  <button class="copy-btn" (click)="copyIban()" id="btn-copy-iban" [class.copied]="bankCopied">
+                    {{ bankCopied ? '✓ Copiado' : 'Copiar' }}
+                  </button>
+                </div>
+                <div class="bank-row">
+                  <span class="bank-label">Concepto</span>
+                  <span class="bank-value">{{ bankDetails.concepto }}</span>
+                </div>
+              </div>
+            }
+          } @else {
+            <a [href]="item.url" target="_blank" rel="noopener" class="btn btn-outline" [id]="'btn-registry-' + item.id">
+              {{ item.cta }} →
+            </a>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="registry-note" scrollAnimate animClass="fade-up" [animDelay]="400">
+      <p>🙏 Cada detalle, por pequeño que sea, lo recibiremos con el mismo cariño e ilusión.</p>
+    </div>
+  </div>
+</section>

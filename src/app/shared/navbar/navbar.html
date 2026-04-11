@@ -1,0 +1,25 @@
+<nav class="navbar" [class.scrolled]="scrolled()">
+  <div class="nav-inner container">
+
+    <button class="nav-brand" (click)="scrollTo('hero')" aria-label="Inicio">
+      <span class="initials">P</span>
+      <span class="ampersand">&amp;</span>
+      <span class="initials">D</span>
+    </button>
+
+    <ul class="nav-links" [class.open]="menuOpen()">
+      @for (link of navLinks; track link.anchor) {
+        <li>
+          <button class="nav-link" (click)="scrollTo(link.anchor)">{{ link.label }}</button>
+        </li>
+      }
+    </ul>
+
+    <button class="hamburger" [class.active]="menuOpen()" (click)="toggleMenu()" aria-label="Abrir menú">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+  </div>
+</nav>
