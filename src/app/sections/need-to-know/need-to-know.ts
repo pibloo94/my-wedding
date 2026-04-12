@@ -51,17 +51,6 @@ export class NeedToKnowComponent {
       ]
     },
     {
-      icon: '📸',
-      title: 'Fotografía',
-      accent: '#6f0000',
-      items: [
-        'Contamos con fotógrafo y videógrafo profesional',
-        'La ceremonia es "unplugged" — os pedimos que guardéis los móviles',
-        'Para el cóctel y la fiesta, ¡captura todos los momentos que quieras!',
-        'Compartid vuestras fotos con el hashtag #PabloYDaniela2027'
-      ]
-    },
-    {
       icon: '🍽️',
       title: 'Menú y Alergias',
       accent: '#006080',
