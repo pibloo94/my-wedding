@@ -20,22 +20,31 @@ export class RsvpComponent {
   constructor(private fb: FormBuilder, private rsvpSvc: RsvpService) {
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
-      email: ['', [Validators.required, Validators.email]],
       attending: ['si', Validators.required],
-      guests: [1, [Validators.required, Validators.min(1), Validators.max(10)]],
+      hasPartner: [false],
+      partnerName: [''],
+      needsBus: [false],
       dietary: [''],
       message: ['']
     });
 
-    // When "No" is selected, disable guests
+    // Reset partner/bus if not attending
     this.form.get('attending')!.valueChanges.subscribe(val => {
-      const guestsCtrl = this.form.get('guests')!;
       if (val === 'no') {
-        guestsCtrl.setValue(0);
-        guestsCtrl.disable();
+        this.form.patchValue({
+          hasPartner: false,
+          partnerName: '',
+          needsBus: false
+        });
+      }
+    });
+
+    // Clear partnerName if hasPartner is unchecked
+    this.form.get('hasPartner')!.valueChanges.subscribe(val => {
+      if (!val) {
+        this.form.get('partnerName')?.setValue('');
       } else {
-        guestsCtrl.enable();
-        if (guestsCtrl.value === 0) guestsCtrl.setValue(1);
+        // Optionially add validator here if needed, but keeping it flexible as per "no obligatorio"
       }
     });
   }
@@ -45,13 +54,12 @@ export class RsvpComponent {
     return c.invalid && c.touched;
   }
 
-  get emailInvalid(): boolean {
-    const c = this.form.get('email')!;
-    return c.invalid && c.touched;
-  }
-
   get isAttending(): boolean {
     return this.form.get('attending')?.value === 'si';
+  }
+
+  get hasPartner(): boolean {
+    return this.form.get('hasPartner')?.value === true;
   }
 
   submit(): void {
@@ -68,7 +76,7 @@ export class RsvpComponent {
   }
 
   reset(): void {
-    this.form.reset({ attending: 'si', guests: 1 });
+    this.form.reset({ attending: 'si', hasPartner: false, needsBus: false });
     this.formState.set('idle');
   }
 }

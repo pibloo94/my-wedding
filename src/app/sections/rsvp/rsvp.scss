@@ -123,6 +123,91 @@
   p { color: #666; font-size: 0.82rem; margin: 2px 0 0; }
 }
 
+// ── Checkboxes ────────────────────────────────────────────────────────────────
+.checkbox-field {
+  margin: 12px 0;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-left: 36px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  user-select: none;
+  min-height: 24px;
+
+  input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+
+  .checkmark {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    height: 22px;
+    width: 22px;
+    background-color: var(--color-white);
+    border: 1.5px solid var(--color-light);
+    border-radius: 6px;
+    transition: var(--transition);
+
+    &::after {
+      content: "";
+      position: absolute;
+      display: none;
+      left: 7px;
+      top: 3px;
+      width: 5px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+  }
+
+  &:hover input ~ .checkmark {
+    border-color: var(--color-muted);
+  }
+
+  input:checked ~ .checkmark {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+
+    &::after { display: block; }
+  }
+
+  .checkbox-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    line-height: 1.2;
+
+    small {
+      color: var(--color-muted);
+      font-size: 0.75rem;
+      font-style: italic;
+    }
+  }
+}
+
+// ── Animations ────────────────────────────────────────────────────────────────
+.fade-in {
+  animation: fadeIn 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 // ── Submit area ───────────────────────────────────────────────────────────────
 .form-submit {
   text-align: center;

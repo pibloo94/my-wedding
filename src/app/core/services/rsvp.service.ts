@@ -5,9 +5,10 @@ import { catchError } from 'rxjs/operators';
 
 export interface RsvpPayload {
   name: string;
-  email: string;
   attending: string;
-  guests: number;
+  hasPartner: boolean;
+  partnerName: string;
+  needsBus: boolean;
   dietary: string;
   message: string;
   submittedAt?: string;
@@ -17,7 +18,7 @@ export interface RsvpPayload {
 export class RsvpService {
   // TODO: Reemplaza esta URL con la URL de tu Google Apps Script Web App
   // Instrucciones en: src/app/sections/rsvp/INSTRUCCIONES_GOOGLE_SHEETS.md
-  private readonly APPS_SCRIPT_URL = 'https://script.google.com/macros/s/TU_SCRIPT_ID_AQUI/exec';
+  private readonly APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyMPK74DiNeB86JXE-tkuVVa76lug18K7SlolhaCwEvp-3fvX-xo2-rHvmulgqT8oyN/exec';
 
   constructor(private http: HttpClient) {}
 

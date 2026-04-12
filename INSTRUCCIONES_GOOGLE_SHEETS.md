@@ -11,9 +11,9 @@ Sigue estos pasos para que el formulario de confirmación guarde los datos en tu
 2. Crea una hoja nueva → ponle el nombre: **"RSVP Boda Pablo & Daniela"**
 3. En la **fila 1** añade estas cabeceras (una por celda):
 
-| A | B | C | D | E | F | G |
-|---|---|---|---|---|---|---|
-| Fecha | Nombre | Email | Asistencia | Nº Personas | Alergias | Mensaje |
+| A | B | C | D | E | F | G | H |
+|---|---|---|---|---|---|---|---|
+| Fecha | Nombre | Asistencia | ¿Acompañante? | Nombre Acompañante | Autobús | Alergias | Mensaje |
 
 ---
 
@@ -30,12 +30,17 @@ function doPost(e) {
     // Leer los datos del form (application/x-www-form-urlencoded)
     const params = e.parameter;
     
+    // Convertir booleanos a texto más legible para Sheets
+    const acompanante = params.hasPartner === 'true' ? 'SÍ' : 'NO';
+    const autobus = params.needsBus === 'true' ? 'SÍ' : 'NO';
+
     sheet.appendRow([
       params.submittedAt || new Date().toLocaleString('es-ES'),
       params.name        || '',
-      params.email       || '',
       params.attending   || '',
-      params.guests      || '',
+      acompanante,
+      params.partnerName || '-',
+      autobus,
       params.dietary     || '',
       params.message     || ''
     ]);

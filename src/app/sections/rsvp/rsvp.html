@@ -43,26 +43,14 @@
       @if (formState() === 'idle' || formState() === 'loading') {
         <form class="rsvp-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
 
-          <div class="form-grid-2">
-            <!-- Name -->
-            <div class="form-group">
-              <label for="rsvp-name">Nombre completo *</label>
-              <input id="rsvp-name" type="text" formControlName="name"
-                     placeholder="Tu nombre y apellidos" [class.ng-invalid]="nameInvalid" [class.ng-touched]="nameInvalid">
-              @if (nameInvalid) {
-                <span class="error-msg">Por favor, introduce tu nombre completo</span>
-              }
-            </div>
-
-            <!-- Email -->
-            <div class="form-group">
-              <label for="rsvp-email">Email *</label>
-              <input id="rsvp-email" type="email" formControlName="email"
-                     placeholder="tu@email.com" [class.ng-invalid]="emailInvalid" [class.ng-touched]="emailInvalid">
-              @if (emailInvalid) {
-                <span class="error-msg">Por favor, introduce un email válido</span>
-              }
-            </div>
+          <!-- Name -->
+          <div class="form-group">
+            <label for="rsvp-name">Nombre completo *</label>
+            <input id="rsvp-name" type="text" formControlName="name"
+                   placeholder="Tu nombre y apellidos" [class.ng-invalid]="nameInvalid" [class.ng-touched]="nameInvalid">
+            @if (nameInvalid) {
+              <span class="error-msg">Por favor, introduce tu nombre completo</span>
+            }
           </div>
 
           <!-- Attending -->
@@ -82,24 +70,34 @@
             </div>
           </div>
 
-          <!-- Guests (only if attending) -->
+          <!-- Guests / Companion Section -->
           @if (isAttending) {
-            <div class="form-group">
-              <label for="rsvp-guests">Número de personas (incluyéndote) *</label>
-              <input id="rsvp-guests" type="number" formControlName="guests" min="1" max="10">
+            <div class="form-group checkbox-field">
+              <label class="checkbox-container">
+                <input type="checkbox" formControlName="hasPartner">
+                <span class="checkmark"></span>
+                <span>Vengo con acompañante</span>
+              </label>
             </div>
-          }
 
-          <!-- Bus -->
-          @if (isAttending) {
-            <div class="form-group bus-info">
-              <div class="bus-banner">
-                <span>🚌</span>
-                <div>
-                  <strong>¿Necesitas el autobús?</strong>
-                  <p>Indicálo en el mensaje para reservar tu plaza desde Getafe Central</p>
-                </div>
+            @if (hasPartner) {
+              <div class="form-group fade-in">
+                <label for="rsvp-partner-name">Nombre del acompañante</label>
+                <input id="rsvp-partner-name" type="text" formControlName="partnerName"
+                       placeholder="Nombre de tu acompañante">
               </div>
+            }
+
+            <!-- Bus -->
+            <div class="form-group checkbox-field">
+              <label class="checkbox-container">
+                <input type="checkbox" formControlName="needsBus">
+                <span class="checkmark"></span>
+                <div class="checkbox-text">
+                  <span>Necesito plaza en el autobús</span>
+                  <small>Salida desde Getafe Central</small>
+                </div>
+              </label>
             </div>
           }
 
