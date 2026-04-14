@@ -163,6 +163,15 @@
   margin-top: 6px;
 }
 
+.countdown-expired {
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  color: var(--color-white);
+  margin-bottom: 52px;
+  animation: fadeUp 1s ease 0.9s both;
+  letter-spacing: 0.02em;
+}
+
 .countdown-sep {
   font-family: var(--font-heading);
   font-size: clamp(2.4rem, 5vw, 3.8rem);

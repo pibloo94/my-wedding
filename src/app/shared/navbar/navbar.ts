@@ -1,4 +1,4 @@
-import { Component, HostListener, signal } from '@angular/core';
+import { Component, HostListener, signal, effect } from '@angular/core';
 
 @Component({
   selector: 'app-navbar',
@@ -10,6 +10,12 @@ import { Component, HostListener, signal } from '@angular/core';
 export class NavbarComponent {
   scrolled = signal(false);
   menuOpen = signal(false);
+
+  constructor() {
+    effect(() => {
+      document.body.style.overflow = this.menuOpen() ? 'hidden' : '';
+    });
+  }
 
   navLinks = [
     { label: 'El Gran Día', anchor: 'eventos' },

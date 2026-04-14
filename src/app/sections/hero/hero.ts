@@ -24,6 +24,8 @@ export class HeroComponent implements OnInit, OnDestroy {
     { value: 0, label: 'Segundos' }
   ]);
 
+  expired = signal(false);
+
   ngOnInit(): void {
     this.updateCountdown();
     this.intervalId = setInterval(() => this.updateCountdown(), 1000);
@@ -39,12 +41,11 @@ export class HeroComponent implements OnInit, OnDestroy {
     const diff = target - now;
 
     if (diff <= 0) {
-      this.countdown.set([
-        { value: 0, label: 'Días' },
-        { value: 0, label: 'Horas' },
-        { value: 0, label: 'Minutos' },
-        { value: 0, label: 'Segundos' }
-      ]);
+      this.expired.set(true);
+      if (this.intervalId) {
+        clearInterval(this.intervalId);
+        this.intervalId = null;
+      }
       return;
     }
 

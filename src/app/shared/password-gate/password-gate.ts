@@ -17,15 +17,20 @@ export class PasswordGateComponent {
   opening = signal(false);
   hiding = signal(false);
 
-  private readonly CORRECT = 'PabloAndDaniela2027';
+  // SHA-256 de 'PabloAndDaniela2027'
+  private readonly EXPECTED_HASH = 'd99f22a517e3d0be9599b727d7bd06e4ea238216e18cf1c4f719f2671ad2fb56';
 
   onInput(value: string) {
     this.password.set(value);
     if (this.error()) this.error.set(false);
   }
 
-  submit() {
-    if (this.password() === this.CORRECT) {
+  async submit() {
+    if (this.opening()) return; // Previene envío múltiple temporalmente
+
+    const hashHex = await this.hashPassword(this.password());
+
+    if (hashHex === this.EXPECTED_HASH) {
       this.error.set(false);
       this.opening.set(true);
 
@@ -45,5 +50,12 @@ export class PasswordGateComponent {
 
   onKeydown(event: KeyboardEvent) {
     if (event.key === 'Enter') this.submit();
+  }
+
+  private async hashPassword(password: string): Promise<string> {
+    const msgBuffer = new TextEncoder().encode(password);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   }
 }
