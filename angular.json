@@ -57,6 +57,7 @@
           },
           "configurations": {
             "production": {
+              "baseHref": "/my-wedding/",
               "budgets": [
                 {
                   "type": "initial",

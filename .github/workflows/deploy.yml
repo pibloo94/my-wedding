@@ -2,32 +2,27 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches:
-      - main
-
-permissions:
-  contents: write
+    branches: [main]
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: '20'
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build
-        run: npx ng build --base-href /my-wedding/
+      - name: Build production
+        run: ng build --configuration production
 
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          folder: dist/wedding-app/browser # Standard path for Angular 18+ application builder
-          branch: gh-pages
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist/wedding-app/browser
