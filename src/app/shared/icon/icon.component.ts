@@ -94,6 +94,9 @@ import { Component, input } from '@angular/core';
           <path d="M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s-2-5-4.5-5a2.5 2.5 0 0 1 0 5Z"/>
           <path d="M16.5 8a2.5 2.5 0 0 0 0-5C14 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 0 0 5Z"/>
         }
+        @case ('chevron-right') {
+          <polyline points="9 18 15 12 9 6"/>
+        }
       }
     </svg>
   `,

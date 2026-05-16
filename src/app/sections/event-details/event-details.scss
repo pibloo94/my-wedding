@@ -30,6 +30,7 @@
   height: 56px;
   border-radius: 50%;
   background: var(--color-primary);
+  opacity: 0.6;
   color: var(--color-white);
   display: flex;
   align-items: center;
@@ -43,6 +44,7 @@
 
 .timeline-line {
   width: 2px;
+  opacity: 0.5;
   flex: 1;
   min-height: 40px;
   background: linear-gradient(180deg, var(--color-primary), rgba(187,187,187,0.3));

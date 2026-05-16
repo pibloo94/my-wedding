@@ -21,7 +21,11 @@
             <app-icon name="check-circle" [size]="48" />
           </div>
           <h3>¡Muchas gracias!</h3>
-          <p>Hemos recibido tu confirmación. ¡Estamos deseando celebrarlo contigo el 11 de septiembre de 2027!</p>
+          @if (isAttending) {
+            <p>Hemos recibido tu confirmación. ¡Estamos deseando celebrarlo contigo el 11 de septiembre de 2027!</p>
+          } @else {
+            <p>Qué pena que no puedas asistir, nos habría encantado compartir este día contigo. ¡Te tendremos muy presente!</p>
+          }
           <button class="btn btn-outline" (click)="reset()" id="btn-rsvp-reset">Enviar otra respuesta</button>
         </div>
       }
@@ -64,14 +68,16 @@
                 <span class="radio-icon">
                   <app-icon name="glass" [size]="20" />
                 </span>
-                <span>Sí, allí estaré</span>
+                <span class="text-desktop">Sí, allí estaré</span>
+                <span class="text-mobile">SÍ</span>
               </label>
               <label class="radio-card" [class.selected]="form.get('attending')?.value === 'no'">
                 <input type="radio" formControlName="attending" value="no">
                 <span class="radio-icon">
                   <app-icon name="frown" [size]="20" />
                 </span>
-                <span>No podré asistir</span>
+                <span class="text-desktop">No podré asistir</span>
+                <span class="text-mobile">NO</span>
               </label>
             </div>
           </div>

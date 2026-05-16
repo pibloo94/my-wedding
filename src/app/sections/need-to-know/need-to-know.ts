@@ -34,7 +34,7 @@ export class NeedToKnowComponent {
       title: 'Detalles del Lugar',
       accent: '#444',
       items: [
-        'La ceremonia se realiza al aire libre — prever calzado cómodo para jardín',
+        'La ceremonia se realiza al aire libre, prever calzado cómodo para jardín',
         'No se permite confeti ni arroz dentro del recinto',
         'Zona de aparcamiento gratuita disponible dentro del recinto',
         'El recinto es accesible para personas con movilidad reducida'
