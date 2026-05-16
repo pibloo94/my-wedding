@@ -7,14 +7,14 @@
   --color-secondary:   #DDBEA9; // Dusty Rose
   --color-teal:        #6B705C; // Olive Green
   --color-light:       #B7B7A4; // Soft Apricot
-  --color-muted:       #A5A58D; // Sage Fern
+  --color-muted:       #7A7A67; // Darker Sage
   --color-bg:          #FFE8D6; // Peach Cream
   --color-bg-alt:      #F5E1D0; // Lightened Peach Cream
   --color-surface:     #FFF8F3;
   --color-dark:        #3A3D32;
-  --color-text:        #6B705C;
+  --color-text:        #4A4D3E; // Darker Olive
   --color-white:       #ffffff;
-  --color-border:      rgba(107, 112, 92, 0.12);
+  --color-border:      rgba(74, 77, 62, 0.15);
 
   --font-heading:      'Playfair Display', serif;
   --font-editorial:    'Playfair Display', serif;
@@ -86,7 +86,6 @@ p {
   font-family: var(--font-editorial);
   font-size: 1.25rem;
   color: var(--color-muted);
-  font-style: italic;
   font-weight: 300;
   letter-spacing: 0.04em;
 }
@@ -127,14 +126,20 @@ a {
   white-space: nowrap;
   border: 1px solid transparent;
 
-  &.btn-primary, &.btn-teal {
-    background: var(--color-teal);
+  &.btn-primary {
+    background: var(--color-primary);
     color: var(--color-white);
     
     &:hover {
       background: var(--color-dark);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     }
+  }
+
+  &.btn-teal {
+    background: var(--color-teal);
+    color: var(--color-white);
   }
 
   &.btn-outline {
@@ -316,4 +321,17 @@ a {
   :root { --section-padding: 64px 0; }
   .section-header { margin-bottom: 40px; }
   .card { padding: 24px; }
+  
+  .hero-divider {
+    gap: 12px;
+    .line-divider { width: 40px; }
+  }
+
+  h2 { font-size: 1.8rem; }
+  .subtitle { font-size: 1rem; }
+}
+
+@media (max-width: 480px) {
+  .container { padding: 0 20px; }
+  .section-header h2 { font-size: 1.6rem; }
 }

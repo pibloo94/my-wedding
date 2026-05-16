@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ScrollAnimateDirective } from '../../shared/scroll-animate.directive';
 import { IconComponent } from '../../shared/icon/icon.component';
 
 interface CountdownUnit {
@@ -11,7 +10,7 @@ interface CountdownUnit {
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [CommonModule, ScrollAnimateDirective, IconComponent],
+  imports: [CommonModule, IconComponent],
   templateUrl: './hero.html',
   styleUrl: './hero.scss'
 })

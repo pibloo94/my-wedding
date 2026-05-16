@@ -34,7 +34,7 @@ export class EventDetailsComponent {
       venue: 'Jardines del Negralejo',
       address: 'Carr. de Mejorada, km 2,5, 28522 Rivas-Vaciamadrid, Madrid',
       mapsUrl: 'https://www.google.com/maps/place/Jardines+del+Negralejo/@40.4085192,-3.51632,17z/data=!4m6!3m5!1s0xd423b214854bab3:0x664516d941116999!8m2!3d40.4085706!4d-3.5162788!16s%2Fg%2F11thnjv_ym?entry=ttu&g_ep=EgoyMDI2MDUxMy4wIKXMDSoASAFQAw%3D%3D',
-      dressCode: 'Traje Formal',
+      dressCode: 'Traje Formal · Evitar blanco',
       dressColor: '#CB997E',
       description: 'Os esperamos para dar comienzo a esta historia juntos. La ceremonia tendrá lugar en el precioso jardín del palacio.'
     },
@@ -46,7 +46,7 @@ export class EventDetailsComponent {
       time: '13:30 h',
       venue: 'Jardines del Negralejo',
       address: 'Carr. de Mejorada, km 2,5, 28522 Rivas-Vaciamadrid, Madrid',
-      dressCode: 'Traje Formal',
+      dressCode: 'Traje Formal · Evitar blanco',
       dressColor: '#CB997E',
       description: 'Disfruta de aperitivos y bebidas en los jardines mientras celebramos juntos el inicio de nuestra nueva vida.'
     },

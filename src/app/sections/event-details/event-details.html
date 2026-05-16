@@ -30,7 +30,7 @@
                 <span class="label-accent">{{ event.type }}</span>
                 <h3 class="event-title">{{ event.title }}</h3>
               </div>
-              <div class="dress-badge flex" [style.background]="event.dressColor + '18'" [style.color]="event.dressColor" [style.border-color]="event.dressColor + '40'">
+              <div class="dress-badge">
                 <app-icon name="shirt" [size]="16" /> {{ event.dressCode }}
               </div>
             </div>
@@ -53,8 +53,9 @@
             <p class="event-description">{{ event.description }}</p>
 
             @if (event.mapsUrl) {
-              <a [href]="event.mapsUrl" target="_blank" rel="noopener" class="btn btn-teal map-btn" [id]="'btn-maps-' + event.id">
-                Ver en Google Maps →
+              <a [href]="event.mapsUrl" target="_blank" rel="noopener" class="btn btn-primary map-btn" [id]="'btn-maps-' + event.id">
+                <app-icon name="map" [size]="18" />
+                <span class="map-btn-text">Ver en Google Maps</span>
               </a>
             }
           </div>
