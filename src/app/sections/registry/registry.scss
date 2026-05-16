@@ -142,6 +142,16 @@
   &:hover:not(.copied) { background: var(--color-secondary); }
 }
 
+#btn-registry-bank {
+  background: var(--color-primary);
+  box-shadow: 0 4px 15px rgba(203, 153, 126, 0.25);
+  
+  &:hover {
+    background: var(--color-dark);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  }
+}
+
 // ── Note ──────────────────────────────────────────────────────────────────────
 .registry-note {
   text-align: center;

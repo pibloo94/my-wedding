@@ -21,14 +21,21 @@
   width: 56px;
   height: 56px;
   border-radius: 14px;
-  border: 1px solid;
+  background: rgba(203, 153, 126, 0.08);
+  border: 1px solid rgba(203, 153, 126, 0.19);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  color: var(--color-primary);
+  transition: var(--transition);
 }
 
-.info-icon { font-size: 1.6rem; }
+.info-icon { 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 .info-title {
   font-family: var(--font-heading);

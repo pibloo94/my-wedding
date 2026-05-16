@@ -3,12 +3,10 @@
     <div class="section-header" scrollAnimate animClass="fade-up">
       <span class="label-accent">Lista de Bodas</span>
       <h2>Vuestra Generosidad</h2>
-      <div class="ornament-divider">
-        <div class="line"></div>
-        <div class="diamond"></div>
-        <div class="diamond-center">✦</div>
-        <div class="diamond"></div>
-        <div class="line right"></div>
+      <div class="hero-divider">
+        <div class="line-divider"></div>
+        <span class="diamond-hero">✦</span>
+        <div class="line-divider"></div>
       </div>
       <p class="subtitle">
         Vuestro regalo más importante es vuestra presencia. Si aun así queréis tener un detalle con nosotros, aquí encontraréis una cuenta bancaria para hacer una transferencia.
@@ -19,13 +17,16 @@
       @for (item of items; track item.id; let i = $index) {
         <div class="registry-card card" [class.highlight]="item.highlight"
              scrollAnimate animClass="fade-up" [animDelay]="i * 120">
-          <div class="registry-icon">{{ item.icon }}</div>
+          <div class="registry-icon">
+            <app-icon [name]="item.icon" [size]="40" />
+          </div>
           <h3 class="registry-title">{{ item.title }}</h3>
           <p class="registry-desc">{{ item.description }}</p>
 
           @if (item.id === 'transfer') {
             <button class="btn btn-primary" (click)="toggleBank()" id="btn-registry-bank">
-              {{ showBank ? 'Ocultar datos' : item.cta }} ↓
+              {{ showBank ? 'Ocultar datos' : item.cta }} 
+              <app-icon [name]="showBank ? 'chevron-up' : 'chevron-down'" [size]="16" />
             </button>
 
             @if (showBank) {
@@ -57,7 +58,7 @@
     </div>
 
     <div class="registry-note" scrollAnimate animClass="fade-up" [animDelay]="400">
-      <p>🙏 Cada detalle, por pequeño que sea, lo recibiremos con el mismo cariño e ilusión.</p>
+      <p><app-icon name="heart" [size]="18" /> Cada detalle, por pequeño que sea, lo recibiremos con el mismo cariño e ilusión.</p>
     </div>
   </div>
 </section>

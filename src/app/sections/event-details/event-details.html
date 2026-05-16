@@ -3,12 +3,10 @@
     <div class="section-header" scrollAnimate animClass="fade-up">
       <span class="label-accent">El Gran Día</span>
       <h2>Detalles del Evento</h2>
-      <div class="ornament-divider">
-        <div class="line"></div>
-        <div class="diamond"></div>
-        <div class="diamond-center">✦</div>
-        <div class="diamond"></div>
-        <div class="line right"></div>
+      <div class="hero-divider">
+        <div class="line-divider"></div>
+        <span class="diamond-hero">✦</span>
+        <div class="line-divider"></div>
       </div>
       <p class="subtitle">Todo lo que necesitas saber para acompañarnos en este día tan especial</p>
     </div>
@@ -19,7 +17,7 @@
         <div class="timeline-item" scrollAnimate animClass="fade-up" [animDelay]="i * 150">
           <div class="timeline-connector">
             <div class="timeline-dot">
-              <span class="event-icon">{{ event.icon }}</span>
+              <app-icon [name]="event.icon" [size]="24" />
             </div>
             @if (!$last) {
               <div class="timeline-line"></div>
@@ -33,21 +31,21 @@
                 <h3 class="event-title">{{ event.title }}</h3>
               </div>
               <div class="dress-badge flex" [style.background]="event.dressColor + '18'" [style.color]="event.dressColor" [style.border-color]="event.dressColor + '40'">
-                👗 {{ event.dressCode }}
+                <app-icon name="shirt" [size]="16" /> {{ event.dressCode }}
               </div>
             </div>
 
             <div class="event-meta">
               <div class="meta-item">
-                <span class="meta-icon">🕐</span>
+                <app-icon name="clock" [size]="18" />
                 <span>{{ event.time }}</span>
               </div>
               <div class="meta-item">
-                <span class="meta-icon">📍</span>
+                <app-icon name="map-pin" [size]="18" />
                 <span>{{ event.venue }}</span>
               </div>
               <div class="meta-item meta-address">
-                <span class="meta-icon">🗺️</span>
+                <app-icon name="map" [size]="18" />
                 <span>{{ event.address }}</span>
               </div>
             </div>

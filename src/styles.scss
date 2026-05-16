@@ -265,7 +265,7 @@ a {
 }
 
 // ── Divider ───────────────────────────────────────────────────────────────────
-.ornament-divider {
+.hero-divider {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -273,19 +273,22 @@ a {
   margin: 12px auto;
   width: fit-content;
 
-  .line {
+  .line-divider {
     width: 60px;
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--color-light));
-
-    &.right { background: linear-gradient(90deg, var(--color-light), transparent); }
+    background: var(--color-light);
+    opacity: 0.6;
   }
 
-  .diamond {
-    width: 6px;
-    height: 6px;
-    background: var(--color-primary);
-    transform: rotate(45deg);
+  .diamond-hero {
+    color: var(--color-primary);
+    font-size: 0.9rem;
+    line-height: 1;
+  }
+
+  &.divider-light {
+    .line-divider { background: rgba(255,255,255,0.2); }
+    .diamond-hero { color: rgba(255,255,255,0.4); }
   }
 }
 

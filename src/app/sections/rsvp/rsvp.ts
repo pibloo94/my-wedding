@@ -1,6 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ScrollAnimateDirective } from '../../shared/scroll-animate.directive';
+import { IconComponent } from '../../shared/icon/icon.component';
 import { RsvpService } from '../../core/services/rsvp.service';
 
 type FormState = 'idle' | 'loading' | 'success' | 'error';
@@ -8,7 +9,7 @@ type FormState = 'idle' | 'loading' | 'success' | 'error';
 @Component({
   selector: 'app-rsvp',
   standalone: true,
-  imports: [ReactiveFormsModule, ScrollAnimateDirective],
+  imports: [ReactiveFormsModule, ScrollAnimateDirective, IconComponent],
   templateUrl: './rsvp.html',
   styleUrl: './rsvp.scss'
 })
@@ -34,7 +35,9 @@ export class RsvpComponent {
         this.form.patchValue({
           hasPartner: false,
           partnerName: '',
-          needsBus: false
+          needsBus: false,
+          dietary: '',
+          message: ''
         });
       }
     });

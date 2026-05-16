@@ -19,7 +19,7 @@
       <span class="name">Pablo</span>
     </h1>
 
-    <div class="hero-divider">
+    <div class="hero-divider divider-light">
       <div class="line-divider"></div>
       <span class="diamond-hero">✦</span>
       <div class="line-divider"></div>
@@ -47,7 +47,7 @@
 
     <div class="hero-actions">
       <button class="btn btn-primary" (click)="scrollToRsvp()" id="btn-hero-rsvp">
-        ✉ Confirmar Asistencia
+        <app-icon name="mail" [size]="18" /> Confirmar Asistencia
       </button>
       <button class="btn btn-outline hero-btn-outline" (click)="scrollToEvents()" id="btn-hero-events">
         Ver detalles del evento

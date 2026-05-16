@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ScrollAnimateDirective } from '../../shared/scroll-animate.directive';
+import { IconComponent } from '../../shared/icon/icon.component';
 
 interface RegistryItem {
   id: string;
@@ -14,7 +15,7 @@ interface RegistryItem {
 @Component({
   selector: 'app-registry',
   standalone: true,
-  imports: [ScrollAnimateDirective],
+  imports: [ScrollAnimateDirective, IconComponent],
   templateUrl: './registry.html',
   styleUrl: './registry.scss'
 })
@@ -22,7 +23,7 @@ export class RegistryComponent {
   items: RegistryItem[] = [
     {
       id: 'transfer',
-      icon: '🏦',
+      icon: 'landmark',
       title: 'Transferencia Bancaria',
       description: 'Si preferís contribuir directamente, podéis hacerlo mediante transferencia. Vuestro detalle, sea cual sea, significa muchísimo para nosotros.',
       cta: 'Ver datos bancarios',

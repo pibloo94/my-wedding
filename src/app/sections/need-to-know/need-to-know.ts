@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ScrollAnimateDirective } from '../../shared/scroll-animate.directive';
+import { IconComponent } from '../../shared/icon/icon.component';
 
 interface InfoCard {
   icon: string;
@@ -11,14 +12,14 @@ interface InfoCard {
 @Component({
   selector: 'app-need-to-know',
   standalone: true,
-  imports: [ScrollAnimateDirective],
+  imports: [ScrollAnimateDirective, IconComponent],
   templateUrl: './need-to-know.html',
   styleUrl: './need-to-know.scss'
 })
 export class NeedToKnowComponent {
   cards: InfoCard[] = [
     {
-      icon: '👗',
+      icon: 'shirt',
       title: 'Código de Vestimenta',
       accent: '#CB997E',
       items: [
@@ -29,7 +30,7 @@ export class NeedToKnowComponent {
       ]
     },
     {
-      icon: '📋',
+      icon: 'info',
       title: 'Detalles del Lugar',
       accent: '#444',
       items: [
@@ -40,7 +41,7 @@ export class NeedToKnowComponent {
       ]
     },
     {
-      icon: '🍽️',
+      icon: 'utensils',
       title: 'Menú y Alergias',
       accent: '#006080',
       items: [

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ScrollAnimateDirective } from '../../shared/scroll-animate.directive';
+import { IconComponent } from '../../shared/icon/icon.component';
 
 interface WeddingEvent {
   id: string;
@@ -18,7 +19,7 @@ interface WeddingEvent {
 @Component({
   selector: 'app-event-details',
   standalone: true,
-  imports: [ScrollAnimateDirective],
+  imports: [ScrollAnimateDirective, IconComponent],
   templateUrl: './event-details.html',
   styleUrl: './event-details.scss'
 })
@@ -26,7 +27,7 @@ export class EventDetailsComponent {
   events: WeddingEvent[] = [
     {
       id: 'ceremonia',
-      icon: '💍',
+      icon: 'heart',
       type: 'Ceremonia',
       title: 'Ceremonia Civil',
       time: '13:00 h',
@@ -39,7 +40,7 @@ export class EventDetailsComponent {
     },
     {
       id: 'coctel',
-      icon: '🥂',
+      icon: 'glass',
       type: 'Cóctel',
       title: 'Cóctel de Bienvenida',
       time: '13:30 h',
@@ -51,7 +52,7 @@ export class EventDetailsComponent {
     },
     {
       id: 'banquete',
-      icon: '🌹',
+      icon: 'utensils',
       type: 'Banquete',
       title: 'Cena y Baile',
       time: '15:00 h',

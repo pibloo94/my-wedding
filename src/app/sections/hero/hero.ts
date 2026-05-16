@@ -1,5 +1,7 @@
 import { Component, OnInit, OnDestroy, signal } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { ScrollAnimateDirective } from '../../shared/scroll-animate.directive';
+import { IconComponent } from '../../shared/icon/icon.component';
 
 interface CountdownUnit {
   value: number;
@@ -9,7 +11,7 @@ interface CountdownUnit {
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [DecimalPipe],
+  imports: [CommonModule, ScrollAnimateDirective, IconComponent],
   templateUrl: './hero.html',
   styleUrl: './hero.scss'
 })

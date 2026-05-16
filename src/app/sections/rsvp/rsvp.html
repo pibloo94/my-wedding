@@ -4,12 +4,10 @@
     <div class="section-header" scrollAnimate animClass="fade-up">
       <span class="label-accent">Confirmación de Asistencia</span>
       <h2>¿Nos acompañas?</h2>
-      <div class="ornament-divider">
-        <div class="line"></div>
-        <div class="diamond"></div>
-        <div class="diamond-center">✦</div>
-        <div class="diamond"></div>
-        <div class="line right"></div>
+      <div class="hero-divider">
+        <div class="line-divider"></div>
+        <span class="diamond-hero">✦</span>
+        <div class="line-divider"></div>
       </div>
       <p class="subtitle">Por favor confirma antes del <strong>1 de febrero de 2027</strong></p>
     </div>
@@ -19,7 +17,9 @@
       <!-- SUCCESS STATE -->
       @if (formState() === 'success') {
         <div class="state-card state-success">
-          <div class="state-icon">🎉</div>
+          <div class="state-icon">
+            <app-icon name="check-circle" [size]="48" />
+          </div>
           <h3>¡Muchas gracias!</h3>
           <p>Hemos recibido tu confirmación. ¡Estamos deseando celebrarlo contigo el 11 de septiembre de 2027!</p>
           <button class="btn btn-outline" (click)="reset()" id="btn-rsvp-reset">Enviar otra respuesta</button>
@@ -29,7 +29,9 @@
       <!-- ERROR STATE -->
       @if (formState() === 'error') {
         <div class="state-card state-error">
-          <div class="state-icon">😔</div>
+          <div class="state-icon">
+            <app-icon name="alert-circle" [size]="48" />
+          </div>
           <h3>Ha ocurrido un error</h3>
           <p>No se ha podido enviar tu confirmación. Por favor, inténtalo de nuevo o escríbenos directamente.</p>
           <div class="state-actions">
@@ -59,12 +61,16 @@
             <div class="radio-group">
               <label class="radio-card" [class.selected]="form.get('attending')?.value === 'si'">
                 <input type="radio" formControlName="attending" value="si">
-                <span class="radio-icon">🥂</span>
+                <span class="radio-icon">
+                  <app-icon name="glass" [size]="20" />
+                </span>
                 <span>Sí, allí estaré</span>
               </label>
               <label class="radio-card" [class.selected]="form.get('attending')?.value === 'no'">
                 <input type="radio" formControlName="attending" value="no">
-                <span class="radio-icon">😢</span>
+                <span class="radio-icon">
+                  <app-icon name="frown" [size]="20" />
+                </span>
                 <span>No podré asistir</span>
               </label>
             </div>
@@ -89,20 +95,22 @@
             }
           }
 
-          <!-- Dietary -->
-          <div class="form-group">
-            <label for="rsvp-dietary">Alergias o restricciones alimentarias</label>
-            <input id="rsvp-dietary" type="text" formControlName="dietary"
-                   placeholder="Sin gluten, vegetariano, alergia a frutos secos... (o déjalo en blanco si no tienes)">
-          </div>
+          @if (isAttending) {
+            <!-- Dietary -->
+            <div class="form-group">
+              <label for="rsvp-dietary">Alergias o restricciones alimentarias</label>
+              <input id="rsvp-dietary" type="text" formControlName="dietary"
+                     placeholder="Sin gluten, vegetariano, alergia a frutos secos... (o déjalo en blanco si no tienes)">
+            </div>
 
-          <!-- Message -->
-          <div class="form-group">
-            <label for="rsvp-message">Mensaje para los novios (opcional)</label>
-            <textarea id="rsvp-message" formControlName="message"
-                      placeholder="Un pensamiento, una canción que quieras escuchar...">
-            </textarea>
-          </div>
+            <!-- Message -->
+            <div class="form-group">
+              <label for="rsvp-message">Mensaje para los novios (opcional)</label>
+              <textarea id="rsvp-message" formControlName="message"
+                        placeholder="Un pensamiento, una canción que quieras escuchar...">
+              </textarea>
+            </div>
+          }
 
           <div class="form-submit">
             <button type="submit" class="btn btn-primary btn-submit" id="btn-rsvp-submit"
@@ -110,7 +118,7 @@
               @if (formState() === 'loading') {
                 <span class="spinner"></span> Enviando...
               } @else {
-                ✉ Enviar Confirmación
+                <app-icon name="mail" [size]="18" /> Enviar Confirmación
               }
             </button>
             <p class="form-note">* Campos obligatorios</p>
