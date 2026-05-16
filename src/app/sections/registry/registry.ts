@@ -22,13 +22,14 @@ export class RegistryComponent {
   items: RegistryItem[] = [
     {
       id: 'transfer',
-      icon: '🏦',
-      title: 'Transferencia Bancaria',
-      description: 'Si preferís contribuir directamente, podéis hacerlo mediante transferencia. Vuestro detalle, sea cual sea, significa muchísimo para nosotros.',
+      icon: 'IBAN',
+      title: 'Vuestra Generosidad',
+      description: 'Vuestra presencia es nuestro mayor regalo. Si deseáis tener un detalle, podéis hacerlo a través de transferencia bancaria.',
       cta: 'Ver datos bancarios',
       url: '#bank-details',
       highlight: false
     },
+  ];
   ];
 
   bankCopied = false;

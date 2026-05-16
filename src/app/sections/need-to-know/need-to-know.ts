@@ -18,36 +18,36 @@ interface InfoCard {
 export class NeedToKnowComponent {
   cards: InfoCard[] = [
     {
-      icon: '👗',
-      title: 'Código de Vestimenta',
-      accent: '#CB997E',
+      icon: 'dress',
+      title: 'Vestimenta',
+      accent: '#6B705C',
       items: [
-        'Traje formal para caballeros (corbata o pajarita)',
-        'Vestido de cóctel o de noche para señoras',
-        'Por favor, evitar colores blanco, marfil y crudo',
-        '¡Tenemos una pista de baile! Zapatos cómodos son bienvenidos'
+        'Formal para caballeros',
+        'Cóctel o noche para señoras',
+        'Rogamos evitar el color blanco y derivados',
+        'Calzado cómodo para disfrutar del baile'
       ]
     },
     {
-      icon: '📋',
-      title: 'Detalles del Lugar',
-      accent: '#444',
+      icon: 'venue',
+      title: 'El Recinto',
+      accent: '#6B705C',
       items: [
-        'La ceremonia se realiza al aire libre — prever calzado cómodo para jardín',
-        'No se permite confeti ni arroz dentro del recinto',
-        'Zona de aparcamiento gratuita disponible dentro del recinto',
-        'El recinto es accesible para personas con movilidad reducida'
+        'Ceremonia al aire libre en jardines',
+        'Aparcamiento gratuito disponible',
+        'Espacio accesible para todos',
+        'Clima previsto: Cálido mediterráneo'
       ]
     },
     {
-      icon: '🍽️',
-      title: 'Menú y Alergias',
-      accent: '#006080',
+      icon: 'food',
+      title: 'Menú Especial',
+      accent: '#6B705C',
       items: [
-        'Menú de cuatro tiempos con opciones vegetarianas',
-        'Indicad vuestras alergias o intolerancias en el formulario de confirmación',
-        'Menú infantil disponible para los más pequeños',
-        'Barra libre durante la fiesta'
+        'Opciones vegetarianas y celíacas',
+        'Indicad vuestras alergias al confirmar',
+        'Menú infantil disponible',
+        'Barra libre durante la celebración'
       ]
     }
   ];

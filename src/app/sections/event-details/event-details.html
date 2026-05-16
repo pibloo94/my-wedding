@@ -1,16 +1,9 @@
 <section id="eventos" class="section event-details-section">
   <div class="container">
     <div class="section-header" scrollAnimate animClass="fade-up">
-      <span class="label-accent">El Gran Día</span>
-      <h2>Detalles del Evento</h2>
-      <div class="ornament-divider">
-        <div class="line"></div>
-        <div class="diamond"></div>
-        <div class="diamond-center">✦</div>
-        <div class="diamond"></div>
-        <div class="line right"></div>
-      </div>
-      <p class="subtitle">Todo lo que necesitas saber para acompañarnos en este día tan especial</p>
+      <span class="label-caps">Nuestra Boda</span>
+      <h2>El Evento</h2>
+      <p class="subtitle">Acompáñanos en este recorrido por los momentos más especiales de nuestro día</p>
     </div>
 
     <!-- Timeline -->
@@ -19,7 +12,7 @@
         <div class="timeline-item" scrollAnimate animClass="fade-up" [animDelay]="i * 150">
           <div class="timeline-connector">
             <div class="timeline-dot">
-              <span class="event-icon">{{ event.icon }}</span>
+              <span class="event-number">{{ event.icon }}</span>
             </div>
             @if (!$last) {
               <div class="timeline-line"></div>
@@ -29,34 +22,30 @@
           <div class="card event-card">
             <div class="event-header">
               <div>
-                <span class="label-accent">{{ event.type }}</span>
+                <span class="label-caps">{{ event.type }}</span>
                 <h3 class="event-title">{{ event.title }}</h3>
               </div>
-              <div class="dress-badge flex" [style.background]="event.dressColor + '18'" [style.color]="event.dressColor" [style.border-color]="event.dressColor + '40'">
-                👗 {{ event.dressCode }}
+              <div class="dress-badge">
+                {{ event.dressCode }}
               </div>
             </div>
 
             <div class="event-meta">
               <div class="meta-item">
-                <span class="meta-icon">🕐</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 <span>{{ event.time }}</span>
               </div>
               <div class="meta-item">
-                <span class="meta-icon">📍</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                 <span>{{ event.venue }}</span>
-              </div>
-              <div class="meta-item meta-address">
-                <span class="meta-icon">🗺️</span>
-                <span>{{ event.address }}</span>
               </div>
             </div>
 
             <p class="event-description">{{ event.description }}</p>
 
             @if (event.mapsUrl) {
-              <a [href]="event.mapsUrl" target="_blank" rel="noopener" class="btn btn-teal map-btn" [id]="'btn-maps-' + event.id">
-                Ver en Google Maps →
+              <a [href]="event.mapsUrl" target="_blank" rel="noopener" class="btn btn-outline map-btn" [id]="'btn-maps-' + event.id">
+                Ubicación
               </a>
             }
           </div>

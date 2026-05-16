@@ -1,62 +1,46 @@
 <section id="hero" class="hero">
-  <!-- Floating petals -->
-  <div class="petals" aria-hidden="true">
-    @for (i of [1,2,3,4,5,6,7,8,9,10,11,12]; track i) {
-      <div class="petal" [style.--i]="i"></div>
-    }
-  </div>
-
-  <div class="hero-overlay"></div>
-
   <div class="hero-content container">
-    <div class="hero-tag">
-      <span class="label-accent" style="color: rgba(255,255,255,0.6)">con la alegría de anunciaros que</span>
+    <div class="hero-tag fade-up" style="transition-delay: 0.1s">
+      <span class="label-caps">Estáis invitados a la boda de</span>
     </div>
 
-    <h1 class="hero-names">
+    <h1 class="hero-names fade-up" style="transition-delay: 0.3s">
       <span class="name">Daniela</span>
       <span class="ampersand-hero">&</span>
       <span class="name">Pablo</span>
     </h1>
-
-    <div class="hero-divider">
-      <div class="line-divider"></div>
-      <span class="diamond-hero">✦</span>
-      <div class="line-divider"></div>
     </div>
 
-    <p class="hero-date">11 de Septiembre de 2027</p>
-    <p class="hero-location">Madrid, España</p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.5s">
+      <p class="hero-date">11.09.2027</p>
+      <div class="meta-divider"></div>
+      <p class="hero-location">Madrid</p>
+    </div>
 
     <!-- Countdown -->
-    @if (expired()) {
-      <p class="countdown-expired">¡Ha llegado el gran día!</p>
-    } @else {
-      <div class="countdown">
+    @if (!expired()) {
+      <div class="countdown fade-up" style="transition-delay: 0.7s">
         @for (unit of countdown(); track unit.label) {
           <div class="countdown-unit">
             <span class="countdown-value">{{ unit.value | number:'2.0-0' }}</span>
             <span class="countdown-label">{{ unit.label }}</span>
           </div>
-          @if (!$last) {
-            <span class="countdown-sep">:</span>
-          }
         }
       </div>
     }
 
-    <div class="hero-actions">
+    <div class="hero-actions fade-up" style="transition-delay: 0.9s">
       <button class="btn btn-primary" (click)="scrollToRsvp()" id="btn-hero-rsvp">
-        ✉ Confirmar Asistencia
+        Confirmar Asistencia
       </button>
-      <button class="btn btn-outline hero-btn-outline" (click)="scrollToEvents()" id="btn-hero-events">
-        Ver detalles del evento
+      <button class="btn btn-outline" (click)="scrollToEvents()" id="btn-hero-events">
+        Detalles
       </button>
     </div>
   </div>
 
-  <!-- Scroll indicator -->
-  <div class="scroll-indicator" (click)="scrollToEvents()" aria-hidden="true">
-    <div class="scroll-arrow"></div>
+  <div class="scroll-indicator" (click)="scrollToEvents()">
+    <span class="label-caps">Descubrir</span>
+    <div class="scroll-line"></div>
   </div>
 </section>

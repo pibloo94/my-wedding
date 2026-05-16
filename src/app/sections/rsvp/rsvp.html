@@ -1,17 +1,9 @@
 <section id="rsvp" class="section rsvp-section">
-  <div class="rsvp-bg-pattern" aria-hidden="true"></div>
   <div class="container">
     <div class="section-header" scrollAnimate animClass="fade-up">
-      <span class="label-accent">Confirmación de Asistencia</span>
+      <span class="label-caps">Confirmación</span>
       <h2>¿Nos acompañas?</h2>
-      <div class="ornament-divider">
-        <div class="line"></div>
-        <div class="diamond"></div>
-        <div class="diamond-center">✦</div>
-        <div class="diamond"></div>
-        <div class="line right"></div>
-      </div>
-      <p class="subtitle">Por favor confirma antes del <strong>1 de febrero de 2027</strong></p>
+      <p class="subtitle">Agradecemos vuestra respuesta antes del 1 de febrero de 2027</p>
     </div>
 
     <div class="rsvp-wrapper" scrollAnimate animClass="fade-up" [animDelay]="200">
@@ -19,9 +11,8 @@
       <!-- SUCCESS STATE -->
       @if (formState() === 'success') {
         <div class="state-card state-success">
-          <div class="state-icon">🎉</div>
-          <h3>¡Muchas gracias!</h3>
-          <p>Hemos recibido tu confirmación. ¡Estamos deseando celebrarlo contigo el 11 de septiembre de 2027!</p>
+          <h3 class="editorial-heading">Gracias</h3>
+          <p>Hemos recibido tu confirmación. Estamos deseando celebrarlo juntos el 11 de septiembre de 2027.</p>
           <button class="btn btn-outline" (click)="reset()" id="btn-rsvp-reset">Enviar otra respuesta</button>
         </div>
       }
@@ -29,12 +20,11 @@
       <!-- ERROR STATE -->
       @if (formState() === 'error') {
         <div class="state-card state-error">
-          <div class="state-icon">😔</div>
-          <h3>Ha ocurrido un error</h3>
-          <p>No se ha podido enviar tu confirmación. Por favor, inténtalo de nuevo o escríbenos directamente.</p>
+          <h3 class="editorial-heading">Lo sentimos</h3>
+          <p>No se ha podido enviar tu respuesta. Por favor, inténtalo de nuevo o contacta con nosotros.</p>
           <div class="state-actions">
-            <button class="btn btn-primary" (click)="reset()" id="btn-rsvp-retry">Intentar de nuevo</button>
-            <a href="mailto:pablo.daniela2027@gmail.com" class="btn btn-outline">Contactar</a>
+            <button class="btn btn-primary" (click)="reset()" id="btn-rsvp-retry">Reintentar</button>
+            <a href="mailto:pablo.daniela2027@gmail.com" class="btn btn-outline">Email</a>
           </div>
         </div>
       }
@@ -43,28 +33,24 @@
       @if (formState() === 'idle' || formState() === 'loading') {
         <form class="rsvp-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
 
-          <!-- Name -->
           <div class="form-group">
-            <label for="rsvp-name">Nombre completo *</label>
+            <label for="rsvp-name">Nombre completo</label>
             <input id="rsvp-name" type="text" formControlName="name"
-                   placeholder="Tu nombre y apellidos" [class.ng-invalid]="nameInvalid" [class.ng-touched]="nameInvalid">
+                   placeholder="Escribe tu nombre" [class.ng-invalid]="nameInvalid" [class.ng-touched]="nameInvalid">
             @if (nameInvalid) {
-              <span class="error-msg">Por favor, introduce tu nombre completo</span>
+              <span class="error-msg">Por favor, introduce tu nombre</span>
             }
           </div>
 
-          <!-- Attending -->
           <div class="form-group">
-            <label>¿Confirmas tu asistencia? *</label>
+            <label>Asistencia</label>
             <div class="radio-group">
               <label class="radio-card" [class.selected]="form.get('attending')?.value === 'si'">
                 <input type="radio" formControlName="attending" value="si">
-                <span class="radio-icon">🥂</span>
-                <span>Sí, allí estaré</span>
+                <span>Sí, asistiré</span>
               </label>
               <label class="radio-card" [class.selected]="form.get('attending')?.value === 'no'">
                 <input type="radio" formControlName="attending" value="no">
-                <span class="radio-icon">😢</span>
                 <span>No podré asistir</span>
               </label>
             </div>
@@ -76,7 +62,7 @@
               <label class="checkbox-container">
                 <input type="checkbox" formControlName="hasPartner">
                 <span class="checkmark"></span>
-                <span>Vengo con acompañante</span>
+                <span>Asistiré con acompañante</span>
               </label>
             </div>
 
@@ -89,18 +75,16 @@
             }
           }
 
-          <!-- Dietary -->
           <div class="form-group">
-            <label for="rsvp-dietary">Alergias o restricciones alimentarias</label>
+            <label for="rsvp-dietary">Restricciones alimentarias</label>
             <input id="rsvp-dietary" type="text" formControlName="dietary"
-                   placeholder="Sin gluten, vegetariano, alergia a frutos secos... (o déjalo en blanco si no tienes)">
+                   placeholder="Alergias, intolerancias o menú especial">
           </div>
 
-          <!-- Message -->
           <div class="form-group">
-            <label for="rsvp-message">Mensaje para los novios (opcional)</label>
+            <label for="rsvp-message">Mensaje para nosotros</label>
             <textarea id="rsvp-message" formControlName="message"
-                      placeholder="Un pensamiento, una canción que quieras escuchar...">
+                      placeholder="Alguna sugerencia o mensaje especial...">
             </textarea>
           </div>
 
@@ -108,12 +92,12 @@
             <button type="submit" class="btn btn-primary btn-submit" id="btn-rsvp-submit"
                     [disabled]="formState() === 'loading'">
               @if (formState() === 'loading') {
-                <span class="spinner"></span> Enviando...
+                Enviando...
               } @else {
-                ✉ Enviar Confirmación
+                Enviar Confirmación
               }
             </button>
-            <p class="form-note">* Campos obligatorios</p>
+            <p class="form-note">Todos los campos son opcionales excepto nombre y asistencia</p>
           </div>
 
         </form>

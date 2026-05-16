@@ -1,33 +1,35 @@
 // ── Google Fonts ──────────────────────────────────────────────────────────────
-@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400..900;1,400..900&family=Josefin+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Montserrat:wght@300;400;500;600&display=swap');
 
 // ── CSS Variables / Design Tokens ─────────────────────────────────────────────
 :root {
-  --color-primary:     #b68971; // Terracota
-  --color-secondary:   #e0c4b0; // Dusty Rose
+  --color-primary:     #CB997E; // Terracota
+  --color-secondary:   #DDBEA9; // Dusty Rose
   --color-teal:        #6B705C; // Olive Green
   --color-light:       #B7B7A4; // Soft Apricot
-  --color-muted:       #92927e; // Sage Fern
+  --color-muted:       #A5A58D; // Sage Fern
   --color-bg:          #FFE8D6; // Peach Cream
   --color-bg-alt:      #F5E1D0; // Lightened Peach Cream
-  --color-dark:        #3A3D32; // Dark Olive Variation
+  --color-surface:     #FFF8F3;
+  --color-dark:        #3A3D32;
+  --color-text:        #6B705C;
   --color-white:       #ffffff;
+  --color-border:      rgba(107, 112, 92, 0.12);
 
-  --font-heading:      'Bodoni Moda', serif;
-  --font-editorial:    'Bodoni Moda', serif;
-  --font-body:         'Josefin Sans', sans-serif;
-  --font-accent:       'Josefin Sans', sans-serif;
+  --font-heading:      'Playfair Display', serif;
+  --font-editorial:    'Playfair Display', serif;
+  --font-body:         'Montserrat', sans-serif;
+  --font-accent:       'Montserrat', sans-serif;
 
-  --shadow-soft:       0 4px 24px rgba(203, 153, 126, 0.12);
-  --shadow-card:       0 8px 40px rgba(203, 153, 126, 0.18);
-  --shadow-hover:      0 16px 56px rgba(203, 153, 126, 0.25);
+  --shadow-subtle:     0 12px 48px rgba(107, 112, 92, 0.06);
+  --shadow-soft:       0 8px 32px rgba(107, 112, 92, 0.04);
+  
+  --border-radius:     14px;
+  --border-radius-lg:  14px;
+  --transition:        all 400ms cubic-bezier(0.4, 0, 0.2, 1);
 
-  --border-radius:     12px;
-  --border-radius-lg:  20px;
-  --transition:        all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-
-  --section-padding:   100px 0;
-  --container-max:     1100px;
+  --section-padding:   120px 0;
+  --container-max:     1200px;
 }
 
 // ── Reset & Base ──────────────────────────────────────────────────────────────
@@ -46,18 +48,20 @@ body {
   font-family: var(--font-body);
   font-weight: 300;
   background-color: var(--color-bg);
-  color: var(--color-dark);
-  line-height: 1.7;
+  color: var(--color-text);
+  line-height: 1.8;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  letter-spacing: -0.01em;
 }
 
 // ── Typography ────────────────────────────────────────────────────────────────
 h1, h2, h3 {
   font-family: var(--font-heading);
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: 0.01em;
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--color-teal);
 }
 
 h1 { font-size: clamp(2.8rem, 7vw, 5.5rem); }
@@ -72,9 +76,10 @@ h4 { font-size: 1.3rem; }
 
 p {
   font-family: var(--font-body);
-  font-size: 1rem;
+  font-size: 1.05rem;
   line-height: 1.8;
-  color: #444;
+  color: var(--color-text);
+  opacity: 0.9;
 }
 
 .subtitle {
@@ -86,13 +91,14 @@ p {
   letter-spacing: 0.04em;
 }
 
-.label-accent {
+.label-caps {
   font-family: var(--font-accent);
-  font-size: 0.75rem;
-  letter-spacing: 0.2em;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
   text-transform: uppercase;
   color: var(--color-teal);
-  font-weight: 600;
+  font-weight: 400;
+  opacity: 0.8;
 }
 
 a {
@@ -107,60 +113,44 @@ a {
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 14px 36px;
-  border: none;
+  justify-content: center;
+  padding: 14px 34px;
   border-radius: 50px;
   font-family: var(--font-accent);
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.15em;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   cursor: pointer;
   transition: var(--transition);
   text-decoration: none;
   white-space: nowrap;
+  border: 1px solid transparent;
 
-  &.btn-primary {
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  &.btn-primary, &.btn-teal {
+    background: var(--color-teal);
     color: var(--color-white);
-    box-shadow: 0 4px 20px rgba(203, 153, 126, 0.35);
-
+    
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(203, 153, 126, 0.45);
-      color: var(--color-white);
+      background: var(--color-dark);
+      transform: translateY(-1px);
     }
-
-    &:active { transform: translateY(0); }
   }
 
   &.btn-outline {
     background: transparent;
-    color: var(--color-primary);
-    border: 1.5px solid var(--color-primary);
+    color: var(--color-teal);
+    border-color: var(--color-border);
 
     &:hover {
-      background: var(--color-primary);
-      color: var(--color-white);
-      transform: translateY(-2px);
-    }
-  }
-
-  &.btn-teal {
-    background: linear-gradient(315deg, var(--color-teal));
-    color: var(--color-white);
-    box-shadow: 0 4px 20px rgba(0,96,128,0.30);
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(0,96,128,0.40);
-      color: var(--color-white);
+      background: rgba(107, 112, 92, 0.04);
+      border-color: var(--color-teal);
+      transform: translateY(-1px);
     }
   }
 
   &:disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
     transform: none !important;
   }
@@ -170,42 +160,37 @@ a {
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-bottom: 20px;
+  gap: 8px;
+  margin-bottom: 24px;
 
   label {
-    font-family: var(--font-accent);
-    font-size: 0.75rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--color-primary);
-    font-weight: 600;
+    @extend .label-caps;
+    margin-bottom: 4px;
+    display: block;
   }
 
   input, textarea, select {
     width: 100%;
-    padding: 14px 18px;
-    border: 1.5px solid var(--color-light);
+    padding: 16px 20px;
+    border: 1px solid var(--color-border);
     border-radius: var(--border-radius);
     font-family: var(--font-body);
     font-size: 0.95rem;
-    color: var(--color-dark);
-    background: rgba(255,255,255,0.8);
+    color: var(--color-text);
+    background: var(--color-white);
     transition: var(--transition);
     outline: none;
     appearance: none;
 
-    &::placeholder { color: var(--color-muted); }
+    &::placeholder { color: var(--color-muted); opacity: 0.6; }
 
     &:focus {
       border-color: var(--color-teal);
       background: var(--color-white);
-      box-shadow: 0 0 0 3px rgba(0,96,128,0.12);
     }
 
     &.ng-invalid.ng-touched {
-      border-color: var(--color-secondary);
-      box-shadow: 0 0 0 3px rgba(128,0,32,0.10);
+      border-color: #d1a49c;
     }
   }
 
@@ -216,9 +201,9 @@ a {
 
   .error-msg {
     font-size: 0.78rem;
-    color: var(--color-secondary);
+    color: #9e5f3d;
     font-family: var(--font-body);
-    margin-top: 2px;
+    margin-top: 4px;
   }
 }
 
@@ -257,11 +242,11 @@ a {
 
 .section-header {
   text-align: center;
-  margin-bottom: 64px;
+  margin-bottom: 80px;
 
-  .label-accent { margin-bottom: 12px; display: block; }
-  h2 { color: var(--color-primary); margin-bottom: 16px; }
-  .subtitle { max-width: 560px; margin: 0 auto; }
+  .label-caps { margin-bottom: 16px; display: block; }
+  h2 { color: var(--color-teal); margin-bottom: 16px; }
+  .subtitle { max-width: 600px; margin: 0 auto; opacity: 0.8; }
 }
 
 // ── Divider ───────────────────────────────────────────────────────────────────
@@ -291,18 +276,16 @@ a {
 
 // ── Cards ─────────────────────────────────────────────────────────────────────
 .card {
-  background: rgba(255,255,255,0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(187,187,187,0.3);
-  border-radius: var(--border-radius-lg);
-  padding: 36px;
-  box-shadow: var(--shadow-card);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: 48px;
+  box-shadow: var(--shadow-soft);
   transition: var(--transition);
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-hover);
+    box-shadow: var(--shadow-subtle);
+    transform: translateY(-2px);
   }
 }
 

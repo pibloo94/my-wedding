@@ -1,244 +1,156 @@
 .rsvp-section {
-  background: linear-gradient(160deg, var(--color-bg-alt) 0%, var(--color-bg) 100%);
-  position: relative;
-  overflow: hidden;
-}
-
-.rsvp-bg-pattern {
-  position: absolute;
-  inset: 0;
-  opacity: 0.03;
-  background-image: repeating-linear-gradient(
-    45deg,
-    var(--color-primary) 0,
-    var(--color-primary) 1px,
-    transparent 0,
-    transparent 50%
-  );
-  background-size: 20px 20px;
-  pointer-events: none;
+  background: var(--color-bg);
 }
 
 .rsvp-wrapper {
-  max-width: 700px;
+  max-width: 760px;
   margin: 0 auto;
 }
 
-// ── State Cards ───────────────────────────────────────────────────────────────
+// ── States ────────────────────────────────────────────────────────────────────
 .state-card {
   text-align: center;
-  padding: 60px 40px;
-  background: rgba(255,255,255,0.9);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-card);
+  padding: 80px 40px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
 
-  .state-icon { font-size: 3.5rem; margin-bottom: 20px; }
-  h3 { color: var(--color-primary); margin-bottom: 12px; }
-  p { color: #666; max-width: 400px; margin: 0 auto 28px; }
+  h3 {
+    font-family: var(--font-heading);
+    color: var(--color-teal);
+    margin-bottom: 24px;
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+  }
 
-  &.state-success { border-top: 4px solid #4caf50; }
-  &.state-error { border-top: 4px solid var(--color-secondary); }
+  p {
+    color: var(--color-text);
+    opacity: 0.8;
+    margin: 0 auto 40px;
+    max-width: 480px;
+    line-height: 1.7;
+  }
 }
 
 .state-actions {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   justify-content: center;
   flex-wrap: wrap;
 }
 
 // ── Form ──────────────────────────────────────────────────────────────────────
 .rsvp-form {
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(187,187,187,0.25);
-  border-radius: var(--border-radius-lg);
-  padding: 48px 40px;
-  box-shadow: var(--shadow-card);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: 72px;
 
-  @media (max-width: 600px) { padding: 28px 20px; }
+  @media (max-width: 640px) { padding: 48px 24px; }
 }
 
-.form-grid-2 {
+.radio-group {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
 
-  @media (max-width: 560px) { grid-template-columns: 1fr; }
-}
-
-// ── Radio Cards (attending) ────────────────────────────────────────────────────
-.radio-group {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+  @media (max-width: 480px) { grid-template-columns: 1fr; }
 }
 
 .radio-card {
-  flex: 1;
-  min-width: 140px;
+  padding: 24px;
+  text-align: center;
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: var(--transition);
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 14px 20px;
-  border: 1.5px solid var(--color-light);
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  font-family: var(--font-body);
-  transition: var(--transition);
-  background: rgba(250,248,245,0.6);
-
-  input[type="radio"] { display: none; }
-
-  .radio-icon { font-size: 1.3rem; }
+  justify-content: center;
+  
+  input { display: none; }
+  
+  span {
+    @extend .label-caps;
+    font-size: 0.65rem;
+    color: var(--color-text);
+    opacity: 0.7;
+  }
 
   &.selected {
-    border-color: var(--color-primary);
-    background: rgba(203, 153, 126, 0.05);
-    color: var(--color-primary);
-    font-weight: 700;
+    border-color: var(--color-teal);
+    background: rgba(107, 112, 92, 0.04);
+    span { color: var(--color-teal); opacity: 1; }
   }
 
   &:hover:not(.selected) {
+    background: var(--color-bg);
     border-color: var(--color-muted);
-    background: rgba(255,255,255,0.8);
   }
-}
-
-// ── Bus Banner ────────────────────────────────────────────────────────────────
-.bus-banner {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 16px 20px;
-  background: rgba(107, 112, 92, 0.08);
-  border: 1px solid rgba(107, 112, 92, 0.2);
-  border-radius: var(--border-radius);
-  font-size: 0.9rem;
-
-  span:first-child { font-size: 1.8rem; flex-shrink: 0; }
-
-  strong { color: var(--color-teal); font-family: var(--font-accent); font-size: 0.85rem; letter-spacing: 0.05em; }
-  p { color: #666; font-size: 0.82rem; margin: 2px 0 0; }
 }
 
 // ── Checkboxes ────────────────────────────────────────────────────────────────
 .checkbox-field {
-  margin: 12px 0;
+  margin: 8px 0;
 }
 
 .checkbox-container {
   display: flex;
   align-items: center;
-  position: relative;
-  padding-left: 36px;
+  gap: 12px;
   cursor: pointer;
   font-family: var(--font-body);
   font-size: 0.95rem;
+  color: var(--color-text);
   user-select: none;
-  min-height: 24px;
 
-  input {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
-    height: 0;
-    width: 0;
-  }
+  input { display: none; }
 
   .checkmark {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    transform: translateY(-50%);
-    height: 22px;
-    width: 22px;
-    background-color: var(--color-white);
-    border: 1.5px solid var(--color-light);
-    border-radius: 6px;
+    width: 20px;
+    height: 20px;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: var(--transition);
+    border-radius: 2px;
 
     &::after {
-      content: "";
-      position: absolute;
-      display: none;
-      left: 7px;
-      top: 3px;
-      width: 5px;
+      content: '';
+      width: 10px;
       height: 10px;
-      border: solid white;
-      border-width: 0 2px 2px 0;
-      transform: rotate(45deg);
+      background: var(--color-teal);
+      transform: scale(0);
+      transition: var(--transition);
     }
-  }
-
-  &:hover input ~ .checkmark {
-    border-color: var(--color-muted);
   }
 
   input:checked ~ .checkmark {
-    background-color: var(--color-primary);
-    border-color: var(--color-primary);
-
-    &::after { display: block; }
-  }
-
-  .checkbox-text {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    line-height: 1.2;
-
-    small {
-      color: var(--color-muted);
-      font-size: 0.75rem;
-      font-style: italic;
-    }
+    border-color: var(--color-teal);
+    &::after { transform: scale(1); }
   }
 }
 
-// ── Animations ────────────────────────────────────────────────────────────────
-.fade-in {
-  animation: fadeIn 0.4s ease forwards;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-// ── Submit area ───────────────────────────────────────────────────────────────
 .form-submit {
   text-align: center;
-  margin-top: 8px;
+  margin-top: 48px;
 }
 
 .btn-submit {
   width: 100%;
-  max-width: 340px;
-  justify-content: center;
-  font-size: 0.9rem;
-  padding: 16px 40px;
+  padding: 18px;
 }
 
 .form-note {
-  font-size: 0.75rem;
-  color: var(--color-muted);
-  margin-top: 12px;
+  @extend .label-caps;
+  font-size: 0.55rem;
+  opacity: 0.4;
+  margin-top: 20px;
 }
 
-// ── Spinner ───────────────────────────────────────────────────────────────────
-.spinner {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255,255,255,0.4);
-  border-top-color: #fff;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
+.fade-in {
+  animation: fadeIn 0.5s ease both;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
