@@ -95,7 +95,7 @@
 
   &.selected {
     border-color: var(--color-primary);
-    background: rgba(111,0,0,0.05);
+    background: rgba(203, 153, 126, 0.05);
     color: var(--color-primary);
     font-weight: 700;
   }
@@ -112,8 +112,8 @@
   align-items: center;
   gap: 14px;
   padding: 16px 20px;
-  background: rgba(0,96,128,0.08);
-  border: 1px solid rgba(0,96,128,0.2);
+  background: rgba(107, 112, 92, 0.08);
+  border: 1px solid rgba(107, 112, 92, 0.2);
   border-radius: var(--border-radius);
   font-size: 0.9rem;
 

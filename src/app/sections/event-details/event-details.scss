@@ -29,11 +29,11 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  background: var(--color-primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 16px rgba(111,0,0,0.3);
+  box-shadow: 0 4px 16px rgba(203, 153, 126, 0.3);
   flex-shrink: 0;
   z-index: 1;
 
@@ -96,7 +96,6 @@
   padding: 16px 20px;
   background: var(--color-bg-alt);
   border-radius: var(--border-radius);
-  border-left: 3px solid var(--color-primary);
 }
 
 .meta-item {

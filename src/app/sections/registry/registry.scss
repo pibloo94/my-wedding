@@ -23,8 +23,8 @@
   overflow: hidden;
 
   &.highlight {
-    border-color: rgba(111,0,0,0.25);
-    background: linear-gradient(140deg, rgba(111,0,0,0.04), rgba(255,255,255,0.9));
+    border-color: rgba(203, 153, 126, 0.25);
+    background: linear-gradient(140deg, rgba(203, 153, 126, 0.04), rgba(255,255,255,0.9));
 
     &::before {
       content: '';
@@ -146,8 +146,8 @@
 .registry-note {
   text-align: center;
   padding: 24px 32px;
-  background: rgba(111,0,0,0.04);
-  border: 1px solid rgba(111,0,0,0.1);
+  background: rgba(203, 153, 126, 0.04);
+  border: 1px solid rgba(203, 153, 126, 0.1);
   border-radius: var(--border-radius-lg);
 
   p {

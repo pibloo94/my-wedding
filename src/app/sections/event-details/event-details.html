@@ -54,9 +54,11 @@
 
             <p class="event-description">{{ event.description }}</p>
 
-            <a [href]="event.mapsUrl" target="_blank" rel="noopener" class="btn btn-teal map-btn" [id]="'btn-maps-' + event.id">
-              Ver en Google Maps →
-            </a>
+            @if (event.mapsUrl) {
+              <a [href]="event.mapsUrl" target="_blank" rel="noopener" class="btn btn-teal map-btn" [id]="'btn-maps-' + event.id">
+                Ver en Google Maps →
+              </a>
+            }
           </div>
         </div>
       }

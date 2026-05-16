@@ -18,20 +18,9 @@ interface InfoCard {
 export class NeedToKnowComponent {
   cards: InfoCard[] = [
     {
-      icon: '🚌',
-      title: 'Transporte',
-      accent: '#006080',
-      items: [
-        'Autobús gratuito desde Getafe Central (Plaza de la Constitución)',
-        'Salida: 11:00 h · Hora exacta por confirmar',
-        'Regreso: aproximadamente a las 02:00 h',
-        'Plazas limitadas — confirma tu plaza en el formulario',
-      ]
-    },
-    {
       icon: '👗',
       title: 'Código de Vestimenta',
-      accent: '#6f0000',
+      accent: '#CB997E',
       items: [
         'Traje formal para caballeros (corbata o pajarita)',
         'Vestido de cóctel o de noche para señoras',
@@ -46,7 +35,7 @@ export class NeedToKnowComponent {
       items: [
         'La ceremonia se realiza al aire libre — prever calzado cómodo para jardín',
         'No se permite confeti ni arroz dentro del recinto',
-        'Zona de aparcamiento gratuita disponible en el palacio',
+        'Zona de aparcamiento gratuita disponible dentro del recinto',
         'El recinto es accesible para personas con movilidad reducida'
       ]
     },
@@ -58,7 +47,7 @@ export class NeedToKnowComponent {
         'Menú de cuatro tiempos con opciones vegetarianas',
         'Indicad vuestras alergias o intolerancias en el formulario de confirmación',
         'Menú infantil disponible para los más pequeños',
-        'Open bar durante toda la celebración'
+        'Barra libre durante la fiesta'
       ]
     }
   ];

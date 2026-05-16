@@ -17,8 +17,8 @@ export class PasswordGateComponent {
   opening = signal(false);
   hiding = signal(false);
 
-  // SHA-256 de 'PabloAndDaniela2027'
-  private readonly EXPECTED_HASH = 'd99f22a517e3d0be9599b727d7bd06e4ea238216e18cf1c4f719f2671ad2fb56';
+  // SHA-256 de 'Daniela&Pablo2027'
+  private readonly EXPECTED_HASH = '5668d9a200cf1562dbcac36c2cde0cbbae0fec9a0cb367688f4ba910a1eb0d4b';
 
   onInput(value: string) {
     this.password.set(value);

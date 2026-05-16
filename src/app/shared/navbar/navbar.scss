@@ -8,12 +8,12 @@
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
   &.scrolled {
-    background: rgba(250, 248, 245, 0.88);
+    background: rgba(255, 232, 214, 0.88);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     padding: 12px 0;
-    border-bottom: 1px solid rgba(187,187,187,0.25);
-    box-shadow: 0 2px 24px rgba(111,0,0,0.08);
+    border-bottom: 1px solid rgba(183, 183, 164, 0.25);
+    box-shadow: 0 2px 24px rgba(203, 153, 126, 0.08);
 
     .nav-brand {
       .initials { color: var(--color-primary); }
@@ -21,6 +21,10 @@
     }
 
     .nav-link { color: var(--color-dark); }
+
+    .hamburger span {
+      background: var(--color-primary);
+    }
   }
 }
 
@@ -59,7 +63,8 @@
     position: fixed;
     inset: 0;
     flex-direction: column;
-    background: rgba(26, 10, 10, 0.97);
+    justify-content: center;
+    background: rgba(58, 61, 50, 0.97);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     opacity: 0;
@@ -68,10 +73,27 @@
     transition: all 0.35s ease;
     gap: 24px;
 
+    z-index: 1050;
+
     &.open {
       opacity: 1;
       pointer-events: all;
       transform: translateY(0);
+
+      li {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    li {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      
+      @for $i from 1 through 6 {
+        &:nth-child(#{$i}) { transition-delay: #{$i * 0.1}s; }
+      }
     }
   }
 }
@@ -122,6 +144,7 @@
   }
 
   &.active {
+    span { background: var(--color-white) !important; }
     span:nth-child(1) { transform: rotate(45deg) translate(4.5px, 4.5px); }
     span:nth-child(2) { opacity: 0; transform: scaleX(0); }
     span:nth-child(3) { transform: rotate(-45deg) translate(4.5px, -4.5px); }

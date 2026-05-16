@@ -36,7 +36,7 @@ export class RegistryComponent {
   bankDetails = {
     titular: 'Pablo Agudo Brun',
     iban: 'ES12 3456 7891 0123 4567 8901',
-    concepto: 'Regalo boda Pablo & Daniela'
+    concepto: 'Regalo boda Daniela & Pablo'
   };
 
   showBank = false;

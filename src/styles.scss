@@ -1,26 +1,26 @@
 // ── Google Fonts ──────────────────────────────────────────────────────────────
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Lato:wght@300;400;700&family=Josefin+Sans:wght@300;400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400..900;1,400..900&family=Josefin+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap');
 
 // ── CSS Variables / Design Tokens ─────────────────────────────────────────────
 :root {
-  --color-primary:     #6f0000;
-  --color-secondary:   #800020;
-  --color-teal:        #006080;
-  --color-light:       #bbbbbb;
-  --color-muted:       #aaaaaa;
-  --color-bg:          #faf8f5;
-  --color-bg-alt:      #f3eeea;
-  --color-dark:        #1a1a1a;
+  --color-primary:     #b68971; // Terracota
+  --color-secondary:   #e0c4b0; // Dusty Rose
+  --color-teal:        #6B705C; // Olive Green
+  --color-light:       #B7B7A4; // Soft Apricot
+  --color-muted:       #92927e; // Sage Fern
+  --color-bg:          #FFE8D6; // Peach Cream
+  --color-bg-alt:      #F5E1D0; // Lightened Peach Cream
+  --color-dark:        #3A3D32; // Dark Olive Variation
   --color-white:       #ffffff;
 
-  --font-heading:      'Playfair Display', Georgia, serif;
-  --font-editorial:    'Cormorant Garamond', Georgia, serif;
-  --font-body:         'Lato', sans-serif;
+  --font-heading:      'Bodoni Moda', serif;
+  --font-editorial:    'Bodoni Moda', serif;
+  --font-body:         'Josefin Sans', sans-serif;
   --font-accent:       'Josefin Sans', sans-serif;
 
-  --shadow-soft:       0 4px 24px rgba(111,0,0,0.08);
-  --shadow-card:       0 8px 40px rgba(111,0,0,0.12);
-  --shadow-hover:      0 16px 56px rgba(111,0,0,0.18);
+  --shadow-soft:       0 4px 24px rgba(203, 153, 126, 0.12);
+  --shadow-card:       0 8px 40px rgba(203, 153, 126, 0.18);
+  --shadow-hover:      0 16px 56px rgba(203, 153, 126, 0.25);
 
   --border-radius:     12px;
   --border-radius-lg:  20px;
@@ -44,6 +44,7 @@ html {
 
 body {
   font-family: var(--font-body);
+  font-weight: 300;
   background-color: var(--color-bg);
   color: var(--color-dark);
   line-height: 1.7;
@@ -123,11 +124,11 @@ a {
   &.btn-primary {
     background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
     color: var(--color-white);
-    box-shadow: 0 4px 20px rgba(111,0,0,0.35);
+    box-shadow: 0 4px 20px rgba(203, 153, 126, 0.35);
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(111,0,0,0.45);
+      box-shadow: 0 8px 32px rgba(203, 153, 126, 0.45);
       color: var(--color-white);
     }
 
@@ -147,7 +148,7 @@ a {
   }
 
   &.btn-teal {
-    background: linear-gradient(135deg, var(--color-teal) 0%, #004d66 100%);
+    background: linear-gradient(315deg, var(--color-teal));
     color: var(--color-white);
     box-shadow: 0 4px 20px rgba(0,96,128,0.30);
 
