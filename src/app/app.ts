@@ -33,9 +33,14 @@ export class App implements OnInit {
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
-      const isAuth = localStorage.getItem('wedding_auth_v1') === 'true';
-      if (isAuth) {
-        this.authenticated.set(true);
+      const expDateStr = localStorage.getItem('wedding_auth_v1_exp');
+      if (expDateStr) {
+        const now = new Date().getTime();
+        if (now < parseInt(expDateStr, 10)) {
+          this.authenticated.set(true);
+        } else {
+          localStorage.removeItem('wedding_auth_v1_exp');
+        }
       }
     }
   }
@@ -43,7 +48,9 @@ export class App implements OnInit {
   onAuthenticated() {
     this.authenticated.set(true);
     if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem('wedding_auth_v1', 'true');
+      // Establecemos la expiración en 30 días
+      const expDate = new Date().getTime() + (30 * 24 * 60 * 60 * 1000);
+      localStorage.setItem('wedding_auth_v1_exp', expDate.toString());
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
     }
   }
