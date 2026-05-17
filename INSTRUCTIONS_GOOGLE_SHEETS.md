@@ -11,9 +11,9 @@ Sigue estos pasos para que el formulario de confirmación guarde los datos en tu
 2. Crea una hoja nueva → ponle el nombre: **"RSVP Boda Pablo & Daniela"**
 3. En la **fila 1** añade estas cabeceras (una por celda):
 
-| A | B | C | D | E | F | G | H |
-|---|---|---|---|---|---|---|---|
-| Fecha | Nombre | Asistencia | ¿Acompañante? | Nombre Acompañante | Autobús | Alergias | Mensaje |
+| A | B | C | D | E | F | G |
+|---|---|---|---|---|---|---|
+| Fecha | Nombre | Asistencia | ¿Acompañante? | Nombre Acompañante | Alergias | Mensaje |
 
 ---
 
@@ -32,7 +32,6 @@ function doPost(e) {
     
     // Convertir booleanos a texto más legible para Sheets
     const acompanante = params.hasPartner === 'true' ? 'SÍ' : 'NO';
-    const autobus = params.needsBus === 'true' ? 'SÍ' : 'NO';
 
     sheet.appendRow([
       params.submittedAt || new Date().toLocaleString('es-ES'),
@@ -40,7 +39,6 @@ function doPost(e) {
       params.attending   || '',
       acompanante,
       params.partnerName || '-',
-      autobus,
       params.dietary     || '',
       params.message     || ''
     ]);
@@ -90,15 +88,10 @@ Abre el archivo:
 src/app/core/services/rsvp.service.ts
 ```
 
-Busca esta línea y reemplaza `TU_SCRIPT_ID_AQUI` con tu URL real:
+Busca esta línea y reemplaza la URL con la tuya real:
 
 ```typescript
 private readonly APPS_SCRIPT_URL = 'https://script.google.com/macros/s/TU_SCRIPT_ID_AQUI/exec';
-```
-
-Resultado:
-```typescript
-private readonly APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfyc.../exec';
 ```
 
 ---

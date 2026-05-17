@@ -329,6 +329,15 @@ a {
 
   h2 { font-size: 1.8rem; }
   .subtitle { font-size: 1rem; }
+
+  // Prevent iOS/Safari auto-zoom on input focus.
+  // Browsers zoom in when input font-size < 16px; this overrides to the
+  // minimum safe value only on mobile, keeping desktop sizing unchanged.
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    font-size: 16px;
+  }
 }
 
 @media (max-width: 480px) {
