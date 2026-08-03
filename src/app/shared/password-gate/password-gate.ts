@@ -34,13 +34,13 @@ export class PasswordGateComponent {
       this.error.set(false);
       this.opening.set(true);
 
-      // After envelope opens (1.2s), fade out the gate (0.8s)
+      // Let the card slowly draw out and be read (~3.8s), then fade the gate (0.8s)
       setTimeout(() => {
         this.hiding.set(true);
         setTimeout(() => {
           this.authenticated.emit();
         }, 800);
-      }, 1400);
+      }, 3800);
     } else {
       this.error.set(true);
       // Shake and clear
