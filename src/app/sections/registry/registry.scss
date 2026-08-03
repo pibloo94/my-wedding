@@ -138,7 +138,22 @@
 
   &:last-child { border-bottom: none; }
 
-  &.iban-row { flex-wrap: wrap; }
+  // Label stays in a row beside the number/button block
+  &.iban-row {
+    align-items: flex-start;
+  }
+}
+
+// The number/button block: always stacked in a column
+.iban-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+
+  .iban { width: 100%; }
 }
 
 .bank-label {

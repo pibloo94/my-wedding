@@ -36,10 +36,12 @@
                 </div>
                 <div class="bank-row iban-row">
                   <span class="bank-label">IBAN</span>
-                  <span class="bank-value iban">{{ bankDetails.iban }}</span>
-                  <button class="copy-btn" (click)="copyIban()" id="btn-copy-iban" [class.copied]="bankCopied">
-                    {{ bankCopied ? '✓ Copiado' : 'Copiar' }}
-                  </button>
+                  <div class="iban-container">
+                    <span class="bank-value iban">{{ bankDetails.iban }}</span>
+                    <button class="copy-btn" (click)="copyIban()" id="btn-copy-iban" [class.copied]="bankCopied">
+                      {{ bankCopied ? '✓ Copiado' : 'Copiar' }}
+                    </button>
+                  </div>
                 </div>
                 <div class="bank-row">
                   <span class="bank-label">Concepto</span>

@@ -15,7 +15,7 @@ interface CountdownUnit {
   styleUrl: './hero.scss'
 })
 export class HeroComponent implements OnInit, OnDestroy {
-  private weddingDate = new Date('2027-04-04T12:00:00');
+  private weddingDate = new Date('2027-09-11T12:00:00');
   private intervalId: ReturnType<typeof setInterval> | null = null;
 
   countdown = signal<CountdownUnit[]>([

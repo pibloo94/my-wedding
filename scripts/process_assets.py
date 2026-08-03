@@ -44,6 +44,9 @@ JOBS = {
                              remove_interior=True, threshold=242, neutral_chroma=10),
     "divider-sprig":    dict(src="divider-sprig.png",    longest=1300,
                              remove_interior=True, threshold=242, neutral_chroma=10),
+    # Just the heraldic shield + monogram lifted out of the full crest, used as
+    # the envelope seal (the surrounding wreath/ribbon would be illegible small).
+    "crest-shield":     dict(src="crest.png",            longest=700, extract_shield=True),
 }
 
 # A pixel counts as "background candidate" when it is near-white.
@@ -97,6 +100,56 @@ def remove_border_background(img: Image.Image, remove_interior: bool = False,
     return im
 
 
+def extract_shield(img: Image.Image) -> Image.Image:
+    """Lift the central heraldic shield (cream field + gold dotted border +
+    monogram) out of the full crest, dropping the surrounding wreath/ribbon.
+
+    The shield interior is the single large, central cream region; we grow it
+    outward to swallow the border ring, keep only that blob and smooth the
+    silhouette so the seal has a clean edge."""
+    # First cut the (possibly opaque white) page background so alpha marks the
+    # real subject; the shield interior stays sealed by its solid gold rules.
+    rgba = remove_border_background(img)
+    arr = np.asarray(rgba).astype(np.int16)
+    r, g, b, al = arr[..., 0], arr[..., 1], arr[..., 2], arr[..., 3]
+    h, w = al.shape
+
+    minc = np.minimum(np.minimum(r, g), b)
+    bright_cream = (minc > 195) & (al > 100)
+
+    structure = np.ones((3, 3), dtype=np.int8)
+    labels, n = ndimage.label(bright_cream, structure=structure)
+    cx, cy = w / 2, h / 2
+    best_lbl, best_score = 0, -1e18
+    for lbl in range(1, n + 1):
+        ys, xs = np.where(labels == lbl)
+        if len(xs) < h * w * 0.01:
+            continue
+        dist = np.hypot(xs.mean() - cx, ys.mean() - cy)
+        score = len(xs) - dist * 60  # large + central wins
+        if score > best_score:
+            best_score, best_lbl = score, lbl
+
+    interior = ndimage.binary_fill_holes(labels == best_lbl)
+    shield = ndimage.binary_dilation(interior, iterations=24)
+    shield = ndimage.binary_closing(shield, structure=structure, iterations=6)
+    shield = ndimage.binary_fill_holes(shield)
+
+    slbl, sn = ndimage.label(shield, structure=structure)
+    if sn > 1:
+        sizes = ndimage.sum(np.ones_like(slbl), slbl, index=range(1, sn + 1))
+        shield = slbl == (int(np.argmax(sizes)) + 1)
+
+    shield = ndimage.gaussian_filter(shield.astype(np.float32), sigma=2.0) > 0.5
+
+    new_alpha = np.where(shield, al, 0).astype(np.uint8)
+    out = np.dstack([arr[..., :3].astype(np.uint8), new_alpha])
+    im = Image.fromarray(out, "RGBA")
+    a = im.getchannel("A").filter(ImageFilter.GaussianBlur(0.6))
+    im.putalpha(a)
+    return im
+
+
 def autocrop(im: Image.Image, pad_ratio: float = 0.015) -> Image.Image:
     alpha = np.asarray(im.getchannel("A"))
     ys, xs = np.where(alpha > 8)
@@ -125,12 +178,15 @@ def main():
             print(f"[skip] missing {path}")
             continue
         im = Image.open(path)
-        im = remove_border_background(
-            im,
-            remove_interior=cfg.get("remove_interior", False),
-            threshold=cfg.get("threshold", WHITE_THRESHOLD),
-            neutral_chroma=cfg.get("neutral_chroma", None),
-        )
+        if cfg.get("extract_shield"):
+            im = extract_shield(im)
+        else:
+            im = remove_border_background(
+                im,
+                remove_interior=cfg.get("remove_interior", False),
+                threshold=cfg.get("threshold", WHITE_THRESHOLD),
+                neutral_chroma=cfg.get("neutral_chroma", None),
+            )
         im = autocrop(im)
         im = resize_max(im, cfg["longest"])
 
