@@ -4,32 +4,32 @@
   left: 0;
   right: 0;
   z-index: 1000;
-  padding: 24px 0;
+  padding: 22px 0;
   transition: var(--transition);
 
+  // Over the light hero the marks read in sage / terracotta from the start
+  .nav-brand .initials { color: var(--color-primary); }
+  .nav-brand .ampersand { color: var(--color-teal); }
+  .nav-link { color: var(--color-teal-deep); }
+  .hamburger span { background: var(--color-teal-deep); }
+
   &.scrolled {
-    background: rgba(255, 232, 214, 0.98);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    padding: 14px 0;
+    background: rgba(245, 239, 227, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 12px 0;
     border-bottom: 1px solid var(--color-border);
-    box-shadow: var(--shadow-soft);
+    box-shadow: var(--shadow-hair);
 
-    .nav-brand {
-      .initials { color: var(--color-primary); }
-      .ampersand { color: var(--color-primary); }
-    }
-
-    .nav-link { color: var(--color-primary); }
-
-    .hamburger span { background: var(--color-primary); }
+    .nav-crest { opacity: 1; transform: scale(1); }
   }
 
   &.menu-open {
     background: var(--color-bg) !important;
-    
+
     .nav-link { color: var(--color-primary); opacity: 1; }
-    .nav-brand .initials, .nav-brand .ampersand { color: var(--color-primary); }
+    .nav-brand .initials { color: var(--color-primary); }
+    .nav-brand .ampersand { color: var(--color-teal); }
     .hamburger span { background: var(--color-primary); }
   }
 }
@@ -46,14 +46,22 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   font-family: var(--font-heading);
-  font-size: 1.4rem;
-  font-weight: 300;
-  letter-spacing: 0.02em;
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
 
-  .initials { color: var(--color-white); transition: color 0.3s; }
-  .ampersand { color: var(--color-white); font-size: 1.1rem; opacity: 0.8; }
+  .nav-crest {
+    width: 34px;
+    height: auto;
+    opacity: 0.92;
+    transform: scale(0.96);
+    transition: var(--transition);
+  }
+
+  .initials { transition: color 0.3s; }
+  .ampersand { font-size: 1rem; font-style: italic; }
 }
 
 .nav-links {
@@ -61,7 +69,7 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
 
   @media (max-width: 768px) {
@@ -84,7 +92,7 @@
       opacity: 1;
       pointer-events: all;
       transform: translateY(0);
-      display: flex; // Ensure it shows
+      display: flex;
 
       li {
         opacity: 1;
@@ -96,7 +104,7 @@
       opacity: 0;
       transform: translateY(20px);
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      
+
       @for $i from 1 through 6 {
         &:nth-child(#{$i}) { transition-delay: #{$i * 0.1}s; }
       }
@@ -109,23 +117,23 @@
   border: none;
   cursor: pointer;
   font-family: var(--font-accent);
-  font-size: 0.7rem;
-  letter-spacing: 0.25em;
+  font-size: 0.72rem;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
-  color: var(--color-white);
   padding: 8px 16px;
   border-radius: 50px;
   transition: all 0.3s ease;
-  opacity: 0.7;
+  opacity: 0.85;
 
   &:hover {
     opacity: 1;
-    background: rgba(107, 112, 92, 0.04);
+    color: var(--color-primary);
+    background: rgba(126, 140, 106, 0.06);
   }
 
   @media (max-width: 768px) {
-    font-size: 1.1rem;
-    letter-spacing: 0.2rem;
+    font-size: 1.2rem;
+    letter-spacing: 0.18em;
     padding: 12px 32px;
     color: var(--color-primary);
     opacity: 1;
@@ -147,7 +155,6 @@
     display: block;
     width: 24px;
     height: 1.5px;
-    background: var(--color-white);
     border-radius: 2px;
     transition: all 0.3s ease;
   }

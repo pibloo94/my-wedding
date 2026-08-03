@@ -1,13 +1,11 @@
 <section id="eventos" class="section event-details-section">
+  <div class="botanical-corner corner-tr" aria-hidden="true"></div>
   <div class="container">
     <div class="section-header" scrollAnimate animClass="fade-up">
+      <img class="cat-header" src="assets/brand/cat-grey.webp" alt="" aria-hidden="true" width="220" height="159" />
       <span class="label-accent">El Gran Día</span>
       <h2>Detalles del Evento</h2>
-      <div class="hero-divider">
-        <div class="line-divider"></div>
-        <span class="diamond-hero">✦</span>
-        <div class="line-divider"></div>
-      </div>
+      <div class="sprig-divider" aria-hidden="true"></div>
       <p class="subtitle">Todo lo que necesitas saber para acompañarnos en este día tan especial</p>
     </div>
 
@@ -30,9 +28,11 @@
                 <span class="label-accent">{{ event.type }}</span>
                 <h3 class="event-title">{{ event.title }}</h3>
               </div>
-              <div class="dress-badge">
-                <app-icon name="shirt" [size]="16" /> {{ event.dressCode }}
-              </div>
+              @if ($first) {
+                <div class="dress-badge">
+                  <app-icon name="shirt" [size]="16" /> {{ event.dressCode }}
+                </div>
+              }
             </div>
 
             <div class="event-meta">

@@ -1,7 +1,11 @@
 <section id="hero" class="hero">
-  <!-- Floating petals -->
+  <!-- Botanical corners (decorative, derived from the crest) -->
+  <div class="botanical-corner corner-tl" aria-hidden="true"></div>
+  <div class="botanical-corner corner-tr" aria-hidden="true"></div>
+
+  <!-- Floating azahar petals -->
   <div class="petals" aria-hidden="true">
-    @for (i of [1,2,3,4,5,6,7,8,9,10,11,12]; track i) {
+    @for (i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]; track i) {
       <div class="petal" [style.--i]="i"></div>
     }
   </div>
@@ -9,17 +13,18 @@
   <div class="hero-overlay"></div>
 
   <div class="hero-content container">
+    <!-- The crest — the centrepiece of the whole identity -->
+    <img class="hero-crest" src="assets/brand/crest-cats.webp"
+         alt="Escudo de Daniela y Pablo con sus tres gatos, flores de azahar y naranjas"
+         width="460" height="447" fetchpriority="high" />
+
     <h1 class="hero-names">
       <span class="name">Daniela</span>
       <span class="ampersand-hero">&</span>
       <span class="name">Pablo</span>
     </h1>
 
-    <div class="hero-divider divider-light">
-      <div class="line-divider"></div>
-      <span class="diamond-hero">✦</span>
-      <div class="line-divider"></div>
-    </div>
+    <div class="sprig-divider" aria-hidden="true"></div>
 
     <p class="hero-date">11 de Septiembre de 2027</p>
     <p class="hero-location">Madrid, España</p>

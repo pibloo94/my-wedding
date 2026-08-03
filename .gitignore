@@ -41,3 +41,7 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Raw font extraction cruft (only the top-level Butler-*.woff2 are used)
+/public/fonts/butler-extracted/
+/public/fonts/Butler.zip

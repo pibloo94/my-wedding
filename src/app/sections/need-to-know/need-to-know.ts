@@ -21,7 +21,7 @@ export class NeedToKnowComponent {
     {
       icon: 'shirt',
       title: 'Código de Vestimenta',
-      accent: '#CB997E',
+      accent: '#B15C38',
       items: [
         'Traje formal para caballeros (corbata o pajarita)',
         'Vestido de cóctel o de noche para señoras',
@@ -32,7 +32,7 @@ export class NeedToKnowComponent {
     {
       icon: 'info',
       title: 'Detalles del Lugar',
-      accent: '#444',
+      accent: '#5E6A49',
       items: [
         'La ceremonia se realiza al aire libre, prever calzado cómodo para jardín',
         'No se permite confeti ni arroz dentro del recinto',
@@ -43,7 +43,7 @@ export class NeedToKnowComponent {
     {
       icon: 'utensils',
       title: 'Menú y Alergias',
-      accent: '#006080',
+      accent: '#CD8A52',
       items: [
         'Menú de cuatro tiempos con opciones vegetarianas',
         'Indicad vuestras alergias o intolerancias en el formulario de confirmación',

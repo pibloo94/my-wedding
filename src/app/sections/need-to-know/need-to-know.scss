@@ -1,37 +1,49 @@
 .need-to-know-section {
   background: var(--color-bg-alt);
+  position: relative;
+  overflow: hidden;
 }
 
 .info-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
+  position: relative;
+  z-index: 1;
 
   @media (max-width: 900px) { grid-template-columns: repeat(3, 1fr); }
-  @media (max-width: 560px) { grid-template-columns: 1fr; }
+  @media (max-width: 720px) { grid-template-columns: 1fr; }
 }
 
 .info-card {
-  padding: 28px 28px 32px;
+  padding: 34px 32px 36px;
+  background: var(--color-surface);
 
-  &:hover { transform: translateY(-5px) !important; }
+  &:hover {
+    transform: translateY(-5px) !important;
+
+    .info-icon-wrap {
+      background: rgba(177, 92, 56, 0.10);
+      border-color: rgba(177, 92, 56, 0.28);
+    }
+  }
 }
 
 .info-icon-wrap {
-  width: 56px;
-  height: 56px;
+  width: 58px;
+  height: 58px;
   border-radius: 14px;
-  background: rgba(203, 153, 126, 0.08);
-  border: 1px solid rgba(203, 153, 126, 0.19);
+  background: rgba(177, 92, 56, 0.07);
+  border: 1px solid rgba(177, 92, 56, 0.18);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   color: var(--color-primary);
   transition: var(--transition);
 }
 
-.info-icon { 
+.info-icon {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -39,30 +51,31 @@
 
 .info-title {
   font-family: var(--font-heading);
-  font-size: 1.1rem;
-  margin-bottom: 16px;
-  font-weight: 600;
+  font-size: 1.3rem;
+  margin-bottom: 18px;
+  font-weight: 400;
 }
 
 .info-list {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 
   li {
     font-family: var(--font-body);
-    font-size: 0.88rem;
-    color: #555;
-    line-height: 1.4;
+    font-size: 1rem;
+    font-weight: 300;
+    color: var(--color-text);
+    line-height: 1.5;
     display: flex;
     align-items: flex-start;
-    gap: 8px;
+    gap: 10px;
     position: relative;
 
     app-icon {
       color: var(--color-primary);
-      margin-top: 2px;
+      margin-top: 5px;
       flex-shrink: 0;
     }
 

@@ -1,34 +1,87 @@
-// ── Google Fonts ──────────────────────────────────────────────────────────────
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Montserrat:wght@300;400;500;600&display=swap');
+// ══════════════════════════════════════════════════════════════════════════════
+//  Daniela & Pablo — Global Design System
+//  Visual identity derived entirely from the hand-painted watercolor crest.
+//  Single typeface: Butler.  Palette: Terracotta · Sage · Arena · Blanco.
+// ══════════════════════════════════════════════════════════════════════════════
+
+// ── Typeface: Butler (self-hosted, single family) ─────────────────────────────
+@font-face {
+  font-family: 'Butler';
+  src: url('/fonts/Butler-UltraLight.woff2') format('woff2');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Butler';
+  src: url('/fonts/Butler-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Butler';
+  src: url('/fonts/Butler-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Butler';
+  src: url('/fonts/Butler-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Butler';
+  src: url('/fonts/Butler-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 // ── CSS Variables / Design Tokens ─────────────────────────────────────────────
 :root {
-  --color-primary:     #CB997E; // Terracota
-  --color-secondary:   #DDBEA9; // Dusty Rose
-  --color-teal:        #6B705C; // Olive Green
-  --color-light:       #B7B7A4; // Soft Apricot
-  --color-muted:       #7A7A67; // Darker Sage
-  --color-bg:          #FFE8D6; // Peach Cream
-  --color-bg-alt:      #F5E1D0; // Lightened Peach Cream
-  --color-surface:     #FFF8F3;
-  --color-dark:        #3A3D32;
-  --color-text:        #4A4D3E; // Darker Olive
-  --color-white:       #ffffff;
-  --color-border:      rgba(74, 77, 62, 0.15);
+  // Palette — drawn straight from the crest
+  --color-primary:      #B15C38; // Terracotta (the monogram)
+  --color-primary-soft: #C98A69; // Terracotta, lightened
+  --color-primary-deep: #97492A; // Terracotta, deepened
+  --color-secondary:    #C98A69; // Soft terracotta (accents / gradients)
 
-  --font-heading:      'Playfair Display', serif;
-  --font-editorial:    'Playfair Display', serif;
-  --font-body:         'Montserrat', sans-serif;
-  --font-accent:       'Montserrat', sans-serif;
+  --color-teal:         #7E8C6A; // Sage green (headings)  — name kept for compatibility
+  --color-teal-deep:    #5E6A49; // Deep sage
+  --color-light:        #B9C2A8; // Light sage (fine dividers)
+  --color-muted:        #86876F; // Muted sage-grey (subtitles / captions)
 
-  --shadow-subtle:     0 12px 48px rgba(107, 112, 92, 0.06);
-  --shadow-soft:       0 8px 32px rgba(107, 112, 92, 0.04);
-  
+  --color-sand:         #E7DCC4; // Arena (shield / ribbon)
+  --color-sand-deep:    #D8C6A4; // Arena, deeper (borders, dotted rule)
+  --color-orange:       #CD8A52; // Painted orange fruit
+
+  --color-bg:           #F5EFE3; // Page — warm arena
+  --color-bg-alt:       #EFE7D6; // Alternate section — deeper arena
+  --color-surface:      #FBF7EF; // Cards — warm white
+  --color-dark:         #43473A; // Deep sage-charcoal (never pure black)
+  --color-text:         #4C4E40; // Body text
+  --color-white:        #ffffff;
+  --color-border:       rgba(126, 140, 106, 0.20); // Sage @ low opacity
+
+  // Single typeface — hierarchy is built with weight, size & tracking only
+  --font-heading:      'Butler', serif;
+  --font-editorial:    'Butler', serif;
+  --font-body:         'Butler', serif;
+  --font-accent:       'Butler', serif;
+
+  // Shadows — sage / terracotta only, never black
+  --shadow-subtle:     0 18px 60px rgba(94, 106, 73, 0.10);
+  --shadow-soft:       0 12px 40px rgba(94, 106, 73, 0.07);
+  --shadow-hair:       0 2px 10px rgba(94, 106, 73, 0.06);
+
   --border-radius:     14px;
-  --border-radius-lg:  14px;
+  --border-radius-lg:  18px;
   --transition:        all 400ms cubic-bezier(0.4, 0, 0.2, 1);
 
-  --section-padding:   120px 0;
+  --section-padding:   140px 0;
   --container-max:     1200px;
 }
 
@@ -46,62 +99,65 @@ html {
 
 body {
   font-family: var(--font-body);
-  font-weight: 300;
+  font-weight: 400;
   background-color: var(--color-bg);
   color: var(--color-text);
   line-height: 1.8;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 
 // ── Typography ────────────────────────────────────────────────────────────────
 h1, h2, h3 {
   font-family: var(--font-heading);
   font-weight: 400;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-  color: var(--color-teal);
+  line-height: 1.14;
+  letter-spacing: 0.005em;
+  color: var(--color-teal-deep);
 }
 
-h1 { font-size: clamp(2.8rem, 7vw, 5.5rem); }
-h2 { font-size: clamp(2rem, 4vw, 3rem); }
-h3 { font-size: clamp(1.3rem, 2.5vw, 1.8rem); }
+h1 { font-size: clamp(2.8rem, 7vw, 5.5rem); font-weight: 300; }
+h2 { font-size: clamp(2.1rem, 4.2vw, 3.2rem); }
+h3 { font-size: clamp(1.35rem, 2.5vw, 1.9rem); }
 
 h4, h5, h6 {
   font-family: var(--font-editorial);
   font-weight: 500;
 }
-h4 { font-size: 1.3rem; }
+h4 { font-size: 1.35rem; }
 
 p {
   font-family: var(--font-body);
-  font-size: 1.05rem;
-  line-height: 1.8;
+  font-size: 1.08rem;
+  font-weight: 300;
+  line-height: 1.85;
   color: var(--color-text);
-  opacity: 0.9;
 }
 
 .subtitle {
   font-family: var(--font-editorial);
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   color: var(--color-muted);
   font-weight: 300;
-  letter-spacing: 0.04em;
+  font-style: italic;
+  letter-spacing: 0.01em;
 }
 
-.label-caps {
+// Eyebrow / small caps label — used across every section header & card
+.label-caps,
+.label-accent {
   font-family: var(--font-accent);
-  font-size: 0.7rem;
-  letter-spacing: 0.25em;
+  font-size: 0.72rem;
+  letter-spacing: 0.42em;
   text-transform: uppercase;
-  color: var(--color-teal);
-  font-weight: 400;
-  opacity: 0.8;
+  color: var(--color-primary);
+  font-weight: 500;
+  display: inline-block;
 }
 
 a {
-  color: var(--color-teal);
+  color: var(--color-teal-deep);
   text-decoration: none;
   transition: var(--transition);
 
@@ -113,12 +169,12 @@ a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 14px 34px;
+  padding: 15px 36px;
   border-radius: 50px;
   font-family: var(--font-accent);
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 500;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
   cursor: pointer;
   transition: var(--transition);
@@ -129,11 +185,11 @@ a {
   &.btn-primary {
     background: var(--color-primary);
     color: var(--color-white);
-    
+
     &:hover {
-      background: var(--color-dark);
+      background: var(--color-primary-deep);
       transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 10px 26px rgba(177, 92, 56, 0.28);
     }
   }
 
@@ -144,11 +200,11 @@ a {
 
   &.btn-outline {
     background: transparent;
-    color: var(--color-teal);
-    border-color: var(--color-border);
+    color: var(--color-teal-deep);
+    border-color: var(--color-sand-deep);
 
     &:hover {
-      background: rgba(107, 112, 92, 0.04);
+      background: rgba(126, 140, 106, 0.06);
       border-color: var(--color-teal);
       transform: translateY(-1px);
     }
@@ -172,6 +228,7 @@ a {
     @extend .label-caps;
     margin-bottom: 4px;
     display: block;
+    color: var(--color-teal-deep);
   }
 
   input, textarea, select {
@@ -180,7 +237,8 @@ a {
     border: 1px solid var(--color-border);
     border-radius: var(--border-radius);
     font-family: var(--font-body);
-    font-size: 0.8rem;
+    font-size: 1rem;
+    font-weight: 300;
     color: var(--color-text);
     background: var(--color-white);
     transition: var(--transition);
@@ -192,10 +250,11 @@ a {
     &:focus {
       border-color: var(--color-teal);
       background: var(--color-white);
+      box-shadow: 0 0 0 4px rgba(126, 140, 106, 0.08);
     }
 
     &.ng-invalid.ng-touched {
-      border-color: #d1a49c;
+      border-color: var(--color-primary-soft);
     }
   }
 
@@ -205,8 +264,9 @@ a {
   }
 
   .error-msg {
-    font-size: 0.78rem;
-    color: #9e5f3d;
+    font-size: 0.9rem;
+    font-style: italic;
+    color: var(--color-primary-deep);
     font-family: var(--font-body);
     margin-top: 4px;
   }
@@ -243,50 +303,34 @@ a {
 
 .section {
   padding: var(--section-padding);
+  position: relative;
 }
 
 .section-header {
   text-align: center;
-  margin-bottom: 80px;
+  margin-bottom: 88px;
 
-  .label-caps { margin-bottom: 16px; display: block; }
-  h2 { color: var(--color-teal); margin-bottom: 16px; }
-  .subtitle { max-width: 600px; margin: 0 auto; opacity: 0.8; }
+  .label-caps,
+  .label-accent { margin-bottom: 18px; display: block; }
+  h2 { color: var(--color-teal-deep); margin-bottom: 8px; }
+  .subtitle { max-width: 620px; margin: 0 auto; }
 }
 
 // ── Divider ───────────────────────────────────────────────────────────────────
-.hero-divider {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  margin: 12px auto;
-  width: fit-content;
-
-  .line-divider {
-    width: 60px;
-    height: 1px;
-    background: var(--color-light);
-    opacity: 0.6;
-  }
-
-  .diamond-hero {
-    color: var(--color-primary);
-    font-size: 0.9rem;
-    line-height: 1;
-  }
-
-  &.divider-light {
-    .line-divider { background: rgba(255,255,255,0.2); }
-    .diamond-hero { color: rgba(255,255,255,0.4); }
-  }
+// Watercolor sprig divider (derived from the crest), used across every section.
+.sprig-divider {
+  width: min(360px, 70%);
+  height: 46px;
+  margin: 22px auto 26px;
+  background: url('/assets/brand/divider-sprig.webp') center / contain no-repeat;
+  opacity: 0.9;
 }
 
 // ── Cards ─────────────────────────────────────────────────────────────────────
 .card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--border-radius);
+  border-radius: var(--border-radius-lg);
   padding: 48px;
   box-shadow: var(--shadow-soft);
   transition: var(--transition);
@@ -297,11 +341,40 @@ a {
   }
 }
 
+// ── Decorative botanical corners (derived from the crest) ──────────────────────
+// Used as aria-hidden accents; never competes with content.
+.botanical-corner {
+  position: absolute;
+  width: clamp(140px, 20vw, 300px);
+  aspect-ratio: 1 / 1;
+  background: url('/assets/brand/botanical-corner.webp') top left / contain no-repeat;
+  pointer-events: none;
+  opacity: 0.9;
+  z-index: 0;
+
+  &.corner-tl { top: 0; left: 0; }
+  &.corner-tr { top: 0; right: 0; transform: scaleX(-1); }
+  &.corner-bl { bottom: 0; left: 0; transform: scaleY(-1); }
+  &.corner-br { bottom: 0; right: 0; transform: scale(-1, -1); }
+
+  @media (max-width: 768px) { opacity: 0.7; width: clamp(110px, 34vw, 170px); }
+}
+
+// Very faint crest watermark
+.crest-watermark {
+  position: absolute;
+  inset: 0;
+  background: url('/assets/brand/crest.webp') center / min(560px, 80%) no-repeat;
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: 0;
+}
+
 // ── Scroll Animations ─────────────────────────────────────────────────────────
 .fade-up {
   opacity: 0;
   transform: translateY(32px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
+  transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.4, 0, 0.2, 1);
 
   &.visible {
     opacity: 1;
@@ -311,24 +384,25 @@ a {
 
 .fade-in {
   opacity: 0;
-  transition: opacity 0.8s ease;
+  transition: opacity 0.9s ease;
 
   &.visible { opacity: 1; }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+}
+
 // ── Responsive ────────────────────────────────────────────────────────────────
 @media (max-width: 768px) {
-  :root { --section-padding: 64px 0; }
-  .section-header { margin-bottom: 40px; }
-  .card { padding: 24px; }
-  
-  .hero-divider {
-    gap: 12px;
-    .line-divider { width: 40px; }
-  }
+  :root { --section-padding: 84px 0; }
+  .section-header { margin-bottom: 48px; }
+  .card { padding: 28px; }
 
-  h2 { font-size: 1.8rem; }
-  .subtitle { font-size: 1rem; }
+  .sprig-divider { width: min(260px, 66%); height: 40px; margin: 18px auto 22px; }
+
+  h2 { font-size: 2rem; }
+  .subtitle { font-size: 1.1rem; }
 
   // Prevent iOS/Safari auto-zoom on input focus.
   // Browsers zoom in when input font-size < 16px; this overrides to the
@@ -336,11 +410,11 @@ a {
   .form-group input,
   .form-group textarea,
   .form-group select {
-    font-size: 14px;
+    font-size: 16px;
   }
 }
 
 @media (max-width: 480px) {
   .container { padding: 0 20px; }
-  .section-header h2 { font-size: 1.6rem; }
+  .section-header h2 { font-size: 1.7rem; }
 }
