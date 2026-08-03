@@ -37,8 +37,13 @@ JOBS = {
     "cat-orange":       dict(src="cat-orange.png",       longest=820, remove_interior=True, threshold=250),
     "cat-black":        dict(src="cat-black.png",        longest=820, remove_interior=True, threshold=250),
     "cat-grey":         dict(src="cat-grey.png",         longest=900),
-    "botanical-corner": dict(src="botanical-corner.png", longest=900),
-    "divider-sprig":    dict(src="divider-sprig.png",    longest=1300),
+    # Botanical art sits on tinted sections, so the neutral paper white (edge
+    # halo + pockets enclosed between leaves/petals) must go, while the warm
+    # cream azahar/hydrangea are kept via the chroma gate.
+    "botanical-corner": dict(src="botanical-corner.png", longest=900,
+                             remove_interior=True, threshold=242, neutral_chroma=10),
+    "divider-sprig":    dict(src="divider-sprig.png",    longest=1300,
+                             remove_interior=True, threshold=242, neutral_chroma=10),
 }
 
 # A pixel counts as "background candidate" when it is near-white.
