@@ -19,8 +19,8 @@ export class NavbarComponent {
 
   navLinks = [
     { label: 'El Gran Día', anchor: 'eventos' },
-    { label: 'Confirmar Asistencia', anchor: 'rsvp' },
     { label: 'Lo Que Debes Saber', anchor: 'detalles' },
+    { label: 'Confirmar Asistencia', anchor: 'rsvp' },
     { label: 'Lista de Bodas', anchor: 'registro' },
   ];
 

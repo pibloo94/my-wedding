@@ -40,6 +40,10 @@
           "builder": "@angular/build:application",
           "options": {
             "browser": "src/main.ts",
+            "externalDependencies": [
+              "assets/*",
+              "fonts/*"
+            ],
             "polyfills": [
               "zone.js"
             ],

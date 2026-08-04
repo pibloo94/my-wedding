@@ -13,10 +13,10 @@
 }
 
 .footer-crest {
-  width: 120px;
+  width: clamp(96px, 18vw, 120px);
   height: auto;
   margin: 0 auto 20px;
-  opacity: 0.95;
+  opacity: 0.96;
   filter: drop-shadow(0 12px 22px rgba(94, 106, 73, 0.12));
 }
 

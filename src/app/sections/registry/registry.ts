@@ -26,7 +26,7 @@ export class RegistryComponent {
       icon: 'landmark',
       title: 'Transferencia Bancaria',
       description: 'Si preferís contribuir directamente, podéis hacerlo mediante transferencia. Vuestro detalle, sea cual sea, significa muchísimo para nosotros.',
-      cta: 'Ver datos bancarios',
+      cta: 'Datos bancarios',
       url: '#bank-details',
       highlight: false
     },

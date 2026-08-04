@@ -9,7 +9,7 @@
   position: absolute;
   inset: 0;
   opacity: 0.05;
-  background: url('/assets/brand/crest.webp') center 40% / min(520px, 76%) no-repeat;
+  background: url('assets/brand/crest.webp') center 40% / min(520px, 76%) no-repeat;
   pointer-events: none;
 }
 
@@ -122,7 +122,7 @@
 .radio-card {
   flex: 1;
   min-width: 120px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
@@ -133,17 +133,35 @@
   font-family: var(--font-body);
   font-size: 1rem;
   font-weight: 300;
+  line-height: 1;
   transition: var(--transition);
   background: var(--color-white);
 
   input[type="radio"] { display: none; }
 
   .radio-icon {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    line-height: 0;
     opacity: 0.7;
     color: var(--color-teal);
+
+    app-icon {
+      display: block;
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .text-desktop,
+  .text-mobile {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1.2;
   }
 
   .text-mobile { display: none; }
@@ -166,9 +184,14 @@
     padding: 14px 12px;
     font-size: 0.95rem;
     letter-spacing: 0.04em;
+    gap: 8px;
 
     .text-desktop { display: none; }
-    .text-mobile { display: inline; }
+    .text-mobile {
+      display: inline-flex;
+      align-items: center;
+      min-height: 20px;
+    }
   }
 }
 

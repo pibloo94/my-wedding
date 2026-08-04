@@ -7,35 +7,35 @@
 // ── Typeface: Butler (self-hosted, single family) ─────────────────────────────
 @font-face {
   font-family: 'Butler';
-  src: url('/fonts/Butler-UltraLight.woff2') format('woff2');
+  src: url('fonts/Butler-UltraLight.woff2') format('woff2');
   font-weight: 200;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Butler';
-  src: url('/fonts/Butler-Light.woff2') format('woff2');
+  src: url('fonts/Butler-Light.woff2') format('woff2');
   font-weight: 300;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Butler';
-  src: url('/fonts/Butler-Regular.woff2') format('woff2');
+  src: url('fonts/Butler-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Butler';
-  src: url('/fonts/Butler-Medium.woff2') format('woff2');
+  src: url('fonts/Butler-Medium.woff2') format('woff2');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Butler';
-  src: url('/fonts/Butler-Bold.woff2') format('woff2');
+  src: url('fonts/Butler-Bold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -322,7 +322,7 @@ a {
   width: min(360px, 70%);
   height: 46px;
   margin: 22px auto 26px;
-  background: url('/assets/brand/divider-sprig.webp') center / contain no-repeat;
+  background: url('assets/brand/divider-sprig.webp') center / contain no-repeat;
   opacity: 0.9;
 }
 
@@ -347,7 +347,7 @@ a {
   position: absolute;
   width: clamp(140px, 20vw, 300px);
   aspect-ratio: 1 / 1;
-  background: url('/assets/brand/botanical-corner.webp') top left / contain no-repeat;
+  background: url('assets/brand/botanical-corner.webp') top left / contain no-repeat;
   pointer-events: none;
   opacity: 0.9;
   z-index: 0;
@@ -364,7 +364,7 @@ a {
 .crest-watermark {
   position: absolute;
   inset: 0;
-  background: url('/assets/brand/crest.webp') center / min(560px, 80%) no-repeat;
+  background: url('assets/brand/crest.webp') center / min(560px, 80%) no-repeat;
   opacity: 0.04;
   pointer-events: none;
   z-index: 0;
