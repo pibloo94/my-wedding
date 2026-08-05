@@ -7,7 +7,8 @@ interface WeddingEvent {
   icon: string;
   type: string;
   title: string;
-  time: string;
+  timeStart: string;
+  timeEnd: string;
   venue: string;
   address: string;
   mapsUrl?: string;
@@ -30,7 +31,8 @@ export class EventDetailsComponent {
       icon: 'heart',
       type: 'Ceremonia',
       title: 'Ceremonia Civil',
-      time: '13:00 h',
+      timeStart: '13:00 h',
+      timeEnd: '13:30 h',
       venue: 'Jardines del Negralejo',
       address: 'Carr. de Mejorada, km 2,5, 28522 Rivas-Vaciamadrid, Madrid',
       mapsUrl: 'https://www.google.com/maps/place/Jardines+del+Negralejo/@40.4085192,-3.51632,17z/data=!4m6!3m5!1s0xd423b214854bab3:0x664516d941116999!8m2!3d40.4085706!4d-3.5162788!16s%2Fg%2F11thnjv_ym?entry=ttu&g_ep=EgoyMDI2MDUxMy4wIKXMDSoASAFQAw%3D%3D',
@@ -43,7 +45,8 @@ export class EventDetailsComponent {
       icon: 'glass',
       type: 'Cóctel',
       title: 'Cóctel de Bienvenida',
-      time: '13:30 h',
+      timeStart: '13:30 h',
+      timeEnd: '15:00 h',
       venue: 'Jardines del Negralejo',
       address: 'Carr. de Mejorada, km 2,5, 28522 Rivas-Vaciamadrid, Madrid',
       dressCode: 'Traje Formal · Evitar blanco',
@@ -54,13 +57,27 @@ export class EventDetailsComponent {
       id: 'banquete',
       icon: 'utensils',
       type: 'Banquete',
-      title: 'Cena y Baile',
-      time: '15:00 h',
+      title: 'Comida',
+      timeStart: '15:00 h',
+      timeEnd: '18:30 h',
       venue: 'Gran Salón del Negralejo',
       address: 'Carr. de Mejorada, km 2,5, 28522 Rivas-Vaciamadrid, Madrid',
       dressCode: 'Traje Formal · Evitar blanco',
       dressColor: '#B15C38',
-      description: 'La celebración continúa con una cena de gala seguida de baile hasta la madrugada. ¡Que empiece la fiesta!'
+      description: 'La celebración continúa con una comida de gala en el Gran Salón. ¡Buen provecho!'
+    },
+    {
+      id: 'baile',
+      icon: 'party-popper',
+      type: 'Fiesta',
+      title: 'Baile',
+      timeStart: '18:30 h',
+      timeEnd: '02:00 h',
+      venue: 'Gran Salón del Negralejo',
+      address: 'Carr. de Mejorada, km 2,5, 28522 Rivas-Vaciamadrid, Madrid',
+      dressCode: 'Traje Formal · Evitar blanco',
+      dressColor: '#B15C38',
+      description: 'Abrimos la pista y bailamos hasta la madrugada. ¡Que empiece la fiesta!'
     }
   ];
 }

@@ -24,9 +24,9 @@ export class NeedToKnowComponent {
       accent: '#B15C38',
       items: [
         'Traje formal para caballeros (corbata o pajarita)',
-        'Vestido de cóctel o de noche para señoras',
+        'Vestido de cóctel para señoras',
         'Por favor, evitar colores blanco, marfil y crudo',
-        '¡Tenemos una pista de baile! Zapatos cómodos son bienvenidos'
+        'Recomendamos llevar zapato de cambio para el baile'
       ]
     },
     {

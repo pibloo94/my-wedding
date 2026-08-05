@@ -21,7 +21,6 @@
     border-bottom: 1px solid var(--color-border);
     box-shadow: var(--shadow-hair);
 
-    .nav-crest { opacity: 1; transform: scale(1); }
   }
 
   &.menu-open {
@@ -51,14 +50,6 @@
   font-size: 1.5rem;
   font-weight: 400;
   letter-spacing: 0.04em;
-
-  .nav-crest {
-    width: 26px;
-    height: auto;
-    opacity: 0.97;
-    transform: scale(1);
-    transition: var(--transition);
-  }
 
   .initials { transition: color 0.3s; }
   .ampersand { font-size: 1rem; font-style: italic; }
