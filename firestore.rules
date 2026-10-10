@@ -1,0 +1,87 @@
+rules_version = '2';
+
+// Reglas de seguridad de Firestore para la boda de Daniela y Pablo.
+// Se pegan en Firebase → Firestore Database → Reglas (ver FIREBASE-SETUP.md).
+//
+//   rsvps/{id}            Respuestas del formulario. Cualquiera puede CREAR (validado); solo los novios leen.
+//   content/published     Contenido público de la web. Cualquiera lee; solo los novios escriben.
+//   content/{otros}       Borradores e historial. Solo los novios.
+//   admin/state/**        Datos de la app de gestión (invitados, mesas, presupuesto…). Solo los novios.
+//   admins/{uid}          Lista de quién tiene acceso. Se crea a mano en la consola; nadie la escribe desde fuera.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function str(v, min, max) {
+      return v is string && v.size() >= min && v.size() <= max;
+    }
+
+    function optBool(p, k) {
+      return !(k in p) || p[k] is bool;
+    }
+
+    function validPerson(p) {
+      return p is map
+        && p.keys().hasOnly(['role', 'name', 'age', 'menu', 'glutenFree', 'lactoseFree', 'allergies'])
+        && p.role in ['adulto', 'acompañante', 'niño']
+        && str(p.name, 1, 120)
+        && str(p.allergies, 0, 300)
+        && (!('menu' in p) || p.menu in ['estandar', 'vegetariano'])
+        && (!('age' in p) || (p.age is int && p.age >= 0 && p.age <= 17))
+        && optBool(p, 'glutenFree')
+        && optBool(p, 'lactoseFree');
+    }
+
+    function validPeople(ps) {
+      return ps is list && ps.size() >= 1 && ps.size() <= 10
+        && validPerson(ps[0])
+        && (ps.size() < 2 || validPerson(ps[1]))
+        && (ps.size() < 3 || validPerson(ps[2]))
+        && (ps.size() < 4 || validPerson(ps[3]))
+        && (ps.size() < 5 || validPerson(ps[4]))
+        && (ps.size() < 6 || validPerson(ps[5]))
+        && (ps.size() < 7 || validPerson(ps[6]))
+        && (ps.size() < 8 || validPerson(ps[7]))
+        && (ps.size() < 9 || validPerson(ps[8]))
+        && (ps.size() < 10 || validPerson(ps[9]));
+    }
+
+    function validRsvp(d) {
+      return d.keys().hasOnly(['name', 'contact', 'attending', 'message', 'people', 'submittedAt', 'source', 'v'])
+        && d.keys().hasAll(['name', 'contact', 'attending', 'message', 'people', 'submittedAt', 'source', 'v'])
+        && str(d.name, 2, 120)
+        && str(d.contact, 5, 120)
+        && d.attending in ['si', 'no']
+        && str(d.message, 0, 1000)
+        && str(d.submittedAt, 10, 40)
+        && d.source == 'web'
+        && d.v == 1
+        && validPeople(d.people);
+    }
+
+    match /rsvps/{id} {
+      allow create: if validRsvp(request.resource.data);
+      allow read, delete: if isAdmin();
+      allow update: if false;
+    }
+
+    match /content/{docId} {
+      allow read: if docId == 'published' || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /admin/{path=**} {
+      allow read, write: if isAdmin();
+    }
+
+    match /admins/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+  }
+}

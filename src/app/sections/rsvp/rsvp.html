@@ -47,13 +47,31 @@
       @if (formState() === 'idle' || formState() === 'loading') {
         <form class="rsvp-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
 
+          <!-- Honeypot anti-spam: invisible para las personas. Si se rellena, no se envía. -->
+          <div class="hp-field" aria-hidden="true">
+            <label for="rsvp-website">No rellenes este campo</label>
+            <input id="rsvp-website" type="text" formControlName="website" tabindex="-1" autocomplete="off">
+          </div>
+
           <!-- Name -->
           <div class="form-group">
             <label for="rsvp-name">Nombre completo *</label>
-            <input id="rsvp-name" type="text" formControlName="name"
+            <input id="rsvp-name" type="text" formControlName="name" autocomplete="name"
                    placeholder="Tu nombre y apellidos" [class.ng-invalid]="nameInvalid" [class.ng-touched]="nameInvalid">
             @if (nameInvalid) {
               <span class="error-msg">Por favor, introduce tu nombre completo</span>
+            }
+          </div>
+
+          <!-- Contact -->
+          <div class="form-group">
+            <label for="rsvp-contact">Correo o teléfono *</label>
+            <input id="rsvp-contact" type="text" formControlName="contact" autocomplete="email"
+                   placeholder="Para poder contactarte si hace falta" [class.ng-invalid]="invalid('contact')" [class.ng-touched]="invalid('contact')">
+            @if (invalid('contact')) {
+              <span class="error-msg">Escribe un correo válido o un teléfono de al menos 9 cifras</span>
+            } @else {
+              <span class="form-hint">Si más adelante cambia algo, vuelve a enviar el formulario con el mismo correo o teléfono y nos quedaremos con tu última respuesta.</span>
             }
           </div>
 
@@ -80,8 +98,38 @@
             </div>
           </div>
 
-          <!-- Guests / Companion Section -->
           @if (isAttending) {
+            <!-- Menu: main guest -->
+            <fieldset class="person-block fade-in" formGroupName="main">
+              <legend class="person-title">Tu menú</legend>
+              <div class="choice-group" role="radiogroup" aria-label="Tu menú">
+                <label class="choice" [class.selected]="isMenu('main.menu', 'estandar')">
+                  <input type="radio" formControlName="menu" value="estandar"> Estándar
+                </label>
+                <label class="choice" [class.selected]="isMenu('main.menu', 'vegetariano')">
+                  <input type="radio" formControlName="menu" value="vegetariano"> Vegetariano
+                </label>
+              </div>
+              <div class="restrictions">
+                <label class="checkbox-container">
+                  <input type="checkbox" formControlName="glutenFree">
+                  <span class="checkmark"></span>
+                  <span>Sin gluten</span>
+                </label>
+                <label class="checkbox-container">
+                  <input type="checkbox" formControlName="lactoseFree">
+                  <span class="checkmark"></span>
+                  <span>Sin lactosa</span>
+                </label>
+              </div>
+              <div class="form-group compact">
+                <label for="rsvp-main-allergies">Alergias o intolerancias</label>
+                <input id="rsvp-main-allergies" type="text" formControlName="allergies"
+                       placeholder="Frutos secos, marisco… (déjalo en blanco si no tienes)">
+              </div>
+            </fieldset>
+
+            <!-- Companion -->
             <div class="form-group checkbox-field">
               <label class="checkbox-container">
                 <input type="checkbox" formControlName="hasPartner">
@@ -91,21 +139,90 @@
             </div>
 
             @if (hasPartner) {
-              <div class="form-group fade-in">
-                <label for="rsvp-partner-name">Nombre del acompañante</label>
-                <input id="rsvp-partner-name" type="text" formControlName="partnerName"
-                       placeholder="Nombre de tu acompañante">
+              <fieldset class="person-block fade-in" formGroupName="partner">
+                <legend class="person-title">Tu acompañante</legend>
+                <div class="form-group compact">
+                  <label for="rsvp-partner-name">Nombre y apellidos *</label>
+                  <input id="rsvp-partner-name" type="text" formControlName="name"
+                         placeholder="Nombre de tu acompañante" [class.ng-invalid]="invalid('partner.name')" [class.ng-touched]="invalid('partner.name')">
+                  @if (invalid('partner.name')) {
+                    <span class="error-msg">Indica el nombre de tu acompañante</span>
+                  }
+                </div>
+                <div class="choice-group" role="radiogroup" aria-label="Menú del acompañante">
+                  <label class="choice" [class.selected]="isMenu('partner.menu', 'estandar')">
+                    <input type="radio" formControlName="menu" value="estandar"> Estándar
+                  </label>
+                  <label class="choice" [class.selected]="isMenu('partner.menu', 'vegetariano')">
+                    <input type="radio" formControlName="menu" value="vegetariano"> Vegetariano
+                  </label>
+                </div>
+                <div class="restrictions">
+                  <label class="checkbox-container">
+                    <input type="checkbox" formControlName="glutenFree">
+                    <span class="checkmark"></span>
+                    <span>Sin gluten</span>
+                  </label>
+                  <label class="checkbox-container">
+                    <input type="checkbox" formControlName="lactoseFree">
+                    <span class="checkmark"></span>
+                    <span>Sin lactosa</span>
+                  </label>
+                </div>
+                <div class="form-group compact">
+                  <label for="rsvp-partner-allergies">Alergias o intolerancias</label>
+                  <input id="rsvp-partner-allergies" type="text" formControlName="allergies"
+                         placeholder="Déjalo en blanco si no tiene">
+                </div>
+              </fieldset>
+            }
+
+            <!-- Children -->
+            <div class="form-group checkbox-field">
+              <label class="checkbox-container">
+                <input type="checkbox" formControlName="hasKids">
+                <span class="checkmark"></span>
+                <span>Vengo con niños</span>
+              </label>
+            </div>
+
+            @if (hasKids) {
+              <div class="kids fade-in" formArrayName="kids">
+                @for (kid of kidGroups; track kid; let i = $index) {
+                  <fieldset class="person-block kid" [formGroupName]="i">
+                    <legend class="person-title">Niño/a {{ i + 1 }}</legend>
+                    <button type="button" class="btn-remove" (click)="removeKid(i)" [attr.aria-label]="'Quitar niño ' + (i + 1)">
+                      <app-icon name="x" [size]="16" [strokeWidth]="2" />
+                    </button>
+                    <div class="kid-grid">
+                      <div class="form-group compact">
+                        <label [attr.for]="'rsvp-kid-name-' + i">Nombre *</label>
+                        <input [id]="'rsvp-kid-name-' + i" type="text" formControlName="name"
+                               [class.ng-invalid]="kidInvalid(i, 'name')" [class.ng-touched]="kidInvalid(i, 'name')">
+                      </div>
+                      <div class="form-group compact">
+                        <label [attr.for]="'rsvp-kid-age-' + i">Edad *</label>
+                        <input [id]="'rsvp-kid-age-' + i" type="number" inputmode="numeric" min="0" max="17" formControlName="age"
+                               [class.ng-invalid]="kidInvalid(i, 'age')" [class.ng-touched]="kidInvalid(i, 'age')">
+                      </div>
+                    </div>
+                    @if (kidInvalid(i, 'name') || kidInvalid(i, 'age')) {
+                      <span class="error-msg">Indica nombre y edad (0 a 17 años)</span>
+                    }
+                    <div class="form-group compact">
+                      <label [attr.for]="'rsvp-kid-allergies-' + i">Alergias o intolerancias</label>
+                      <input [id]="'rsvp-kid-allergies-' + i" type="text" formControlName="allergies"
+                             placeholder="Déjalo en blanco si no tiene">
+                    </div>
+                  </fieldset>
+                }
+                @if (kids.length < maxKids) {
+                  <button type="button" class="btn btn-outline btn-add" (click)="addKid()">
+                    <app-icon name="plus" [size]="16" [strokeWidth]="2" /> &nbsp; Añadir otro niño
+                  </button>
+                }
               </div>
             }
-          }
-
-          @if (isAttending) {
-            <!-- Dietary -->
-            <div class="form-group">
-              <label for="rsvp-dietary">Alergias o restricciones alimentarias</label>
-              <input id="rsvp-dietary" type="text" formControlName="dietary"
-                     placeholder="Sin gluten, vegetariano, alergia a frutos secos... (o déjalo en blanco si no tienes)">
-            </div>
 
             <!-- Message -->
             <div class="form-group">

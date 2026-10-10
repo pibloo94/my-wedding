@@ -105,6 +105,14 @@ import { Component, input } from '@angular/core';
         @case ('chevron-right') {
           <polyline points="9 18 15 12 9 6"/>
         }
+        @case ('plus') {
+          <path d="M12 5v14"/>
+          <path d="M5 12h14"/>
+        }
+        @case ('x') {
+          <path d="M18 6 6 18"/>
+          <path d="m6 6 12 12"/>
+        }
       }
     </svg>
   `,

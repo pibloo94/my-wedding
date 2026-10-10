@@ -1,5 +1,7 @@
 # 📋 Instrucciones: Conectar RSVP con Google Sheets
 
+> **Respaldo temporal.** Las confirmaciones pasan a guardarse en Firebase (ver [FIREBASE-SETUP.md](FIREBASE-SETUP.md)). Este Apps Script solo se usa mientras `public/firebase-config.json` esté vacío; con el formulario nuevo, menús, niños y contacto llegan resumidos en las columnas «Alergias» y «Mensaje».
+
 Sigue estos pasos para que el formulario de confirmación guarde los datos en tu Google Sheets.
 **Tiempo estimado: ~10 minutos.**
 
@@ -29,6 +31,14 @@ function doPost(e) {
     
     // Leer los datos del form (application/x-www-form-urlencoded)
     const params = e.parameter;
+
+    // Anti-spam: el campo oculto "website" solo lo rellenan los bots.
+    // Se responde "success" para no darles pistas, pero no se guarda nada.
+    if (params.website) {
+      return ContentService
+        .createTextOutput(JSON.stringify({ result: 'success' }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
     
     // Convertir booleanos a texto más legible para Sheets
     const acompanante = params.hasPartner === 'true' ? 'SÍ' : 'NO';
@@ -107,9 +117,9 @@ private readonly APPS_SCRIPT_URL = 'https://script.google.com/macros/s/TU_SCRIPT
 
 ## ⚠️ Importante
 
-- Cada vez que **modifiques el Apps Script**, debes crear una **nueva implementación** (no actualizar la existente) para que los cambios surtan efecto. Luego actualiza la URL en `rsvp.service.ts`.
+- Cada vez que **modifiques el Apps Script**, publica una nueva versión **sobre la implementación existente** para conservar la misma URL: **Implementar → Gestionar implementaciones → ✏️ (editar) → Versión: «Nueva versión» → Implementar**. Si en lugar de eso creas una *nueva implementación*, la URL cambia y tendrás que actualizarla en `rsvp.service.ts`.
 - La URL es pública pero no indexada. No la compartas públicamente.
-- Para evitar spam, puedes añadir una validación de email o un campo honeypot en el futuro.
+- **Anti-spam (honeypot):** el formulario incluye un campo oculto `website`. Si llega relleno, la web no envía nada y el script de arriba lo descarta. Frena bots simples, no ataques dirigidos: revisa la hoja antes de importar las respuestas.
 
 ---
 

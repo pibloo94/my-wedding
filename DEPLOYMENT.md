@@ -1,57 +1,34 @@
-# Deployment Instructions for GitHub Pages
+# Publicación en GitHub Pages
 
-This document provides comprehensive instructions for deploying a project to GitHub Pages.
+La web se publica automáticamente con GitHub Actions. No hace falta compilar ni subir nada a mano.
 
-## Prerequisites
-- Ensure that you have a GitHub account.
-- Install Git on your local machine: [Download Git](https://git-scm.com/downloads)
-- Have a project ready in a GitHub repository.
+## Cómo funciona
 
-## Steps for Deployment
+1. Haces **push a la rama `main`**.
+2. El workflow [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) se ejecuta en GitHub y hace esto:
+   - Instala las dependencias con `npm install`.
+   - Compila con `npm run build -- --configuration production`. La configuración de producción usa `baseHref: /my-wedding/` (en `angular.json`).
+   - Publica la carpeta `dist/wedding-app/browser` con `peaceiris/actions-gh-pages`. Esa acción sube el resultado a la rama `gh-pages`.
+3. GitHub Pages sirve la web desde la rama `gh-pages` en https://pibloo94.github.io/my-wedding/.
 
-### 1. Prepare the Project
-- Ensure your project files are ready and contain an `index.html` as the main entry point.
+## Comprobar una publicación
 
-### 2. Create and Navigate to Your Repository
-```bash
-# Create a new directory for your project (if you haven't already)
-mkdir my-project
-cd my-project
+- **Actions** (pestaña del repositorio): el último run de «Deploy to GitHub Pages» debe estar en verde.
+- **Settings → Pages**: la fuente debe ser la rama `gh-pages`, carpeta `/ (root)`.
+- Abre la web en una ventana privada para evitar la caché (puede tardar uno o dos minutos).
 
-# Initialize a new Git repository
-git init
-
-# Add your project files
-git add .
-```
-
-### 3. Commit Your Changes
-```bash
-git commit -m "Initial commit"
-```
-
-### 4. Push to GitHub
-- Create a new repository on GitHub (e.g., `my-wedding`).
+## Antes de hacer push
 
 ```bash
-# Replace <USERNAME> with your GitHub username and <REPO> with your repository name
-git remote add origin https://github.com/pibloo94/my-wedding.git
-git branch -M main
-git push -u origin main
+npm run build    # si compila en local, compilará en Actions
 ```
 
-### 5. Deploy to GitHub Pages
-- Go to the repository on GitHub, navigate to **Settings**.
-- In the **Pages** section, select the branch `main` and the root folder (/) as the source.
-- Click **Save**.
+Revisa la web en el móvil (`npm start` y abre la IP del equipo desde el teléfono) cuando cambies estilos o textos largos.
 
-### 6. Accessing Your Live Site
-- After a few minutes, your site will be available at `https://<USERNAME>.github.io/<REPO>/`.
+## Si algo falla
 
-### Troubleshooting
-1. **Site not displaying:** Check your `index.html` file exists and is correctly referenced.
-2. **404 Error:** Ensure the GitHub Pages setting is configured to the correct branch.
-3. **Cache Issues:** Clear your browser cache or access the site in incognito mode.
-
-## Conclusion
-Following these steps will ensure your project is correctly deployed to GitHub Pages. For additional assistance, refer to [GitHub Pages Documentation](https://docs.github.com/pages).
+| Síntoma | Qué mirar |
+|---|---|
+| El run de Actions falla | El log del paso «Build production»: suele ser un error de compilación |
+| La web no cambia | Caché del navegador; confirma que el run terminó y que Pages usa `gh-pages` |
+| Recursos o rutas en 404 | `baseHref` en `angular.json` debe ser `/my-wedding/` |

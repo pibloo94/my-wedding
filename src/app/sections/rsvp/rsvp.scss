@@ -307,3 +307,128 @@
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+// ── Honeypot anti-spam (fuera de pantalla, no visible ni accesible) ───────────
+.hp-field {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+// ── Persona: menú, restricciones y alergias ───────────────────────────────────
+.person-block {
+  position: relative;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  background: var(--color-white);
+  padding: 22px 22px 6px;
+  margin: 8px 0 24px;
+  min-width: 0;
+
+  @media (max-width: 600px) { padding: 18px 16px 4px; }
+}
+
+.person-title {
+  font-family: var(--font-accent);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  padding: 0 8px;
+  margin-left: -8px;
+}
+
+.choice-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 4px 0 16px;
+}
+
+.choice {
+  flex: 1;
+  min-width: 120px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 50px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.98rem;
+  font-weight: 300;
+  transition: var(--transition);
+  background: var(--color-surface);
+
+  input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  &:focus-within { box-shadow: 0 0 0 4px rgba(126, 140, 106, 0.12); }
+
+  &.selected {
+    border-color: var(--color-primary);
+    background: rgba(177, 92, 56, 0.06);
+    color: var(--color-primary);
+    font-weight: 400;
+  }
+
+  &:hover:not(.selected) { border-color: var(--color-light); }
+}
+
+.restrictions {
+  display: flex;
+  gap: 12px 28px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.form-group.compact { margin-bottom: 16px; }
+
+.form-hint {
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--color-muted);
+  font-family: var(--font-body);
+  margin-top: 2px;
+}
+
+// ── Niños ─────────────────────────────────────────────────────────────────────
+.kids { margin-bottom: 24px; }
+
+.kid-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 110px;
+  gap: 0 14px;
+}
+
+.btn-remove {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-muted);
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:hover { background: var(--color-bg-alt); color: var(--color-primary-deep); }
+}
+
+.btn-add {
+  width: 100%;
+  margin-top: -8px;
+}
