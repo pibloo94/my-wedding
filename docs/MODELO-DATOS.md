@@ -55,3 +55,11 @@ Si la respuesta es «no asistiré», `people` lleva solo a la persona que respon
 2. Se busca la invitación con el mismo `contactKey`. Si no hay, se busca una creada a mano con el mismo nombre y sin contacto. Si tampoco, se crea una nueva con un ID derivado del contacto, el mismo en ambos dispositivos.
 3. Se sustituyen las personas por las de la respuesta. **Se conservan la mesa y el ID** de quien ya estaba, emparejando por nombre.
 4. Grupo y notas no se tocan.
+
+### Borrados (Firestore manda)
+
+- **Borrar una invitación en la app** borra también sus respuestas en `rsvps` (las de su mismo contacto). La app avisa antes de hacerlo.
+- **Borrar una respuesta en Firestore** hace que, en la app:
+  - si la invitación vino solo de la web, desaparezca;
+  - si la invitación existía antes a mano, se conserve (mesa, grupo y notas incluidos), quede desvinculada y vuelva a «pendiente»;
+  - si quedan respuestas más antiguas del mismo contacto, se aplique la más reciente de las que quedan.

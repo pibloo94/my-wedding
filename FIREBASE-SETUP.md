@@ -59,6 +59,7 @@ Estos valores **no son secretos**: Google los diseña para ir en el navegador. L
 **Recomendado:** limita la clave a tu web. Ve a https://console.cloud.google.com → (tu proyecto) → **APIs y servicios → Credenciales** → la clave «Browser key». En **Restricciones de aplicaciones → Sitios web** añade:
 
 - `https://pibloo94.github.io/*`
+- `https://boda-daniela-pablo.firebaseapp.com/*`. Es imprescindible: la ventana de «Entrar con Google» se abre desde ese dominio. Sin él, sale «The requested action is invalid».
 - `http://localhost:4200/*`, para probar en local.
 
 ## 6. Publicar y daros de alta
