@@ -243,3 +243,13 @@
     app-icon { color: var(--color-primary); }
   }
 }
+
+// Aviso mientras no haya IBAN publicado
+.bank-pending p {
+  padding: 16px 18px;
+  font-size: 0.98rem;
+  font-style: italic;
+  color: var(--color-muted);
+  text-align: center;
+  margin: 0;
+}

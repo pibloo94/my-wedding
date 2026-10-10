@@ -486,11 +486,11 @@ const IP={
 const ic=(n,cls='')=>`<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden="true">${IP[n]||''}</svg>`;
 
 /* =================== Contenido actual de la web (leído del repo local el 10/10/2026) =================== */
-const SNAP_DATE='2026-10-10';
+const SNAP_DATE='2026-10-11';
 const WEB_CONTENT=[
  {id:'hero',name:'Portada',file:'src/app/sections/hero/hero.html · hero.ts',fields:[
   ['names','Nombres','Daniela & Pablo'],['date','Fecha visible','11 de Septiembre de 2027'],['location','Ubicación','Madrid, España'],
-  ['countdown','Objetivo de la cuenta atrás','11/09/2027 12:00 (hero.ts)'],['ctas','Botones','Confirmar Asistencia · Ver detalles del evento']]},
+  ['countdown','Objetivo de la cuenta atrás','11/09/2027 13:00, hora de Madrid (hero.ts)'],['ctas','Botones','Confirmar Asistencia · Ver detalles del evento']]},
  {id:'ev-ceremonia',name:'Evento · Ceremonia',file:'src/app/sections/event-details/event-details.ts',fields:[
   ['title','Título','Ceremonia Civil'],['time','Horario','13:00 h – 13:30 h'],['venue','Lugar','Jardines del Negralejo'],
   ['address','Dirección','Carr. de Mejorada, km 2,5, 28522 Rivas-Vaciamadrid, Madrid'],['maps','Google Maps','Enlace presente'],
@@ -515,9 +515,9 @@ const WEB_CONTENT=[
   ['i3','Punto 3','Menú infantil disponible para los más pequeños'],['i4','Punto 4','Barra libre durante la fiesta']]},
  {id:'rsvp',name:'Confirmación (RSVP)',file:'src/app/sections/rsvp/rsvp.html · rsvp.ts',fields:[
   ['deadline','Fecha límite','1 de febrero de 2027'],['contact','Correo de contacto','pablo.daniela2027@gmail.com'],
-  ['fields','Campos','Nombre · Asistencia · Acompañante · Alergias · Mensaje'],['dest','Destino de las respuestas','Google Sheets (Apps Script)']]},
+  ['fields','Campos','Nombre · Correo o teléfono · Asistencia · Por persona: menú, sin gluten, sin lactosa y alergias · Acompañante · Niños (nombre, edad, alergias) · Mensaje'],['privacy','Aviso de privacidad','Solo para organizar la boda; al catering, solo menús y alergias; para cambios o borrado, escribir al correo de contacto'],['dest','Destino de las respuestas','Firebase (colección rsvps) → app de gestión']]},
  {id:'registry',name:'Lista de bodas',file:'src/app/sections/registry/registry.ts · registry.html',fields:[
-  ['title','Título','Vuestra Generosidad'],['holder','Titular','Pablo Agudo Brun'],['iban','IBAN','Presente en el código (no se copia en esta app)'],
+  ['title','Título','Vuestra Generosidad'],['holder','Titular','Pablo Agudo Brun'],['iban','IBAN','Pendiente: la web muestra «Muy pronto publicaremos aquí los datos» hasta que se ponga el IBAN real en registry.ts'],
   ['concept','Concepto','Regalo boda Daniela & Pablo']]},
  {id:'nav',name:'Menú y pie',file:'src/app/shared/navbar/navbar.ts · footer.html',fields:[
   ['links','Enlaces del menú','El Gran Día · Lo Que Debes Saber · Confirmar Asistencia · Lista de Bodas'],
@@ -574,7 +574,7 @@ function seed(){
     T('Iniciar trámites civiles de la ceremonia','m8',240,'General'),
     T('Enviar invitaciones con enlace a la web','m8',245,'Invitados'),
     T('Cierre de confirmaciones (fecha publicada en la web)','m8',222,'Invitados',{due:'2027-02-01',notes:'Fecha fija porque ya está publicada en la web. Puedes cambiarla.'}),
-    T('Importar respuestas RSVP (CSV de Google Sheets) a Invitados','m8',215,'Invitados'),
+    T('Revisar en Invitados quién falta por confirmar','m8',215,'Invitados'),
     T('Diseñar papelería y detalles','m8',200,'Temática'),
     T('Reservar alojamiento recomendado para invitados','m8',190,'Logística'),
     T('Vestuario de los novios','m8',180,'General'),
@@ -629,7 +629,7 @@ function seed(){
     {id:uid(),title:'Web pública',url:'https://pibloo94.github.io/my-wedding/',type:'Enlace',note:'Lo que ven los invitados.'},
     {id:uid(),title:'Repositorio en GitHub',url:'https://github.com/pibloo94/my-wedding',type:'Código',note:'Angular 20 · público · despliegue automático al hacer push a main.'},
     {id:uid(),title:'Carpeta local del proyecto',url:'',type:'Código',note:'C:\\Users\\Pablo\\Desktop\\my-wedding'},
-    {id:uid(),title:'Instrucciones RSVP → Google Sheets',url:'https://github.com/pibloo94/my-wedding/blob/main/INSTRUCTIONS_GOOGLE_SHEETS.md',type:'Documentación',note:'Cabeceras: Fecha, Nombre, Asistencia, ¿Acompañante?, Nombre Acompañante, Alergias, Mensaje.'},
+    {id:uid(),title:'Guía de Firebase',url:'https://github.com/pibloo94/my-wedding/blob/main/FIREBASE-SETUP.md',type:'Documentación',note:'Alta del proyecto, reglas, acceso a la app y problemas habituales.'},
     {id:uid(),title:'Ilustraciones (public/assets/brand)',url:'',type:'Gráficos',note:'Escudos (con gatos, monograma, montaña), ramita divisoria, esquina botánica, gatos gris/naranja/negro, montaña del pie. PNG + WebP.'},
     {id:uid(),title:'Tipografía Butler (public/fonts)',url:'',type:'Gráficos',note:'5 pesos en woff2: UltraLight, Light, Regular, Medium, Bold.'}],
   webTexts:[{id:uid(),section:'Evento · Ceremonia',text:'La descripción habla de «el precioso jardín del palacio»: confirmar que encaja con Jardines del Negralejo.',status:'Pendiente'}],
@@ -1174,7 +1174,7 @@ WV.resumen=()=>{const c=S.config;const ph=n=>S.webPlan.filter(p=>p.phase===n&&p.
   <div class="st"><b>Código de la web</b>Los textos están dentro de los archivos .ts/.html de cada sección.</div><div class="ar">${ic('arrow')}</div>
   <div class="st"><b>Commit + push</b>Desde tu equipo, a la rama main.</div><div class="ar">${ic('arrow')}</div>
   <div class="st"><b>GitHub Actions</b>Compila y publica en GitHub Pages.</div><div class="ar">${ic('arrow')}</div>
-  <div class="st"><b>Web pública</b>Invitados: información y RSVP → Google Sheets.</div></div>
+  <div class="st"><b>Web pública</b>Invitados: información y confirmación → Firebase.</div></div>
   <p class="xs muted" style="margin-top:8px">Esta app no participa: solo enlaza la web e importa el CSV de respuestas.</p></div>
  <div class="sec"><div class="hd"><h2>Con Firebase</h2><span class="xs muted">Los pasos nuevos tienen borde discontinuo</span></div><div class="flow">
   <div class="st new"><b>App de gestión</b>Editáis los textos (borrador y vista previa) e invitados, con login de Google.</div><div class="ar">${ic('arrow')}</div>

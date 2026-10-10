@@ -36,7 +36,9 @@ export class RegistryComponent {
 
   bankDetails = {
     titular: 'Pablo Agudo Brun',
-    iban: 'ES12 3456 7891 0123 4567 8901',
+    // TODO: pon aquí el IBAN real (formato «ES00 0000 0000 0000 0000 0000»).
+    // Mientras esté vacío, la web muestra un aviso en lugar de los datos.
+    iban: '',
     concepto: 'Regalo boda Daniela & Pablo'
   };
 
@@ -44,6 +46,10 @@ export class RegistryComponent {
 
   toggleBank(): void {
     this.showBank = !this.showBank;
+  }
+
+  get hasIban(): boolean {
+    return this.bankDetails.iban.trim().length > 0;
   }
 
   copyIban(): void {

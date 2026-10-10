@@ -432,3 +432,15 @@
   width: 100%;
   margin-top: -8px;
 }
+
+// ── Aviso de privacidad ───────────────────────────────────────────────────────
+.form-privacy {
+  max-width: 520px;
+  margin: 14px auto 0;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--color-muted);
+  text-align: center;
+
+  .nowrap { white-space: nowrap; }
+}

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, shareReplay, switchMap } from 'rxjs/operators';
 
@@ -25,7 +25,7 @@ export interface RsvpSubmission {
   people: RsvpPerson[];
 }
 
-/** Configuración pública de Firebase (public/firebase-config.json). Vacía = Firebase aún no está activo. */
+/** Configuración pública de Firebase (public/firebase-config.json). */
 interface FirebaseWebConfig {
   apiKey?: string;
   projectId?: string;
@@ -33,12 +33,6 @@ interface FirebaseWebConfig {
 
 @Injectable({ providedIn: 'root' })
 export class RsvpService {
-  /**
-   * Respaldo mientras Firebase no esté configurado: el Apps Script que guarda en Google Sheets.
-   * Instrucciones en INSTRUCTIONS_GOOGLE_SHEETS.md. Se puede borrar cuando Firebase esté activo.
-   */
-  private readonly APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwfXYd6v50aSVRxO6EIFRmwXQtHsBDUkBZgheJia084QnkqjJ_sFIHDpB-IpkZQs0De/exec';
-
   private readonly config$: Observable<FirebaseWebConfig | null>;
 
   constructor(private http: HttpClient) {
@@ -52,7 +46,7 @@ export class RsvpService {
     return this.config$.pipe(
       switchMap(cfg => cfg?.apiKey && cfg?.projectId
         ? this.toFirestore(cfg.projectId, cfg.apiKey, rsvp)
-        : this.toAppsScript(rsvp)),
+        : throwError(() => new Error('Falta la configuración de Firebase (public/firebase-config.json)'))),
       catchError(err => {
         console.error('Error enviando RSVP:', err);
         return throwError(() => err);
@@ -71,43 +65,6 @@ export class RsvpService {
       v: 1
     };
     return this.http.post(url, { fields: toFirestoreFields(doc) }).pipe(map(() => true));
-  }
-
-  /** Formato antiguo de la hoja (Fecha, Nombre, Asistencia, ¿Acompañante?, Nombre Acompañante, Alergias, Mensaje). */
-  private toAppsScript(rsvp: RsvpSubmission): Observable<unknown> {
-    const partner = rsvp.people.find(p => p.role === 'acompañante');
-    const describe = (p: RsvpPerson) => {
-      const bits: string[] = [];
-      if (p.role === 'niño') bits.push(`${p.age} años`);
-      if (p.menu === 'vegetariano') bits.push('vegetariano');
-      if (p.glutenFree) bits.push('sin gluten');
-      if (p.lactoseFree) bits.push('sin lactosa');
-      if (p.allergies) bits.push(`alergias: ${p.allergies}`);
-      return bits.length ? `${p.name} (${bits.join(', ')})` : '';
-    };
-    const kids = rsvp.people.filter(p => p.role === 'niño');
-    const dietary = [
-      ...rsvp.people.filter(p => p.role !== 'niño').map(describe).filter(Boolean),
-      ...(kids.length ? [`Niños: ${kids.map(k => describe(k) || k.name).join('; ')}`] : [])
-    ].join(' | ');
-
-    const data: Record<string, string> = {
-      name: rsvp.name,
-      attending: rsvp.attending,
-      hasPartner: String(!!partner),
-      partnerName: partner?.name ?? '',
-      dietary,
-      message: [rsvp.message, `[Contacto: ${rsvp.contact}]`].filter(Boolean).join(' '),
-      website: '',
-      submittedAt: new Date().toLocaleString('es-ES')
-    };
-
-    // Apps Script no admite JSON con CORS: se envía como formulario
-    const body = new URLSearchParams(data).toString();
-    return this.http.post(this.APPS_SCRIPT_URL, body, {
-      headers: new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }),
-      responseType: 'text'
-    });
   }
 }
 

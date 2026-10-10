@@ -28,7 +28,13 @@
               <app-icon [name]="showBank ? 'chevron-up' : 'chevron-down'" [size]="16" />
             </button>
 
-            @if (showBank) {
+            @if (showBank && !hasIban) {
+              <div class="bank-details bank-pending">
+                <p>Muy pronto publicaremos aquí los datos para la transferencia. ¡Gracias por vuestra paciencia!</p>
+              </div>
+            }
+
+            @if (showBank && hasIban) {
               <div class="bank-details">
                 <div class="bank-row">
                   <span class="bank-label">Titular</span>

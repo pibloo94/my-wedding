@@ -8,7 +8,7 @@ Firebase guarda tres cosas:
 
 Todo cabe en el plan gratuito (Spark). Tiempo estimado: unos 20 minutos.
 
-Hasta que rellenes `public/firebase-config.json`, todo sigue como ahora: el formulario envía al Apps Script y la app guarda en el navegador.
+El formulario de la web solo funciona con Firebase configurado (`public/firebase-config.json`). Sin él, la app de gestión funciona en modo local, guardando en el navegador.
 
 ---
 
@@ -78,11 +78,6 @@ La primera vez, la app sube a Firebase los datos que tenga en ese navegador. Si 
 1. En la web, envía una confirmación de prueba con tu correo.
 2. En la app → **Invitados**, debe aparecer en unos segundos («1 respuesta nueva de la web»).
 3. Bórrala si quieres: icono de papelera en la invitación, y en Firestore → `rsvps`.
-
-## 8. Respuestas antiguas y retirada del Apps Script
-
-1. En la hoja de Google: **Archivo → Descargar → CSV**. En la app: **Invitados → Importar CSV**.
-2. Cuando todo funcione, en `src/app/core/services/rsvp.service.ts` puedes borrar `APPS_SCRIPT_URL` y el método `toAppsScript`. En Apps Script → Implementar → Gestionar implementaciones, archiva la implementación.
 
 ---
 

@@ -15,6 +15,9 @@ from scipy import ndimage
 SRC_DIR = r"C:\Users\Pablo\.cursor\projects\c-Users-Pablo-Desktop-my-wedding\assets"
 OUT_DIR = r"C:\Users\Pablo\Desktop\my-wedding\public\assets\brand"
 
+# Recursos que además necesitan versión PNG (og:image no admite WebP en todas las redes)
+PNG_NEEDED = {"crest"}
+
 # The original hand-composed crest (with the three cats) provided at the start.
 SOURCE_CREST = (
     "c__Users_Pablo_AppData_Roaming_Cursor_User_workspaceStorage_"
@@ -190,15 +193,18 @@ def main():
         im = autocrop(im)
         im = resize_max(im, cfg["longest"])
 
-        png_path = os.path.join(OUT_DIR, f"{name}.png")
-        im.save(png_path, "PNG", optimize=True)
-
         webp_path = os.path.join(OUT_DIR, f"{name}.webp")
         im.save(webp_path, "WEBP", quality=90, method=6)
+        sizes = f"webp={os.path.getsize(webp_path)//1024}KB"
 
-        print(f"[ok] {name}: {im.width}x{im.height}  "
-              f"png={os.path.getsize(png_path)//1024}KB  "
-              f"webp={os.path.getsize(webp_path)//1024}KB")
+        # La web solo usa WebP. El PNG se genera únicamente para la imagen que
+        # se comparte en redes sociales (og:image en src/index.html).
+        if name in PNG_NEEDED:
+            png_path = os.path.join(OUT_DIR, f"{name}.png")
+            im.save(png_path, "PNG", optimize=True)
+            sizes += f"  png={os.path.getsize(png_path)//1024}KB"
+
+        print(f"[ok] {name}: {im.width}x{im.height}  {sizes}")
 
 
 if __name__ == "__main__":
