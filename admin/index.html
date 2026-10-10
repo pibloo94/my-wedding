@@ -777,7 +777,9 @@ const acts={
   add(_,b){const k=b.dataset.c,c=C[k];if(k==='guests'){guestDlg(null);return}const pre=b.dataset.pre?JSON.parse(b.dataset.pre):{};openForm('Añadir '+c.t,c.f,{...c.def(),...pre},o=>{S[k].push({id:uid(),...c.def(),...pre,...o});toast('Guardado')})},
   edit(id,b){const k=b.dataset.c,c=C[k],it=S[k].find(x=>x.id===id);if(!it)return;if(k==='guests'){guestDlg(id);return}openForm('Editar '+c.t,c.f,it,o=>{Object.assign(it,o);toast('Guardado')})},
   del(id,b){const k=b.dataset.c,it=S[k].find(x=>x.id===id);const nm=it&&(it.name||it.title||it.concept||it.text)||'este elemento';
-    askConfirm(`¿Borrar «${esc(String(nm).slice(0,60))}»? No se puede deshacer.`,'Borrar',()=>{
+    const linked=k==='guests'&&it?rsvpsOf(it):[];
+    askConfirm(`¿Borrar «${esc(String(nm).slice(0,60))}»? No se puede deshacer.${linked.length?` También se borrará${linked.length>1?'n sus '+linked.length+' respuestas':' su respuesta'} del formulario en Firebase.`:''}`,'Borrar',()=>{
+    if(linked.length)deleteRsvps(linked);
     S[k]=S[k].filter(x=>x.id!==id);if(k==='tables')S.guests.forEach(g=>mem(g).forEach(m=>{if(m.table===id)m.table=''}));
     save();render();toast('Borrado')})},
   confirmYes(){const f=UI.pending;UI.pending=null;$('#dlg').close();if(f)f()},
@@ -1355,16 +1357,23 @@ async function pushDiff(){
   try{await Promise.all(commits);setSync('Sincronizado')}
   catch(e){console.error(e);setSync('Error al guardar');toast('No se pudo guardar en Firebase ('+(e.code||e.message)+'). Revisa la conexión.')}
 }
+function rsvpsOf(g){if(!CLOUD.on||!g)return[];return CLOUD.rsvps.filter(r=>(g.rsvpId&&r.id===g.rsvpId)||(g.contactKey&&contactKey(r.contact)===g.contactKey))}
+async function deleteRsvps(list){
+  const F=CLOUD.F,db=CLOUD.db;if(!F||!list.length)return;
+  const gone=new Set(list.map(r=>r.id));CLOUD.rsvps=CLOUD.rsvps.filter(r=>!gone.has(r.id));
+  try{const b=F.writeBatch(db);list.forEach(r=>b.delete(F.doc(db,'rsvps',r.id)));await b.commit()}
+  catch(e){console.error(e);toast('No se pudo borrar la respuesta en Firebase ('+(e.code||e.message)+')')}
+}
 /* Une las respuestas del formulario (colección rsvps) con las invitaciones, por correo o teléfono. */
 function mergeRsvps(){
   if(!CLOUD.ready)return;
-  const latest=new Map();
+  const latest=new Map(),ids=new Set(CLOUD.rsvps.map(r=>r.id));
   CLOUD.rsvps.forEach(r=>{const k=contactKey(r.contact)||('n:'+norm(r.name));const cur=latest.get(k);if(!cur||String(r.submittedAt)>String(cur.submittedAt))latest.set(k,r)});
   let changed=0;
   latest.forEach((r,k)=>{
     const gid='w_'+hashStr(k);
     const g=S.guests.find(x=>x.id===gid)||S.guests.find(x=>x.contactKey===k)||S.guests.find(x=>!x.contactKey&&norm(x.name)===norm(r.name));
-    if(g&&(g.rsvpId===r.id||(g.rsvpAt&&String(g.rsvpAt)>=String(r.submittedAt))))return;
+    if(g&&(g.rsvpId===r.id||(g.rsvpAt&&ids.has(g.rsvpId)&&String(g.rsvpAt)>=String(r.submittedAt))))return;
     const old=g?mem(g):[];
     const ppl=(Array.isArray(r.people)&&r.people.length?r.people:[{role:'adulto',name:r.name}]).slice(0,10);
     const members=ppl.map((p,i)=>{
@@ -1375,10 +1384,21 @@ function mergeRsvps(){
         gf:!!p.glutenFree,lf:!!p.lactoseFree,allergies:String(p.allergies||'').slice(0,300)})});
     const upd={name:String(r.name||'').slice(0,120),contact:String(r.contact||'').slice(0,120),contactKey:k,status:r.attending==='si'?'confirmado':'rechazado',
       message:String(r.message||'').slice(0,1000),rsvpAt:String(r.submittedAt||''),rsvpId:r.id,source:'web',members};
-    if(g)Object.assign(g,upd);else S.guests.push({id:gid,group:'',notes:'',...upd});
+    if(g){if(!g.origin)g.origin=g.source==='web'?'web':(g.source||'manual');Object.assign(g,upd)}else S.guests.push({id:gid,group:'',notes:'',origin:'web',...upd});
     changed++;
   });
-  if(changed){save();softRender();toast(changed===1?'1 respuesta nueva de la web':`${changed} respuestas nuevas de la web`)}
+  // Respuestas borradas en Firestore: la invitación que venía solo de la web desaparece;
+  // si la invitación existía antes a mano, se conserva y se desvincula.
+  let removed=0;
+  S.guests=S.guests.filter(g=>{
+    if(g.source!=='web'||!g.rsvpId||ids.has(g.rsvpId))return true;
+    if(latest.has(g.contactKey))return true;
+    if(g.origin&&g.origin!=='web'){g.source=g.origin;g.status='pendiente';delete g.rsvpId;delete g.rsvpAt;removed++;return true}
+    removed++;return false;
+  });
+  if(changed||removed){save();softRender();
+    if(changed)toast(changed===1?'1 respuesta nueva de la web':`${changed} respuestas nuevas de la web`);
+    else toast(removed===1?'1 respuesta borrada en Firebase':`${removed} respuestas borradas en Firebase`)}
 }
 
 /* =================== Navegación =================== */
