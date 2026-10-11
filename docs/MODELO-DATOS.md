@@ -87,7 +87,7 @@ La validación es una sola, `normalizeContent()` en `src/app/core/content/weddin
 
 ### Nombres y fecha de la boda
 
-Lo publicado en `hero` es la única fuente: `name1`/`name2` y el día y la hora de `countdownIso` (en Madrid) son los que usa la app para su cabecera, la cuenta atrás, las fases y los vencimientos de tareas. Configuración solo los muestra y enlaza a Web de la boda → Contenido. Los campos `n1`, `n2`, `weddingDate` y `ceremonyTime` de `admin/state` quedan como respaldo sin Firebase o mientras no hay nada publicado.
+Lo publicado en `hero` es la única fuente: `name1`/`name2` y el día y la hora de `countdownIso` (en Madrid) son los que usa la app para su cabecera, la cuenta atrás y las fechas de las tareas. Configuración solo los muestra y enlaza a Web de la boda → Contenido. Los campos `n1`, `n2`, `weddingDate` y `ceremonyTime` de `admin/state` quedan como respaldo sin Firebase o mientras no hay nada publicado.
 
 ### Colores (`theme`)
 
@@ -128,3 +128,12 @@ La portada y el pie son fijos. El resto de la página se pinta en el orden de `s
 | `admin/state` → `plan` | `title`, `width`, `height`, `zones[]` (`id`, `label`, `x`, `y`, `w`, `h`) | Salón y zonas fijas (pista de baile, entrada…) |
 
 Quién se sienta en cada mesa sigue en cada persona de la invitación (`members[].table`). La posición se guarda al soltar la mesa.
+
+## Tareas (`admin/state/tasks`)
+
+Cada tarea tiene una fecha que se agrupa por meses (lista y calendario de la app):
+
+- **Se mueve con la boda** (`due` vacío): la fecha es la de la boda menos `offset` días; si cambia la fecha de la boda, la tarea se mueve con ella.
+- **Fecha fija** (`due` = `AAAA-MM-DD`): no se mueve. `offset` se guarda igualmente como referencia.
+
+El campo `phase` de versiones anteriores ya no se usa; se conserva en las tareas antiguas sin efecto.

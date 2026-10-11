@@ -3,8 +3,8 @@ import { AppState, Collections, FloorPlan, Guest, Meta, Task } from './models';
 import { mkMember } from './domain';
 import { uid } from './util';
 
-const T = (title: string, phase: string, offset: number, cat = 'General', extra: Partial<Task> = {}): Task =>
-  ({ id: uid(), title, phase, who: '', offset, due: '', cat, notes: '', done: false, ...extra });
+const T = (title: string, offset: number, cat = 'General', extra: Partial<Task> = {}): Task =>
+  ({ id: uid(), title, who: '', offset, due: '', cat, notes: '', done: false, ...extra });
 
 export function defaultPlan(): FloorPlan {
   return {
@@ -45,26 +45,26 @@ export function seedCollections(): Collections {
       contract: 'Sin datos', link: '', notes: 'La web lo indica como lugar de ceremonia, cóctel, comida (Gran Salón) y baile. Confirmar aquí el estado real del contrato.'
     }],
     tasks: [
-      T('Definir presupuesto total y reparto por categorías', 'ahora', 320, 'Presupuesto'),
-      T('Cerrar lista preliminar de invitados', 'ahora', 310, 'Invitados'),
-      T('Confirmar qué incluye el espacio (catering, mobiliario, barra libre, horarios)', 'ahora', 300, 'Proveedores'),
-      T('Contratar fotografía y vídeo', 'ahora', 280, 'Proveedores'),
-      T('Elegir música / DJ', 'ahora', 270, 'Proveedores'),
-      T('Iniciar trámites civiles de la ceremonia', 'm8', 240),
-      T('Enviar invitaciones con enlace a la web', 'm8', 245, 'Invitados'),
-      T('Cierre de confirmaciones (fecha publicada en la web)', 'm8', 222, 'Invitados', { due: '2027-02-01' }),
-      T('Diseñar papelería y detalles', 'm8', 200, 'Temática'),
-      T('Reservar alojamiento recomendado para invitados', 'm8', 190, 'Logística'),
-      T('Contratar flores y decoración', 'm5', 170, 'Proveedores'),
-      T('Prueba de menú', 'm5', 130, 'Proveedores'),
-      T('Distribución de mesas', 'm3', 60, 'Invitados'),
-      T('Cerrar cronograma del día con proveedores', 'm1', 45, 'Logística'),
-      T('Confirmar número definitivo de comensales y menús especiales', 'm1', 30, 'Invitados'),
-      T('Pagos finales a proveedores', 'm1', 21, 'Presupuesto'),
-      T('Entregar plan de mesas y decoración al espacio', 'week', 4, 'Logística'),
-      T('Descansar la víspera', 'week', 1),
-      T('Entregar alianzas y documentos a oficiante / testigos', 'day', 0),
-      T('Enviar agradecimientos a los invitados', 'post', -14, 'Invitados')
+      T('Definir presupuesto total y reparto por categorías', 320, 'Presupuesto'),
+      T('Cerrar lista preliminar de invitados', 310, 'Invitados'),
+      T('Confirmar qué incluye el espacio (catering, mobiliario, barra libre, horarios)', 300, 'Proveedores'),
+      T('Contratar fotografía y vídeo', 280, 'Proveedores'),
+      T('Elegir música / DJ', 270, 'Proveedores'),
+      T('Iniciar trámites civiles de la ceremonia', 240),
+      T('Enviar invitaciones con enlace a la web', 245, 'Invitados'),
+      T('Cierre de confirmaciones (fecha publicada en la web)', 222, 'Invitados', { due: '2027-02-01' }),
+      T('Diseñar papelería y detalles', 200, 'Temática'),
+      T('Reservar alojamiento recomendado para invitados', 190, 'Logística'),
+      T('Contratar flores y decoración', 170, 'Proveedores'),
+      T('Prueba de menú', 130, 'Proveedores'),
+      T('Distribución de mesas', 60, 'Invitados'),
+      T('Cerrar cronograma del día con proveedores', 45, 'Logística'),
+      T('Confirmar número definitivo de comensales y menús especiales', 30, 'Invitados'),
+      T('Pagos finales a proveedores', 21, 'Presupuesto'),
+      T('Entregar plan de mesas y decoración al espacio', 4, 'Logística'),
+      T('Descansar la víspera', 1),
+      T('Entregar alianzas y documentos a oficiante / testigos', 0),
+      T('Enviar agradecimientos a los invitados', -14, 'Invitados')
     ],
     inspo: [],
     webResources: [

@@ -90,16 +90,16 @@ export interface Vendor {
   notes?: string;
 }
 
-export type PhaseId = 'ahora' | 'm8' | 'm5' | 'm3' | 'm1' | 'week' | 'day' | 'post';
 
 export interface Task {
   id: string;
   title: string;
-  phase: PhaseId | string;
+  /** Antiguo agrupador por fases; ya no se usa (se agrupa por meses según la fecha) */
+  phase?: string;
   who: string;
-  /** Días antes de la boda (negativo = después) */
+  /** Días antes de la boda (negativo = después). Sin fecha fija, la tarea se mueve con la boda */
   offset: number;
-  /** Fecha fija opcional (AAAA-MM-DD); manda sobre offset */
+  /** Fecha fija (AAAA-MM-DD); si está, manda sobre offset y la tarea no se mueve con la boda */
   due: string;
   cat: string;
   notes: string;

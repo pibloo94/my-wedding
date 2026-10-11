@@ -40,21 +40,22 @@
   <a class="card kpi" routerLink="/tareas">
     <span class="top"><span class="l">Tareas</span><span class="ring" [style.--p]="tasks().pct" [attr.data-v]="tasks().pct + '%'"></span></span>
     <span class="n">{{ tasks().open }}<small>abiertas</small></span>
-    <span class="d" [class.alert]="tasks().late">{{ tasks().late ? tasks().late + ' vencidas' : 'Ninguna vencida' }}</span>
+    <span class="d" [class.alert]="tasks().late">{{ tasks().late ? tasks().late + (tasks().late === 1 ? ' atrasada' : ' atrasadas') : 'Ninguna atrasada' }}</span>
   </a>
 </div>
 
 <section class="sec">
-  <div class="sec-h"><h2>Camino al gran día</h2><a class="btn ghost sm" routerLink="/tareas">Ver tareas <adm-icon name="arrow" [size]="15" /></a></div>
+  <div class="sec-h"><h2>Camino al gran día</h2><a class="btn ghost sm" routerLink="/tareas" [queryParams]="{ vista: 'calendario' }">Calendario <adm-icon name="arrow" [size]="15" /></a></div>
   <div class="card tlwrap">
-    <ol class="tl">
-      @for (p of phases(); track p.id) {
-        <li [class.now]="p.now" [class.past]="p.past">
-          @if (p.now) { <span class="nowtag">Ahora</span> }
-          <span class="dt">{{ p.when }}</span>
-          <span class="nm">{{ p.name }}</span>
-          <span class="prog"><i [style.width.%]="p.pct"></i></span>
-          <span class="ct">{{ p.done }}/{{ p.total }} tareas</span>
+    <ol class="tl" [style.--n]="months().length">
+      @for (m of months(); track m.key) {
+        <li [class.now]="m.now" [class.wed]="m.wedding">
+          <a routerLink="/tareas" [queryParams]="{ vista: 'calendario', mes: m.key }" [attr.aria-label]="m.name + ' ' + m.year + ': ' + m.done + ' de ' + m.total + ' tareas hechas'">
+            @if (m.now) { <span class="nowtag">Ahora</span> }
+            <span class="nm">{{ m.name }} <small>{{ m.year }}</small>@if (m.wedding) { <adm-icon name="heart" [size]="13" /> }</span>
+            <span class="prog"><i [style.width.%]="m.pct"></i></span>
+            <span class="ct">{{ m.total ? m.done + '/' + m.total : '—' }}</span>
+          </a>
         </li>
       }
     </ol>
@@ -63,10 +64,10 @@
 
 <div class="grid g21 sec">
   <section class="card">
-    <h3><adm-icon name="check" /> Próximas tareas</h3>
+    <h3><adm-icon name="check" /> Este mes @if (tasks().late) { <span class="badge b-bad">{{ tasks().late }} {{ tasks().late === 1 ? 'atrasada' : 'atrasadas' }}</span> }</h3>
     <div class="flush">
-      @for (t of tasks().next; track t.id) { <adm-task-row [task]="t" [actions]="false" /> }
-      @empty { <p class="muted small pad">Todo al día.</p> }
+      @for (t of tasks().now; track t.id) { <adm-task-row [task]="t" [actions]="false" /> }
+      @empty { <p class="muted small pad">Nada pendiente este mes.@if (tasks().next) { Lo siguiente: {{ nextText() }}. }</p> }
     </div>
   </section>
   <div class="grid col">

@@ -20,7 +20,7 @@ import { IconComponent } from '../../shared/icon.component';
     </div>
     <div class="when">
       <span class="badge" [class.b-bad]="late()" [class.b-ok]="t.done" [class.b-warn]="soon()">{{ late() ? 'Vencida · ' : '' }}{{ dateText() }}</span>
-      <span class="xs">{{ t.due ? 'fecha fija' : 'automática' }}</span>
+      <span class="xs">{{ t.due ? 'fecha fija' : 'se mueve con la boda' }}</span>
     </div>
     @if (actions()) {
       <div class="ops">

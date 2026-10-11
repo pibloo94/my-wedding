@@ -4,7 +4,7 @@ import { UiService } from './ui.service';
 import { RsvpSyncService } from './rsvp-sync.service';
 import { CollKey } from './models';
 import { FORMS, FormContext } from './forms';
-import { currentPhase, members } from './domain';
+import { members } from './domain';
 import { isoDate, today, uid } from './util';
 
 type Item = { id: string } & Record<string, unknown>;
@@ -20,8 +20,8 @@ export class ListsService {
     const s = this.store.state();
     return {
       vendors: s.vendors.map(v => v.name),
-      people: [s.meta.config.n1, s.meta.config.n2, 'Ambos'],
-      currentPhase: currentPhase(this.store.wedding())
+      people: [this.store.config().n1, this.store.config().n2, 'Ambos'],
+      wedding: this.store.wedding()
     };
   }
 
@@ -32,10 +32,13 @@ export class ListsService {
     }
     const f = FORMS[k];
     if (!f) return;
-    const def = { ...f.def(), ...(k === 'tasks' ? { phase: currentPhase(this.store.wedding()) } : {}), ...(k === 'webLog' ? { date: isoDate(today()) } : {}), ...preset };
-    const v = await this.ui.form('Añadir ' + f.t, f.fields(this.ctx()), def, 'Añadir');
+    const ctx = this.ctx();
+    const base = { ...f.def(), ...(k === 'webLog' ? { date: isoDate(today()) } : {}) };
+    const def = { ...(f.toForm ? f.toForm(base, ctx) : base), ...preset };
+    const v = await this.ui.form('Añadir ' + f.t, f.fields(ctx), def, 'Añadir');
     if (!v) return;
-    this.store.update(s => (s[k] as unknown as Item[]).push({ ...def, ...v, id: uid() }));
+    const saved = f.fromForm ? f.fromForm({ ...def, ...v }, ctx) : { ...def, ...v };
+    this.store.update(s => (s[k] as unknown as Item[]).push({ ...base, ...saved, id: uid() }));
     this.ui.toast('Guardado');
   }
 
@@ -47,11 +50,13 @@ export class ListsService {
     const f = FORMS[k];
     const it = (this.store.list(k) as unknown as Item[]).find(x => x.id === id);
     if (!f || !it) return;
-    const v = await this.ui.form('Editar ' + f.t, f.fields(this.ctx()), it);
+    const ctx = this.ctx();
+    const v = await this.ui.form('Editar ' + f.t, f.fields(ctx), f.toForm ? f.toForm(it, ctx) : it);
     if (!v) return;
+    const saved = f.fromForm ? f.fromForm(v, ctx) : v;
     this.store.update(s => {
       const x = (s[k] as unknown as Item[]).find(y => y.id === id);
-      if (x) Object.assign(x, v);
+      if (x) Object.assign(x, saved);
     });
     this.ui.toast('Guardado');
   }

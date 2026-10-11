@@ -1,20 +1,27 @@
 /** Formularios de alta y edición de cada lista. */
 import { CollKey } from './models';
 import { FieldDef } from './ui.service';
-import { PHASES, TASK_CATS } from './domain';
+import { TASK_CATS, dueOf, followsWedding, taskDateFields } from './domain';
+import { Task } from './models';
+import { isoDate, parseDate } from './util';
 
 export interface CollForm {
   /** Nombre en singular, para los títulos («Añadir proveedor») */
   t: string;
   def: () => Record<string, unknown>;
   fields: (ctx: FormContext) => FieldDef[];
+  /** Valores guardados → valores del formulario (si el formulario no edita los campos tal cual) */
+  toForm?: (item: Record<string, unknown>, ctx: FormContext) => Record<string, unknown>;
+  /** Valores del formulario → campos que se guardan */
+  fromForm?: (v: Record<string, unknown>, ctx: FormContext) => Record<string, unknown>;
 }
 
 /** Datos que algunos formularios necesitan para sus sugerencias. */
 export interface FormContext {
   vendors: string[];
   people: string[];
-  currentPhase: string;
+  /** Día de la boda (para las fechas de las tareas) */
+  wedding: Date;
 }
 
 export const LOG_STATUSES = ['Previsto', 'Hecho en el repositorio', 'Publicado (sin comprobar)', 'Publicado (comprobado en la web)', 'Descartado'];
@@ -60,13 +67,22 @@ export const FORMS: Partial<Record<CollKey, CollForm>> = {
     t: 'tarea', def: () => ({ offset: 60, cat: 'General', done: false, due: '', who: '', notes: '' }),
     fields: ctx => [
       { k: 'title', l: 'Tarea', r: true, full: true },
-      { k: 'phase', l: 'Fase', type: 'select', o: PHASES.map(p => [p[0], p[1]] as [string, string]) },
+      { k: 'date', l: 'Fecha', type: 'date', r: true },
       { k: 'who', l: 'Responsable', list: () => ctx.people },
-      { k: 'offset', l: 'Días antes de la boda', type: 'number', h: 'Negativo = después. Se recalcula si cambia la fecha.' },
-      { k: 'due', l: 'Fecha fija (opcional)', type: 'date', h: 'Si la rellenas, manda sobre el cálculo automático.' },
+      { k: 'follow', l: 'Mover si cambia la fecha de la boda', type: 'check', full: true },
       { k: 'cat', l: 'Categoría', type: 'select', o: TASK_CATS },
       { k: 'notes', l: 'Notas', type: 'textarea', full: true }
-    ]
+    ],
+    toForm: (it, ctx) => {
+      const t = it as unknown as Task;
+      const { offset: _o, due: _d, phase: _p, ...rest } = t;
+      return { ...rest, date: isoDate(dueOf(t, ctx.wedding)), follow: followsWedding(t) };
+    },
+    fromForm: (v, ctx) => {
+      const { date, follow, ...rest } = v;
+      const d = parseDate(String(date || '')) ?? ctx.wedding;
+      return { ...rest, ...taskDateFields(d, !!follow, ctx.wedding) };
+    }
   },
   inspo: {
     t: 'idea', def: () => ({}),

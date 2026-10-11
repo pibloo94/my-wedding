@@ -105,6 +105,8 @@ label.f, .f {
 }
 label.f input, label.f select, label.f textarea { font-size: .95rem; letter-spacing: 0; text-transform: none; font-weight: 400; width: 100%; }
 label.f.ck { flex-direction: row; align-items: center; gap: 10px; min-height: 42px; }
+label.f.ck input { width: 18px; }
+label.f.ck span { font-size: .92rem; letter-spacing: 0; text-transform: none; font-weight: 400; color: var(--text); }
 .hint { font-size: .78rem; letter-spacing: 0; text-transform: none; font-weight: 400; color: var(--muted); }
 .ro { font-size: .92rem; letter-spacing: 0; text-transform: none; font-weight: 400; background: var(--bg-alt); border-radius: 10px; padding: 9px 12px; color: var(--dark); }
 .bar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 0 0 14px; }

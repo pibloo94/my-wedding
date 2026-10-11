@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { RouterLink } from '@angular/router';
 import { StoreService } from '../../core/store.service';
 import { ContentEditorService } from '../../core/content-editor.service';
-import { PHASES, attending, currentPhase, dueOf, members, paid, seats } from '../../core/domain';
-import { addDays, dayDiff, eur, fmtDate, fmtLongDate, parseDate, safeUrl, today } from '../../core/util';
+import { attending, dueOf, members, monthKey, monthRange, monthStart, paid, seats } from '../../core/domain';
+import { dayDiff, eur, fmtDate, fmtLongDate, parseDate, safeUrl, today } from '../../core/util';
 import { IconComponent } from '../../shared/icon.component';
 import { TaskRowComponent } from '../tasks/task-row.component';
 
@@ -41,27 +41,37 @@ export class DashboardPage {
   });
 
   protected tasks = computed(() => {
-    const ts = this.store.state().tasks, w = this.store.wedding();
-    const open = ts.filter(t => !t.done);
+    const ts = this.store.state().tasks, w = this.store.wedding(), now = today(), cur = monthKey(now);
+    const open = ts.filter(t => !t.done).map(t => ({ t, d: dueOf(t, w) })).sort((a, b) => a.d.getTime() - b.d.getTime());
+    const late = open.filter(x => x.d < now);
+    const month = open.filter(x => x.d >= now && monthKey(x.d) === cur);
     return {
-      open: open.length, late: open.filter(t => dueOf(t, w) < today()).length,
+      open: open.length, late: late.length,
       pct: ts.length ? Math.round((ts.length - open.length) / ts.length * 100) : 0,
-      next: open.slice().sort((a, b) => dueOf(a, w).getTime() - dueOf(b, w).getTime()).slice(0, 5)
+      /** Inicio: atrasadas y lo que queda de este mes; si no hay nada, lo siguiente */
+      now: [...late, ...month].map(x => x.t),
+      next: open.find(x => x.d >= now && monthKey(x.d) > cur)
     };
   });
 
-  protected phases = computed(() => {
-    const w = this.store.wedding(), cur = currentPhase(w), ts = this.store.state().tasks;
-    return PHASES.filter(p => p[0] !== 'post').map(p => {
-      const its = ts.filter(t => t.phase === p[0]), dn = its.filter(t => t.done).length;
-      const a = addDays(w, -p[2]), b = addDays(w, -p[3]);
+  /** Camino al gran día: un hito por mes, desde este mes hasta el de la boda. */
+  protected months = computed(() => {
+    const w = this.store.wedding(), ts = this.store.state().tasks, cur = monthKey(today()), wk = monthKey(w);
+    const keys = monthRange(cur <= wk ? cur : wk, wk);
+    return keys.map(key => {
+      const its = ts.filter(t => monthKey(dueOf(t, w)) === key), dn = its.filter(t => t.done).length;
+      const name = fmtDate(monthStart(key), { month: 'short' }).replace('.', '');
       return {
-        id: p[0], name: p[1], now: p[0] === cur, past: b < today() && p[0] !== cur,
-        when: p[0] === 'day' ? fmtDate(a, { day: 'numeric', month: 'short' }) : fmtDate(a, { month: 'short', year: '2-digit' }) + (p[2] !== p[3] ? ' – ' + fmtDate(b, { month: 'short', year: '2-digit' }) : ''),
+        key, name: name.charAt(0).toUpperCase() + name.slice(1), year: key.slice(2, 4), now: key === cur, wedding: key === wk,
         pct: its.length ? dn / its.length * 100 : 0, done: dn, total: its.length
       };
     });
   });
+
+  protected nextText(): string {
+    const n = this.tasks().next;
+    return n ? `${n.t.title} (${fmtDate(n.d, { day: 'numeric', month: 'short' })})` : '';
+  }
 
   protected tableCount = computed(() => this.store.tables().length);
   protected chairs = computed(() => this.store.tables().reduce((a, t) => a + (+t.cap || 0), 0));

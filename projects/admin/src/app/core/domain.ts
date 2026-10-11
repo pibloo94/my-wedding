@@ -1,20 +1,6 @@
-/** Reglas de negocio puras: fases, invitados, mesas, gastos y tareas. */
-import { Expense, Guest, Member, PhaseId, Table, Task } from './models';
-import { addDays, dayDiff, parseDate, today, uid } from './util';
-
-/** [id, nombre, desde (días antes), hasta (días antes)] */
-export type Phase = [PhaseId, string, number, number];
-
-export const PHASES: Phase[] = [
-  ['ahora', '11 a 9 meses', 335, 270],
-  ['m8', '8 a 6 meses', 269, 180],
-  ['m5', '5 a 4 meses', 179, 120],
-  ['m3', '3 a 2 meses', 119, 60],
-  ['m1', 'Último mes', 59, 8],
-  ['week', 'Semana de la boda', 7, 1],
-  ['day', 'El gran día', 0, 0],
-  ['post', 'Después', -1, -90]
-];
+/** Reglas de negocio puras: invitados, mesas, gastos y tareas. */
+import { Expense, Guest, Member, Table, Task } from './models';
+import { addDays, dayDiff, isoDate, parseDate, today, uid } from './util';
 
 export const TASK_CATS = ['General', 'Invitados', 'Presupuesto', 'Proveedores', 'Web', 'Logística', 'Temática'];
 export const GUEST_STATUSES = ['pendiente', 'confirmado', 'rechazado'] as const;
@@ -22,13 +8,24 @@ export const SHAPE_NAMES: Record<string, string> = { redonda: 'Redonda', rectang
 
 export const weddingDay = (iso: string): Date => parseDate(iso) || new Date(2027, 8, 11);
 export const dueOf = (t: Task, wedding: Date): Date => (t.due ? parseDate(t.due) : null) ?? addDays(wedding, -Number(t.offset || 0));
-export const phaseOf = (id: string): Phase => PHASES.find(p => p[0] === id) ?? [id as PhaseId, id, 0, 0];
+/** ¿La tarea se mueve si cambia la fecha de la boda? (sin fecha fija: va a «offset» días de la boda) */
+export const followsWedding = (t: Pick<Task, 'due'>): boolean => !t.due;
 
-export function currentPhase(wedding: Date): PhaseId {
-  const d = dayDiff(wedding, today());
-  if (d < 0) return 'post';
-  for (const p of PHASES) if (d <= p[2] && d >= p[3]) return p[0];
-  return 'ahora';
+/** Campos de fecha de una tarea a partir del día elegido: relativa a la boda o fija. */
+export function taskDateFields(date: Date, follow: boolean, wedding: Date): Pick<Task, 'offset' | 'due'> {
+  return follow ? { offset: dayDiff(wedding, date), due: '' } : { offset: dayDiff(wedding, date), due: isoDate(date) };
+}
+
+/** 'AAAA-MM' del mes de una fecha */
+export const monthKey = (d: Date): string => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+export const monthStart = (key: string): Date => { const [y, m] = key.split('-').map(Number) as [number, number]; return new Date(y, m - 1, 1); };
+export const addMonths = (key: string, n: number): string => { const d = monthStart(key); return monthKey(new Date(d.getFullYear(), d.getMonth() + n, 1)); };
+
+/** Meses entre dos claves 'AAAA-MM', ambos incluidos. */
+export function monthRange(from: string, to: string): string[] {
+  const out: string[] = [];
+  for (let k = from; k <= to && out.length < 120; k = addMonths(k, 1)) out.push(k);
+  return out;
 }
 
 export function mkMember(o: Partial<Member> = {}): Member {
