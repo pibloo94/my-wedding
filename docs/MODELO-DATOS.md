@@ -11,7 +11,7 @@ La web y la app usan los mismos nombres de campo. Este documento es la referenci
 | `admin/state/{colección}/{id}` | Los novios | Los novios | `guests`, `tables`, `expenses`, `vendors`, `tasks`, `inspo`, `webResources`, `webLog` (las antiguas `day`, `logistics`, `webPlan`, `webChecks`, `webTexts` y `webInfo` ya no se usan; sus datos siguen en Firestore) |
 | `admins/{uid}` | Nadie desde fuera (se crea en la consola) | El propio usuario | Quién tiene acceso a la app |
 | `content/published` | Los novios | Cualquiera | Contenido publicado de la web: `{ json, version, publishedAt, by }` |
-| `admin/contentDraft` | Los novios | Los novios | Borrador del contenido, compartido entre los dos |
+| `admin/contentDraft2` | Los novios | Los novios | Borrador del contenido, compartido entre los dos. `admin/contentDraft` es el de la versión anterior de la app: solo se lee la primera vez |
 | `admin/contentHistory/items/v0001…` | Los novios | Los novios | Una copia por publicación (para volver atrás) |
 
 ## Respuesta del formulario (`rsvps`)
@@ -79,6 +79,7 @@ El campo `json` guarda un objeto con esta forma (por defecto: `src/app/core/cont
 | `rsvp` | `deadlineText`, `contactEmail` | Formulario de confirmación |
 | `registry` | `titular`, `iban`, `concepto` | Lista de bodas (con `iban` vacío se muestra «Muy pronto…») |
 | `theme` | `primary`, `primaryDeep`, `sage`, `sageDeep`, `sand`, `orange`, `background`, `surface` (HEX `#RRGGBB`) | Colores de toda la web. Se editan en la app → Temática |
+| `typography` | `headings`, `text`: id de una fuente del catálogo `FONTS` (`butler`, `cormorant`, `playfair`, `lora`, `jost`…) | Letra de títulos (y cursivas) y de texto. Se editan en la app → Temática. Si no es Butler, la web la carga de Google Fonts |
 
 La validación es una sola, `normalizeContent()` en `src/app/core/content/wedding-content.ts`, y la usan la web y la app:
 
@@ -114,10 +115,10 @@ La portada y el pie son fijos. El resto de la página se pinta en el orden de `s
 
 ### Sincronización del contenido (Firestore manda)
 
-- El borrador (`admin/contentDraft`) guarda en `baseKey` la versión publicada de la que parte.
+- El borrador (`admin/contentDraft2`) guarda en `baseKey` la versión publicada de la que parte.
 - Si `content/published` cambia fuera del editor (consola de Firebase u otro dispositivo) y el borrador **no tiene cambios propios**, el editor pasa a mostrar lo publicado.
 - Si el borrador **sí tiene cambios propios**, la app avisa y no deja publicar hasta elegir entre «Usar lo publicado» o «Mantener mi borrador».
-- Los cambios hechos a mano en `admin/contentDraft` también aparecen en el editor al momento.
+- Los cambios hechos a mano en `admin/contentDraft2` también aparecen en el editor al momento.
 
 ## Mesas y plano del salón
 

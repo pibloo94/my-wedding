@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { THEME_KEYS, ThemeColors } from '@web/content';
-import { contrastRatio } from '@web/theme';
+import { FONTS, THEME_KEYS, ThemeColors, Typography, fontById } from '@web/content';
+import { applyFontLink, contrastRatio } from '@web/theme';
 import { StoreService } from '../../core/store.service';
 import { ListsService } from '../../core/lists.service';
 import { UiService } from '../../core/ui.service';
@@ -13,7 +13,7 @@ import { EmptyStateComponent } from '../../shared/empty-state.component';
 import { IconComponent } from '../../shared/icon.component';
 import { ThemePreviewComponent } from './theme-preview.component';
 
-/** Colores de la web (se publican con el contenido), ilustraciones, notas e inspiración. */
+/** Colores y tipografía de la web (se publican con el contenido) e inspiración. */
 @Component({
   selector: 'adm-theme-page',
   imports: [RouterLink, PageHeaderComponent, EmptyStateComponent, IconComponent, ThemePreviewComponent],
@@ -31,7 +31,17 @@ export class ThemePage {
   protected label = THEME_LABEL;
   protected draftTheme = computed(() => this.ct.draft()?.theme ?? DEFAULT_CONTENT.theme);
   protected pubTheme = computed(() => this.ct.base().theme);
-  protected themeChanges = computed(() => this.ct.diff().filter(d => d.key.startsWith('t.')).length);
+  protected draftType = computed(() => this.ct.draft()?.typography ?? DEFAULT_CONTENT.typography);
+  protected pubType = computed(() => this.ct.base().typography);
+  /** Cambios de colores y tipografía sin publicar */
+  protected themeChanges = computed(() => this.ct.diff().filter(d => d.key.startsWith('t.') || d.key.startsWith('f.')).length);
+  protected typeIsDefault = computed(() => this.draftType().headings === DEFAULT_CONTENT.typography.headings && this.draftType().text === DEFAULT_CONTENT.typography.text);
+  protected fontRoles: [keyof Typography, string, string][] = [
+    ['headings', 'Títulos', 'Nombres, títulos de sección y textos en cursiva'],
+    ['text', 'Texto', 'Párrafos, botones, menú y etiquetas']
+  ];
+  protected fontsFor = (role: keyof Typography) => FONTS.filter(f => f.roles.includes(role));
+  protected readonly fontById = fontById;
   protected otherChanges = computed(() => this.ct.diff().length - this.themeChanges());
   protected isDefault = computed(() => THEME_KEYS.every(k => this.draftTheme()[k] === DEFAULT_CONTENT.theme[k]));
   protected names = computed(() => {
@@ -55,10 +65,12 @@ export class ThemePage {
   });
   protected badContrast = computed(() => this.contrast().filter(c => !c.ok));
 
-  protected illustrations = [
-    ['crest-cats.webp', 'Escudo con gatos'], ['crest.webp', 'Monograma'], ['botanical-corner.webp', 'Esquina botánica'],
-    ['cat-grey-sleeping.webp', 'Gato gris'], ['cat-orange-playing.webp', 'Gato naranja'], ['cat-black-playing.webp', 'Gato negro']
-  ];
+  constructor() {
+    // Todas las fuentes del catálogo, para ver cada opción con su letra (solo en esta página)
+    const href = 'https://fonts.googleapis.com/css2?' + FONTS.filter(f => f.google).map(f => 'family=' + f.google).join('&') + '&display=swap';
+    applyFontLink(document, href, 'adm-fonts');
+    inject(DestroyRef).onDestroy(() => applyFontLink(document, '', 'adm-fonts'));
+  }
 
   protected setColor(k: keyof ThemeColors, raw: string): void {
     let v = raw.trim();
@@ -67,21 +79,25 @@ export class ThemePage {
     this.ct.edit(d => { d.theme[k] = v.toUpperCase(); });
   }
 
+  protected setFont(role: keyof Typography, id: string): void {
+    this.ct.edit(d => { d.typography = { ...d.typography, [role]: id }; });
+  }
+
+  protected resetFonts(): void {
+    this.ct.edit(d => { d.typography = { ...DEFAULT_CONTENT.typography }; });
+  }
+
   protected resetColors(): void {
     this.ct.edit(d => { d.theme = { ...DEFAULT_CONTENT.theme }; });
   }
 
-  /** Deshace los cambios de color sin publicar (los demás cambios del borrador se mantienen). */
+  /** Deshace los cambios de colores y tipografía sin publicar (los demás cambios del borrador se mantienen). */
   protected async discardColors(): Promise<void> {
     const n = this.themeChanges();
     if (!n) return;
-    if (!await this.ui.confirm(`Los colores volverán a ser los que se ven ahora en la web (${n} cambio${n === 1 ? '' : 's'}).`, 'Descartar cambios', { danger: true })) return;
-    this.ct.edit(d => { d.theme = { ...this.pubTheme() }; });
-    this.ui.toast('Colores restablecidos a los publicados');
-  }
-
-  protected setNotes(v: string): void {
-    this.store.update(s => { s.meta.theme.notes = v; });
+    if (!await this.ui.confirm(`Los colores y la tipografía volverán a ser los que se ven ahora en la web (${n} cambio${n === 1 ? '' : 's'}).`, 'Descartar cambios', { danger: true })) return;
+    this.ct.edit(d => { d.theme = { ...this.pubTheme() }; d.typography = { ...this.pubType() }; });
+    this.ui.toast('Colores y tipografía restablecidos a los publicados');
   }
 
   protected readonly safeUrl = safeUrl;

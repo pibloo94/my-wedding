@@ -73,9 +73,51 @@ export interface ThemeColors {
 
 export const THEME_KEYS: (keyof ThemeColors)[] = ['primary', 'primaryDeep', 'sage', 'sageDeep', 'sand', 'orange', 'background', 'surface'];
 
+/** Tipografía de la web, editable desde la app de gestión (Temática). Valores: id de FONTS. */
+export interface Typography {
+  /** Títulos, nombres y textos en cursiva */
+  headings: string;
+  /** Texto, botones y etiquetas */
+  text: string;
+}
+
+export interface FontOption {
+  id: string;
+  name: string;
+  /** Pila CSS (font-family) */
+  stack: string;
+  /** Familia y pesos para Google Fonts; sin él, la fuente va con la web (Butler) */
+  google?: string;
+  /** Para qué se ofrece */
+  roles: (keyof Typography)[];
+  /** Descripción corta para elegir */
+  note: string;
+}
+
+const SERIF = 'Georgia, serif';
+const SANS = "system-ui, -apple-system, 'Segoe UI', sans-serif";
+
+/** Tipografías que se pueden elegir. Solo se descargan las que se usan. */
+export const FONTS: FontOption[] = [
+  { id: 'butler', name: 'Butler', stack: `'Butler', ${SERIF}`, roles: ['headings', 'text'], note: 'La original de la web' },
+  { id: 'cormorant', name: 'Cormorant Garamond', stack: `'Cormorant Garamond', ${SERIF}`, google: 'Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400', roles: ['headings', 'text'], note: 'Clásica y fina' },
+  { id: 'playfair', name: 'Playfair Display', stack: `'Playfair Display', ${SERIF}`, google: 'Playfair+Display:ital,wght@0,400;0,500;0,600;1,400', roles: ['headings'], note: 'Editorial, alto contraste' },
+  { id: 'bodoni', name: 'Bodoni Moda', stack: `'Bodoni Moda', ${SERIF}`, google: 'Bodoni+Moda:ital,wght@0,400;0,500;0,600;1,400', roles: ['headings'], note: 'Revista de moda' },
+  { id: 'marcellus', name: 'Marcellus', stack: `'Marcellus', ${SERIF}`, google: 'Marcellus', roles: ['headings'], note: 'Romana, de inscripción' },
+  { id: 'cinzel', name: 'Cinzel', stack: `'Cinzel', ${SERIF}`, google: 'Cinzel:wght@400;500;600', roles: ['headings'], note: 'Solo mayúsculas, solemne' },
+  { id: 'ebgaramond', name: 'EB Garamond', stack: `'EB Garamond', ${SERIF}`, google: 'EB+Garamond:ital,wght@0,400;0,500;0,600;1,400', roles: ['text'], note: 'Libro clásico' },
+  { id: 'lora', name: 'Lora', stack: `'Lora', ${SERIF}`, google: 'Lora:ital,wght@0,400;0,500;0,600;1,400', roles: ['text'], note: 'Serif cálida, muy legible' },
+  { id: 'baskerville', name: 'Libre Baskerville', stack: `'Libre Baskerville', ${SERIF}`, google: 'Libre+Baskerville:ital,wght@0,400;0,700;1,400', roles: ['text'], note: 'Serif sobria' },
+  { id: 'jost', name: 'Jost', stack: `'Jost', ${SANS}`, google: 'Jost:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400', roles: ['text'], note: 'Sin serifa geométrica' },
+  { id: 'montserrat', name: 'Montserrat', stack: `'Montserrat', ${SANS}`, google: 'Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400', roles: ['text'], note: 'Sin serifa moderna' }
+];
+
+export const fontById = (id: string): FontOption => FONTS.find(f => f.id === id) ?? FONTS[0]!;
+
 export interface WeddingContent {
   v: number;
   theme: ThemeColors;
+  typography: Typography;
   /** Orden y configuración de las secciones (la portada y el pie son fijos) */
   sections: SectionConfig[];
   /** Portada. name1/name2: los nombres de la pareja (portada, pie, pantalla de entrada y título). */
@@ -97,6 +139,10 @@ export const DEFAULT_CONTENT: WeddingContent = {
     "orange": "#CD8A52",
     "background": "#F5EFE3",
     "surface": "#FBF7EF"
+  },
+  "typography": {
+    "headings": "butler",
+    "text": "butler"
   },
   "hero": {
     "name1": "Daniela",
@@ -339,6 +385,18 @@ function mergeTheme(base: ThemeColors, inc: unknown): ThemeColors {
   return out;
 }
 
+/** Tipografía: solo ids del catálogo y válidos para su papel; el resto, el de respaldo. */
+function mergeTypography(base: Typography, inc: unknown): Typography {
+  const out = { ...base };
+  if (isObj(inc)) {
+    for (const k of ['headings', 'text'] as const) {
+      const f = FONTS.find(x => x.id === inc[k]);
+      if (f && f.roles.includes(k)) out[k] = f.id;
+    }
+  }
+  return out;
+}
+
 export interface NormalizeOptions {
   /** Contenido de respaldo (por defecto, DEFAULT_CONTENT) */
   base?: WeddingContent;
@@ -375,6 +433,7 @@ export function normalizeContent(inc: unknown, opts: NormalizeOptions = {}): Wed
   return {
     v: typeof src['v'] === 'number' ? src['v'] : base.v,
     theme: mergeTheme(base.theme, src['theme']),
+    typography: mergeTypography(base.typography, src['typography']),
     sections: mergeSections(base.sections, src['sections'], draft),
     hero: strings(base.hero, src['hero']),
     events: keep(events, base.events),

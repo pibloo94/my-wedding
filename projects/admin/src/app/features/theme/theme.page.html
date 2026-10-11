@@ -1,11 +1,12 @@
-<adm-page-header title="Temática" sub="Los colores se publican en la web; el resto es vuestra inspiración" />
+<adm-page-header title="Temática" sub="Colores y tipografía de la web, con vista previa antes de publicar" />
 
 @if (!store.cloud()) {
-  <div class="note"><adm-icon name="info" /><span>Cambiar los colores de la web necesita Firebase. Hazlo desde la app publicada en /my-wedding/admin/.</span></div>
+  <div class="note"><adm-icon name="info" /><span>Cambiar los colores y la tipografía de la web necesita Firebase. Hazlo desde la app publicada en /my-wedding/admin/.</span></div>
 } @else if (!ct.loaded()) {
-  <p class="muted loading">Cargando los colores de la web…</p>
+  <p class="muted loading">Cargando los colores y la tipografía de la web…</p>
 } @else {
   <section class="colors">
+   <div class="left">
     <div class="pal card">
       <div class="card-h"><adm-icon name="palette" /><h3>Colores de la web</h3></div>
       <p class="small muted">Se guardan en el borrador del contenido. La web no cambia hasta que pulsas «Publicar».</p>
@@ -24,9 +25,34 @@
       </div>
     </div>
 
+    <div class="typo card">
+      <div class="card-h"><span class="aa" aria-hidden="true">Aa</span><h3>Tipografía</h3></div>
+      <p class="small muted">Elige una letra para los títulos y otra para el texto. Solo se descarga en la web la que elijáis.</p>
+      @for (r of fontRoles; track r[0]) {
+        <fieldset class="fr">
+          <legend><b>{{ r[1] }}</b><span class="xs muted">{{ r[2] }}</span></legend>
+          <div class="fopts">
+            @for (f of fontsFor(r[0]); track f.id) {
+              <label class="fo" [class.on]="draftType()[r[0]] === f.id">
+                <input type="radio" [name]="'font-' + r[0]" [value]="f.id" [checked]="draftType()[r[0]] === f.id" (change)="setFont(r[0], f.id)">
+                <span class="fs" [style.font-family]="f.stack">{{ r[0] === 'headings' ? names().n1 + ' & ' + names().n2 : 'Nos casamos' }}</span>
+                <span class="fn">{{ f.name }} <span class="xs muted">· {{ f.note }}</span></span>
+                @if (draftType()[r[0]] === f.id && pubType()[r[0]] !== f.id) { <span class="dot" title="Cambiado y sin publicar"></span> }
+              </label>
+            }
+          </div>
+        </fieldset>
+      }
+      <div class="row-actions">
+        <button class="btn ghost sm" (click)="resetFonts()" [disabled]="typeIsDefault()"><adm-icon name="reset" [size]="15" /> Tipografía original</button>
+      </div>
+    </div>
+
+   </div>
+
     <div class="prev">
       <div class="prevh"><h3>Así se verá</h3><span class="badge" [class.b-warn]="themeChanges()">{{ themeChanges() ? 'Borrador sin publicar' : 'Igual que la web' }}</span></div>
-      <adm-theme-preview [theme]="draftTheme()" [n1]="names().n1" [n2]="names().n2" [date]="dateText()" />
+      <adm-theme-preview [theme]="draftTheme()" [typography]="draftType()" [n1]="names().n1" [n2]="names().n2" [date]="dateText()" />
 
       @if (badContrast().length) {
         <div class="note">
@@ -56,20 +82,6 @@
     </div>
   </section>
 }
-
-<section class="sec">
-  <div class="sec-h"><h2>Ilustraciones de la web</h2><span class="xs muted">public/assets/brand</span></div>
-  <div class="card ill">
-    @for (i of illustrations; track i[0]) {
-      <figure><img [src]="'assets/brand/' + i[0]" [alt]="i[1]" loading="lazy"><figcaption class="xs muted">{{ i[1] }}</figcaption></figure>
-    }
-  </div>
-</section>
-
-<section class="sec">
-  <div class="sec-h"><h2>Notas de estilo</h2></div>
-  <textarea class="notes" [value]="store.meta().theme.notes" (change)="setNotes($any($event.target).value)" aria-label="Notas de estilo"></textarea>
-</section>
 
 <section class="sec">
   <div class="sec-h"><h2>Inspiración</h2><button class="btn out" (click)="lists.add('inspo')"><adm-icon name="plus" /> Idea</button></div>

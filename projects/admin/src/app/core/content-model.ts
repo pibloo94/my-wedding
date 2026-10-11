@@ -6,7 +6,7 @@
  */
 import {
   DEFAULT_CONTENT, EMPTY_EVENT_TEMPLATE, EMPTY_SECTION_TEMPLATE, SectionConfig, SectionKind, THEME_KEYS,
-  ThemeColors, WeddingContent, WeddingEvent, normalizeContent
+  ThemeColors, WeddingContent, WeddingEvent, fontById, normalizeContent
 } from '@web/content';
 import { stable } from './util';
 
@@ -39,6 +39,8 @@ export function flatten(c: Content): [string, string, string][] {
   const out: [string, string, string][] = [];
   const add = (k: string, l: string, v: unknown) => out.push([k, l, String(v ?? '')]);
   for (const k of THEME_KEYS) add(`t.${k}`, `Colores · ${THEME_LABEL[k][0]}`, c.theme[k]);
+  add('f.h', 'Tipografía · Títulos', fontById(c.typography.headings).name);
+  add('f.t', 'Tipografía · Texto', fontById(c.typography.text).name);
   const SF: [keyof SectionConfig, string][] = [['visible', 'Visible'], ['navLabel', 'Texto en el menú'], ['label', 'Etiqueta'], ['title', 'Título'], ['subtitle', 'Subtítulo'], ['body', 'Texto'], ['items', 'Puntos'], ['linkText', 'Texto del botón'], ['linkUrl', 'Enlace del botón']];
   add('s.order', 'Secciones · Orden', c.sections.map(x => x.id).join(','));
   for (const x of c.sections) for (const [k, l] of SF) {

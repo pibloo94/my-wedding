@@ -4,7 +4,7 @@ import { EMPTY } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { DEFAULT_CONTENT, SectionConfig, SectionKind, WeddingContent, mergeContent } from '../content/wedding-content';
 import { FirebaseConfigService } from './firebase-config.service';
-import { changedThemeVars, themeVars } from '../content/theme';
+import { applyFontLink, changedFontVars, changedThemeVars, fontVars, googleFontsHref, themeVars } from '../content/theme';
 
 interface FirestoreDoc {
   fields?: { json?: { stringValue?: string } };
@@ -35,6 +35,8 @@ export class ContentService {
   constructor(http: HttpClient, cfg: FirebaseConfigService) {
     // Colores publicados desde la app de gestión (Temática). Con los de por defecto no se toca nada.
     effect(() => this.applyTheme());
+    // Tipografía elegida en Temática: solo se descarga si no es la original (Butler)
+    effect(() => this.applyFonts());
     // Título de la pestaña con los nombres y la fecha publicados
     effect(() => {
       const h = this._data().hero;
@@ -66,5 +68,14 @@ export class ContentService {
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme.primary);
     if (vars['--color-bg']) document.documentElement.style.backgroundColor = vars['--color-bg'];
     else document.documentElement.style.removeProperty('background-color');
+  }
+
+  private applyFonts(): void {
+    if (typeof document === 'undefined') return;
+    const ty = this._data().typography;
+    const root = document.documentElement.style;
+    for (const name of Object.keys(fontVars(ty))) root.removeProperty(name);
+    for (const [name, value] of Object.entries(changedFontVars(ty))) root.setProperty(name, value);
+    applyFontLink(document, googleFontsHref(ty));
   }
 }

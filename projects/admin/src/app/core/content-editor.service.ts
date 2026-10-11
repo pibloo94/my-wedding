@@ -5,6 +5,17 @@ import { UiService } from './ui.service';
 import { Content, DEFAULT_CONTENT, contentErrors, contentKey, contentWarnings, diffContent, normContent } from './content-model';
 import { clone, isoDate, today, uid } from './util';
 
+/**
+ * Documento del borrador. Va versionado: una app de gestión antigua (otra pestaña, el móvil…)
+ * no conoce los campos nuevos (p. ej. la tipografía), los descartaría al leer el borrador y lo
+ * volvería a guardar sin ellos. Cada versión del formato usa su propio documento.
+ */
+const DRAFT_DOC = 'contentDraft2';
+/** Borrador de la versión anterior: solo se lee la primera vez, para no perder cambios sin publicar */
+const LEGACY_DRAFT_DOC = 'contentDraft';
+
+interface DraftData { json?: string; baseKey?: string; }
+
 export interface HistoryItem {
   id: string;
   version: number;
@@ -15,7 +26,7 @@ export interface HistoryItem {
 }
 
 /**
- * Contenido de la web: borrador compartido (admin/contentDraft), publicado (content/published)
+ * Contenido de la web: borrador compartido (admin/contentDraft2), publicado (content/published)
  * e historial (admin/contentHistory/items).
  *
  * El borrador sigue a lo publicado —también si se cambia desde la consola de Firebase— salvo
@@ -48,6 +59,8 @@ export class ContentEditorService {
   private gotDraft = false;
   private draftDoc: { content: Content; baseKey: string } | null = null;
   private started = false;
+  private legacy?: Promise<DraftData | undefined>;
+  private hasDraft = false;
 
   start(): void {
     if (this.started || !this.fb.db) return;
@@ -67,18 +80,27 @@ export class ContentEditorService {
       }
       this.reconcile();
     }, e => console.warn('content', e));
-    fs.onSnapshot(fs.doc(db, 'admin', 'contentDraft'), d => {
-      const x = d.data() as { json?: string; baseKey?: string } | undefined;
-      this.gotDraft = true;
-      this.draftDoc = null;
-      if (x?.json) {
-        try { this.draftDoc = { content: normContent(JSON.parse(x.json)), baseKey: x.baseKey || '' }; } catch { /* ignorar */ }
-      }
-      this.reconcile();
+    fs.onSnapshot(fs.doc(db, 'admin', DRAFT_DOC), d => {
+      const x = d.data() as DraftData | undefined;
+      this.hasDraft = !!x?.json;
+      if (x?.json) { this.applyDraft(x); return; }
+      // Aún no hay borrador de esta versión: se parte del antiguo, si lo hay (se lee una vez)
+      this.legacy ??= fs.getDoc(fs.doc(db, 'admin', LEGACY_DRAFT_DOC))
+        .then(l => l.data() as DraftData | undefined, () => undefined);
+      void this.legacy.then(l => { if (!this.hasDraft) this.applyDraft(l); });
     }, e => console.warn('draft', e));
     fs.onSnapshot(fs.collection(db, 'admin', 'contentHistory', 'items'), qs => {
       this.history.set(qs.docs.map(d => ({ ...(d.data() as Omit<HistoryItem, 'id'>), id: d.id })).sort((a, b) => (b.version || 0) - (a.version || 0)));
     }, e => console.warn('history', e));
+  }
+
+  private applyDraft(x: DraftData | undefined): void {
+    this.gotDraft = true;
+    this.draftDoc = null;
+    if (x?.json) {
+      try { this.draftDoc = { content: normContent(JSON.parse(x.json)), baseKey: x.baseKey || '' }; } catch { /* ignorar */ }
+    }
+    this.reconcile();
   }
 
   private reconcile(): void {
@@ -134,7 +156,7 @@ export class ContentEditorService {
     const db = this.fb.db;
     if (!db) return;
     try {
-      await fs.setDoc(fs.doc(db, 'admin', 'contentDraft'), {
+      await fs.setDoc(fs.doc(db, 'admin', DRAFT_DOC), {
         json: JSON.stringify(this.draft()), baseKey: this.baseKey, updatedAt: new Date().toISOString(), by: this.fb.user()?.email ?? ''
       });
     } catch (e) {
@@ -214,7 +236,7 @@ export class ContentEditorService {
       b.set(fs.doc(db, 'admin', 'contentHistory', 'items', 'v' + String(v).padStart(4, '0')), { json, version: v, publishedAt: now, by, summary });
       this.baseKey = contentKey(draft);
       this.conflict.set(false);
-      b.set(fs.doc(db, 'admin', 'contentDraft'), { json, baseKey: this.baseKey, updatedAt: now, by });
+      b.set(fs.doc(db, 'admin', DRAFT_DOC), { json, baseKey: this.baseKey, updatedAt: now, by });
       await b.commit();
     } catch (e) {
       this.ui.toast(`No se pudo publicar (${(e as { code?: string }).code ?? (e as Error).message})`);

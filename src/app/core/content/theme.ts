@@ -5,7 +5,7 @@
  * Los tonos derivados se calculan mezclando con blanco, negro o arena; con los colores por
  * defecto salen prácticamente los mismos valores que hay escritos en src/styles.scss.
  */
-import { DEFAULT_CONTENT, ThemeColors } from './wedding-content';
+import { DEFAULT_CONTENT, ThemeColors, Typography, fontById } from './wedding-content';
 
 type Rgb = [number, number, number];
 
@@ -70,4 +70,37 @@ export function changedThemeVars(t: ThemeColors): Record<string, string> {
     if (now[k] !== def[k]) out[k] = now[k]!;
   }
   return out;
+}
+
+/** Variables de tipografía de la web. Los títulos llevan también los textos en cursiva (editorial). */
+export function fontVars(t: Typography): Record<string, string> {
+  const h = fontById(t.headings).stack, x = fontById(t.text).stack;
+  return { '--font-heading': h, '--font-editorial': h, '--font-body': x, '--font-accent': x };
+}
+
+/** Solo las variables de tipografía que cambian respecto a las de por defecto. */
+export function changedFontVars(t: Typography): Record<string, string> {
+  const now = fontVars(t), def = fontVars(DEFAULT_CONTENT.typography);
+  const out: Record<string, string> = {};
+  for (const k of Object.keys(now)) if (now[k] !== def[k]) out[k] = now[k]!;
+  return out;
+}
+
+/** Hoja de Google Fonts con las fuentes elegidas que no van con la web; '' si no hace falta. */
+export function googleFontsHref(t: Typography): string {
+  const fams = [...new Set([t.headings, t.text].map(id => fontById(id).google).filter((g): g is string => !!g))];
+  return fams.length ? `https://fonts.googleapis.com/css2?${fams.map(f => 'family=' + f).join('&')}&display=swap` : '';
+}
+
+/** Añade, cambia o quita la hoja de Google Fonts (id fijo) en el documento. */
+export function applyFontLink(doc: Document, href: string, id = 'wedding-fonts'): void {
+  let link = doc.getElementById(id) as HTMLLinkElement | null;
+  if (!href) { link?.remove(); return; }
+  if (!link) {
+    link = doc.createElement('link');
+    link.id = id;
+    link.rel = 'stylesheet';
+    doc.head.appendChild(link);
+  }
+  if (link.getAttribute('href') !== href) link.href = href;
 }
