@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, throwError } from 'rxjs';
-import { catchError, map, shareReplay, switchMap } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
+import { FirebaseConfigService, FirebaseWebConfig } from './firebase-config.service';
 
 /** Persona incluida en una respuesta. Mismo modelo que la app de gestión (docs/MODELO-DATOS.md). */
 export interface RsvpPerson {
@@ -25,27 +26,14 @@ export interface RsvpSubmission {
   people: RsvpPerson[];
 }
 
-/** Configuración pública de Firebase (public/firebase-config.json). */
-interface FirebaseWebConfig {
-  apiKey?: string;
-  projectId?: string;
-}
-
 @Injectable({ providedIn: 'root' })
 export class RsvpService {
-  private readonly config$: Observable<FirebaseWebConfig | null>;
-
-  constructor(private http: HttpClient) {
-    this.config$ = this.http.get<FirebaseWebConfig>('firebase-config.json').pipe(
-      catchError(() => of(null)),
-      shareReplay(1)
-    );
-  }
+  constructor(private http: HttpClient, private cfg: FirebaseConfigService) {}
 
   submit(rsvp: RsvpSubmission): Observable<unknown> {
-    return this.config$.pipe(
-      switchMap(cfg => cfg?.apiKey && cfg?.projectId
-        ? this.toFirestore(cfg.projectId, cfg.apiKey, rsvp)
+    return this.cfg.config$.pipe(
+      switchMap(cfg => cfg
+        ? this.toFirestore(cfg, rsvp)
         : throwError(() => new Error('Falta la configuración de Firebase (public/firebase-config.json)'))),
       catchError(err => {
         console.error('Error enviando RSVP:', err);
@@ -55,9 +43,8 @@ export class RsvpService {
   }
 
   /** Crea un documento en la colección `rsvps` mediante la API REST de Firestore. */
-  private toFirestore(projectId: string, apiKey: string, rsvp: RsvpSubmission): Observable<unknown> {
-    const url = `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(projectId)}`
-      + `/databases/(default)/documents/rsvps?key=${encodeURIComponent(apiKey)}`;
+  private toFirestore(cfg: FirebaseWebConfig, rsvp: RsvpSubmission): Observable<unknown> {
+    const url = FirebaseConfigService.docUrl(cfg, 'rsvps');
     const doc = {
       ...rsvp,
       submittedAt: new Date().toISOString(),

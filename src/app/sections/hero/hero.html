@@ -26,8 +26,8 @@
 
     <div class="sprig-divider" aria-hidden="true"></div>
 
-    <p class="hero-date">11 de Septiembre de 2027</p>
-    <p class="hero-location">Madrid, España</p>
+    <p class="hero-date">{{ content.data().hero.dateText }}</p>
+    <p class="hero-location">{{ content.data().hero.location }}</p>
 
     <!-- Countdown -->
     @if (expired()) {

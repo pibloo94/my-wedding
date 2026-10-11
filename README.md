@@ -30,12 +30,14 @@ Cada **push a `main`** lanza el workflow `.github/workflows/deploy.yml`, que com
 | `src/app/shared/navbar`, `footer`, `icon` | Navegación, pie e iconos |
 | `src/app/shared/password-gate` | Pantalla de acceso con contraseña |
 | `src/app/core/services/rsvp.service.ts` | Envío del RSVP a Firestore |
+| `src/app/core/content/wedding-content.ts` | Textos por defecto de la web y validación del contenido publicado |
+| `src/app/core/services/content.service.ts` | Lee el contenido publicado (Firestore `content/published`) |
 | `src/styles.scss` | Sistema visual (paleta, tipografía Butler, botones, tarjetas) |
 | `public/assets/brand` | Ilustraciones en acuarela (PNG + WebP) |
 | `public/fonts` | Tipografía Butler (woff2) |
 | `scripts/process_assets.py` | Procesado de las ilustraciones |
 
-Los textos de cada sección están, por ahora, dentro de su archivo `.ts` o `.html`.
+Los textos editables (fecha, programa del día, información práctica, fecha límite y correo de contacto, datos de la lista de bodas) **se editan y publican desde la app de gestión** (Web de la boda → Contenido). La web los lee de Firestore al cargar; si Firebase no responde, usa los de `wedding-content.ts`. Si cambias la estructura del contenido, actualiza también la app (`DEFAULT_CONTENT`) y [docs/MODELO-DATOS.md](docs/MODELO-DATOS.md).
 
 ## Confirmaciones (RSVP) y Firebase
 

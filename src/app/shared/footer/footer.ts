@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IconComponent } from '../icon/icon.component';
+import { ContentService } from '../../core/services/content.service';
 
 @Component({
   selector: 'app-footer',
@@ -10,4 +11,6 @@ import { IconComponent } from '../icon/icon.component';
 })
 export class FooterComponent {
   currentYear = new Date().getFullYear();
+
+  constructor(public content: ContentService) {}
 }

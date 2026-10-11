@@ -7,7 +7,7 @@
       <span class="label-accent">Confirmación de Asistencia</span>
       <h2>¿Nos acompañas?</h2>
       <div class="sprig-divider" aria-hidden="true"></div>
-      <p class="subtitle">Por favor confirma antes del <strong>1 de febrero de 2027</strong></p>
+      <p class="subtitle">Por favor confirma antes del <strong>{{ content.data().rsvp.deadlineText }}</strong></p>
     </div>
 
     <div class="rsvp-wrapper" scrollAnimate animClass="fade-up" [animDelay]="200">
@@ -20,7 +20,7 @@
           </div>
           <h3>¡Muchas gracias!</h3>
           @if (isAttending) {
-            <p>Hemos recibido tu confirmación. ¡Estamos deseando celebrarlo contigo el 11 de septiembre de 2027!</p>
+            <p>Hemos recibido tu confirmación. ¡Estamos deseando celebrarlo contigo el {{ content.data().hero.dateText | lowercase }}!</p>
           } @else {
             <p>Qué pena que no puedas asistir, nos habría encantado compartir este día contigo. ¡Te tendremos muy presente!</p>
           }
@@ -38,7 +38,7 @@
           <p>No se ha podido enviar tu confirmación. Por favor, inténtalo de nuevo o escríbenos directamente.</p>
           <div class="state-actions">
             <button class="btn btn-primary" (click)="reset()" id="btn-rsvp-retry">Intentar de nuevo</button>
-            <a href="mailto:pablo.daniela2027@gmail.com" class="btn btn-outline">Contactar</a>
+            <a [href]="'mailto:' + content.data().rsvp.contactEmail" class="btn btn-outline">Contactar</a>
           </div>
         </div>
       }
@@ -246,7 +246,7 @@
             <p class="form-privacy">
               Usaremos estos datos solo para organizar la boda: menús, alergias y mesas.
               Solo los vemos nosotros y únicamente compartiremos con el catering lo necesario sobre menús y alergias.
-              Si quieres cambiarlos o que los borremos, escríbenos a <span class="nowrap">pablo.daniela2027&#64;gmail.com</span>.
+              Si quieres cambiarlos o que los borremos, escríbenos a <span class="nowrap">{{ content.data().rsvp.contactEmail }}</span>.
             </p>
           </div>
 

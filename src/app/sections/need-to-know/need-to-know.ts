@@ -1,13 +1,8 @@
 import { Component } from '@angular/core';
 import { ScrollAnimateDirective } from '../../shared/scroll-animate.directive';
 import { IconComponent } from '../../shared/icon/icon.component';
-
-interface InfoCard {
-  icon: string;
-  title: string;
-  items: string[];
-  accent: string;
-}
+import { ContentService } from '../../core/services/content.service';
+import { InfoCard } from '../../core/content/wedding-content';
 
 @Component({
   selector: 'app-need-to-know',
@@ -17,39 +12,10 @@ interface InfoCard {
   styleUrl: './need-to-know.scss'
 })
 export class NeedToKnowComponent {
-  cards: InfoCard[] = [
-    {
-      icon: 'shirt',
-      title: 'Código de Vestimenta',
-      accent: '#B15C38',
-      items: [
-        'Traje formal para caballeros (corbata o pajarita)',
-        'Vestido de cóctel para señoras',
-        'Por favor, evitar colores blanco, marfil y crudo',
-        'Recomendamos llevar zapato de cambio para el baile'
-      ]
-    },
-    {
-      icon: 'info',
-      title: 'Detalles del Lugar',
-      accent: '#5E6A49',
-      items: [
-        'La ceremonia se realiza al aire libre, prever calzado cómodo para jardín',
-        'No se permite confeti ni arroz dentro del recinto',
-        'Zona de aparcamiento gratuita disponible dentro del recinto',
-        'El recinto es accesible para personas con movilidad reducida'
-      ]
-    },
-    {
-      icon: 'utensils',
-      title: 'Menú y Alergias',
-      accent: '#CD8A52',
-      items: [
-        'Menú de cuatro tiempos con opciones vegetarianas',
-        'Indicad vuestras alergias o intolerancias en el formulario de confirmación',
-        'Menú infantil disponible para los más pequeños',
-        'Barra libre durante la fiesta'
-      ]
-    }
-  ];
+  constructor(private content: ContentService) {}
+
+  /** Tarjetas de información práctica: se editan desde la app de gestión. */
+  get cards(): InfoCard[] {
+    return this.content.data().needToKnow;
+  }
 }

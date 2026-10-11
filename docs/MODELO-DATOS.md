@@ -10,7 +10,9 @@ La web y la app usan los mismos nombres de campo. Este documento es la referenci
 | `admin/state` | Los novios | Los novios | Configuración, paleta, estado de la web |
 | `admin/state/{colección}/{id}` | Los novios | Los novios | `guests`, `tables`, `expenses`, `vendors`, `tasks`, `day`, `logistics`, `inspo`, `webPlan`, `webChecks`, `webResources`, `webTexts`, `webInfo`, `webLog` |
 | `admins/{uid}` | Nadie desde fuera (se crea en la consola) | El propio usuario | Quién tiene acceso a la app |
-| `content/published` | Los novios | Cualquiera | Contenido público de la web (fase 4) |
+| `content/published` | Los novios | Cualquiera | Contenido publicado de la web: `{ json, version, publishedAt, by }` |
+| `admin/contentDraft` | Los novios | Los novios | Borrador del contenido, compartido entre los dos |
+| `admin/contentHistory/items/v0001…` | Los novios | Los novios | Una copia por publicación (para volver atrás) |
 
 ## Respuesta del formulario (`rsvps`)
 
@@ -63,3 +65,24 @@ Si la respuesta es «no asistiré», `people` lleva solo a la persona que respon
   - si la invitación vino solo de la web, desaparezca;
   - si la invitación existía antes a mano, se conserve (mesa, grupo y notas incluidos), quede desvinculada y vuelva a «pendiente»;
   - si quedan respuestas más antiguas del mismo contacto, se aplique la más reciente de las que quedan.
+
+## Contenido de la web (`content/published`)
+
+El campo `json` guarda un objeto con esta forma (por defecto: `src/app/core/content/wedding-content.ts`):
+
+| Bloque | Campos | Dónde se ve |
+|---|---|---|
+| `hero` | `dateText`, `location`, `countdownIso` (fecha y hora de Madrid con su desfase, p. ej. `2027-09-11T13:00:00+02:00`) | Portada, cuenta atrás, pie y mensaje de gracias |
+| `events[]` | `id`, `icon`, `type`, `title`, `timeStart`, `timeEnd`, `venue`, `address`, `mapsUrl`, `dressCode`, `description` | Programa del día |
+| `needToKnow[]` | `icon`, `title`, `accent`, `items[]` | Lo que debes saber |
+| `rsvp` | `deadlineText`, `contactEmail` | Formulario de confirmación |
+| `registry` | `titular`, `iban`, `concepto` | Lista de bodas (con `iban` vacío se muestra «Muy pronto…») |
+
+La web valida cada campo al leerlo. Si algo falta o tiene un tipo inesperado, usa el valor por defecto; si una lista llega vacía, usa la de respaldo. La app comprueba antes de publicar las horas, los enlaces, el correo y el IBAN (dígitos de control).
+
+### Sincronización del contenido (Firestore manda)
+
+- El borrador (`admin/contentDraft`) guarda en `baseKey` la versión publicada de la que parte.
+- Si `content/published` cambia fuera del editor (consola de Firebase u otro dispositivo) y el borrador **no tiene cambios propios**, el editor pasa a mostrar lo publicado.
+- Si el borrador **sí tiene cambios propios**, la app avisa y no deja publicar hasta elegir entre «Usar lo publicado» o «Mantener mi borrador».
+- Los cambios hechos a mano en `admin/contentDraft` también aparecen en el editor al momento.

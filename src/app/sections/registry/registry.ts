@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ScrollAnimateDirective } from '../../shared/scroll-animate.directive';
 import { IconComponent } from '../../shared/icon/icon.component';
+import { ContentService } from '../../core/services/content.service';
 
 interface RegistryItem {
   id: string;
@@ -34,13 +35,15 @@ export class RegistryComponent {
 
   bankCopied = false;
 
-  bankDetails = {
-    titular: 'Pablo Agudo Brun',
-    // TODO: pon aquí el IBAN real (formato «ES00 0000 0000 0000 0000 0000»).
-    // Mientras esté vacío, la web muestra un aviso en lugar de los datos.
-    iban: '',
-    concepto: 'Regalo boda Daniela & Pablo'
-  };
+  constructor(private content: ContentService) {}
+
+  /**
+   * Titular, IBAN y concepto se editan desde la app de gestión (Web de la boda → Contenido).
+   * Mientras el IBAN esté vacío, la web muestra un aviso en lugar de los datos.
+   */
+  get bankDetails(): { titular: string; iban: string; concepto: string } {
+    return this.content.data().registry;
+  }
 
   showBank = false;
 

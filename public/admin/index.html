@@ -398,6 +398,17 @@ textarea{min-height:84px;resize:vertical}
 .mrow input,.mrow select{width:100%}
 .mrow input[type=checkbox]{width:18px}
 @media (max-width:760px){.mhead{grid-template-columns:minmax(0,1fr) 72px auto}.mhead select{grid-column:1/-1}.mdiet{grid-template-columns:1fr 1fr}.mdiet select,.mdiet input[data-f=allergies]{grid-column:1/-1}}
+details.ced{padding:0 20px 16px;margin-bottom:14px}
+details.ced>summary{list-style:none;cursor:pointer;padding:16px 0 4px}
+details.ced>summary::-webkit-details-marker{display:none}
+.cblock{border:1px solid var(--line);border-radius:14px;padding:6px 14px 14px;margin-top:12px;background:#fff}
+.cbh{display:flex;align-items:center;gap:4px;padding-top:6px}
+.cbh .icb[disabled]{opacity:.3;cursor:default}
+.cdiff{font-size:.84rem;padding:7px 0;border-top:1px solid var(--line);min-width:0;overflow-wrap:anywhere}
+.cside{grid-template-columns:minmax(0,1fr)}
+.cdiff:first-child{border-top:0}
+.cdiff .k{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+.cerr{color:#7d3216;font-size:.84rem;margin:2px 0}
 @media print{.side,.mtop,.tabbar,.bar,.btn,.icb{display:none!important}.app{display:block}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -730,7 +741,7 @@ const C={
   webResources:{t:'recurso',def:()=>({type:'Enlace'}),f:[{k:'title',l:'Título',r:1,full:1},{k:'url',l:'URL',full:1},{k:'type',l:'Tipo',type:'select',o:['Enlace','Código','Documentación','Gráficos','Otro']},{k:'note',l:'Nota',type:'textarea',full:1}]},
   webTexts:{t:'texto a revisar',def:()=>({status:'Pendiente'}),f:[{k:'section',l:'Sección',list:()=>WEB_CONTENT.map(s=>s.name),full:1},{k:'text',l:'Qué revisar',type:'textarea',r:1,full:1},{k:'status',l:'Estado',type:'select',o:['Pendiente','Revisado','Descartado']}]},
   webInfo:{t:'información para invitados',def:()=>({status:'Pendiente de decidir'}),f:[{k:'text',l:'Información',type:'textarea',r:1,full:1},{k:'status',l:'Estado',type:'select',o:['En la web','Pendiente de decidir','Pendiente de confirmar','Pendiente de añadir a la web']},{k:'note',l:'Notas',type:'textarea',full:1}]},
-  webLog:{t:'cambio',def:()=>({date:iso(today()),status:'Previsto'}),f:[{k:'date',l:'Fecha',type:'date'},{k:'status',l:'Estado',type:'select',o:['Previsto','Hecho en el repositorio','Publicado (comprobado en la web)','Descartado']},
+  webLog:{t:'cambio',def:()=>({date:iso(today()),status:'Previsto'}),f:[{k:'date',l:'Fecha',type:'date'},{k:'status',l:'Estado',type:'select',o:['Previsto','Hecho en el repositorio','Publicado (sin comprobar)','Publicado (comprobado en la web)','Descartado']},
     {k:'section',l:'Sección',list:()=>WEB_CONTENT.map(s=>s.name),full:1},{k:'field',l:'Campo',full:1},{k:'from',l:'Texto actual',type:'textarea',full:1},{k:'to',l:'Texto nuevo',type:'textarea',full:1},{k:'change',l:'Nota',type:'textarea',full:1}]}
 };
 
@@ -1149,11 +1160,11 @@ V.theme=()=>`${head('Temática','Colores e inspiración','Paleta e ilustraciones
   ${tbl('inspo',[{h:'Idea',f:i=>`<b>${esc(i.title)}</b><div class="xs muted">${esc(i.note||'')}</div>`},{h:'Enlace',f:i=>link(i.url,'Abrir')}],S.inspo,empty('Guarda aquí enlaces e ideas.','catorange'))}</div>`;
 
 /* ---------- Web de la boda ---------- */
-const WTABS=[['resumen','Cómo funciona'],['plan','Plan de cambios'],['contenido','Contenido actual'],['comprobar','Comprobaciones'],['registro','Registro'],['recursos','Recursos']];
+const WTABS=[['resumen','Cómo funciona'],['contenido','Contenido'],['plan','Plan de cambios'],['comprobar','Comprobaciones'],['registro','Registro'],['recursos','Recursos']];
 V.web=()=>{
   const c=S.config,tab=UI.webTab,plan=S.webPlan;
   const pend=S.webLog.filter(l=>l.status==='Previsto').length,chk=S.webChecks.filter(x=>!x.ok).length,pl=plan.filter(p=>p.status!=='Hecho'&&p.status!=='Descartado').length;
-  const badge={plan:pl,registro:pend,comprobar:chk};
+  const badge={plan:pl,registro:pend,comprobar:chk,contenido:CLOUD.on&&CT.draft?cDiff(cBase(),CT.draft).length:0};
   return `${head('Web de la boda','Web de la boda','La web pública es para los invitados; aquí se organiza qué cambiar y se comprueba',safeUrl(c.publicUrl)?`<a class="btn pri" href="${esc(c.publicUrl)}" target="_blank" rel="noopener noreferrer">${ic('ext')} Abrir web</a>`:'')}
   <nav class="tabs" role="tablist">${WTABS.map(([k,l])=>`<a href="#web" role="tab" class="${tab===k?'on':''}" data-act="webTab" data-tab="${k}">${l}${badge[k]?` <span class="badge ${k==='registro'?'b-warn':''}">${badge[k]}</span>`:''}</a>`).join('')}</nav>
   ${WV[tab]()}`;
@@ -1196,10 +1207,58 @@ WV.plan=()=>{const names={'0':['Ajustes rápidos en la web','Cambios pequeños e
    <div><div class="tt" ${p.status==='Hecho'||p.status==='Descartado'?'style="text-decoration:line-through;color:var(--faint)"':''}>${esc(p.title)}</div><div class="small muted">${esc(p.detail||'')}</div>${p.file?`<div style="margin-top:4px"><code>${esc(p.file)}</code></div>`:''}</div>
    <div style="display:flex;gap:2px;align-items:center"><select data-change="pstatus" data-id="${p.id}" aria-label="Estado" style="min-height:34px;padding:4px 8px;font-size:.82rem">${ST.map(s=>`<option ${p.status===s?'selected':''}>${s}</option>`).join('')}</select><button class="icb" data-act="edit" data-c="webPlan" data-id="${p.id}" aria-label="Editar">${ic('edit')}</button></div></div>`).join('')||'<p class="empty">Sin pasos.</p>'}</div></div></div>`}).join('')}
  <div style="margin-top:16px">${addBtn('webPlan','Añadir paso','out')}</div>`};
-WV.contenido=()=>{const byKey={};S.webLog.filter(l=>l.status!=='Descartado'&&l.status!=='Publicado (comprobado en la web)').forEach(l=>{byKey[l.section+'|'+l.field]=l});
- return `<div class="note sage small">${ic('eye')}<span>Lo que muestra hoy la web, leído de tu carpeta local el ${fd(SNAP_DATE)} (coincide con lo publicado). Es una foto fija: con la fase 1 del plan esta pantalla pasará a leer y editar el archivo de contenido real. Pulsa ${ic('edit')} para anotar un cambio; quedará como «Previsto» en el Registro.</span></div>
- <div class="grid g2">${WEB_CONTENT.map(s=>`<div class="card"><h3 style="justify-content:space-between">${esc(s.name)}</h3><div class="xs muted" style="margin:2px 0 8px"><code>${esc(s.file)}</code></div>
-  ${s.fields.map(([k,l,v])=>{const pc=byKey[s.name+'|'+l];return `<div class="fld"><div class="k">${esc(l)}</div><div class="v ${pc?'pending':''}">${esc(v)}${pc?`<div class="diff">${ic('arrow')} <ins>${esc(pc.to)}</ins> <span class="badge b-warn">${esc(pc.status)}</span></div>`:''}</div>${k==='iban'||k==='maps'?'<span></span>':`<button class="icb" data-act="propose" data-sec="${s.id}" data-k="${k}" aria-label="Proponer cambio en ${esc(l)}">${ic('edit')}</button>`}</div>`}).join('')}</div>`).join('')}</div>`};
+WV.contenido=()=>{
+ if(!CLOUD.on)return `<div class="note">${ic('info')}<span>Editar y publicar los textos de la web necesita Firebase. Hazlo desde la app de gestión publicada en <b>/my-wedding/admin/</b>.</span></div>`;
+ if(!CT.loaded)return `<p class="empty">Cargando el contenido…</p>`;
+ const d=CT.draft,pub=CT.published,ver=CT.pubVersion;
+ const ICONS_EV=[['heart','Corazón'],['glass','Copa'],['utensils','Cubiertos'],['party-popper','Fiesta'],['clock','Reloj'],['map-pin','Ubicación'],['info','Información'],['gift','Regalo']];
+ const ICONS_CARD=[['shirt','Ropa'],['info','Información'],['utensils','Cubiertos'],['map-pin','Ubicación'],['clock','Reloj'],['heart','Corazón'],['gift','Regalo']];
+ const ACCENTS=[['#B15C38','Terracota'],['#5E6A49','Salvia'],['#CD8A52','Naranja'],['#7E8C6A','Salvia claro']];
+ const fi=(path,label,val,o={})=>`<label class="f${o.full?' full':''}">${label}${o.ta?`<textarea data-cpath="${path}" data-input="cset" rows="${o.rows||3}">${esc(val)}</textarea>`:`<input data-cpath="${path}" data-input="cset" value="${esc(val)}" ${o.ph?`placeholder="${esc(o.ph)}"`:''} ${o.type?`type="${o.type}"`:''}>`}${o.h?`<span class="hint">${o.h}</span>`:''}</label>`;
+ const sel=(path,label,val,opts)=>`<label class="f">${label}<select data-cpath="${path}" data-change="cset">${opts.map(([v,l])=>`<option value="${esc(v)}" ${v===val?'selected':''}>${esc(l)}</option>`).join('')}</select></label>`;
+ const cd=String(d.hero.countdownIso||'');
+ return `<div class="card" style="display:flex;gap:14px 24px;align-items:center;flex-wrap:wrap">
+   <div style="flex:1;min-width:220px"><div class="eyebrow">Publicado en la web</div><div class="tt" style="color:var(--dark)">${pub?`Versión ${ver} · ${fd(String(CT.pubAt||'').slice(0,10))}`:'Aún no se ha publicado nada: la web muestra sus textos de respaldo.'}</div>
+   <div class="small muted" id="cstatus">${cStatusText()}</div></div>
+   <button class="btn out" data-act="cdiscard">${ic('x')} Descartar cambios</button>
+   <button class="btn pri" data-act="cpublish">${ic('up')} Publicar</button></div>
+  ${CT.conflict?`<div class="note">${ic('alert')}<div><b>Lo publicado ha cambiado fuera de este editor</b> (desde la consola de Firebase o desde otro dispositivo) mientras tenías cambios sin publicar. Revisa la lista de cambios de la derecha antes de decidir.
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="btn pri sm" data-act="cusepub">Usar lo publicado</button><button class="btn out sm" data-act="ckeep">Mantener mi borrador</button></div></div></div>`:''}
+  <div class="note sage small">${ic('info')}<span>Lo que escribes se guarda solo como <b>borrador</b>, compartido entre los dos. La web no cambia hasta que pulsas <b>Publicar</b>. Cada publicación queda en el historial y se puede recuperar.</span></div>
+  <div class="grid g21" style="align-items:start">
+  <div>
+  <details class="card ced" open><summary><h3>${ic('home')} Portada</h3></summary><div class="fgrid">
+   ${fi('hero.dateText','Fecha visible',d.hero.dateText)}${fi('hero.location','Lugar',d.hero.location)}
+   <label class="f">Día de la cuenta atrás<input type="date" data-ccount="date" value="${esc(cd.slice(0,10))}"></label>
+   <label class="f">Hora de la cuenta atrás<input type="time" data-ccount="time" value="${esc(cd.slice(11,16))}"><span class="hint">Hora de Madrid.</span></label></div></details>
+  <details class="card ced" open><summary><h3>${ic('clock')} Programa del día</h3></summary>
+   ${d.events.map((e,i)=>`<div class="cblock"><div class="cbh"><b>${i+1}. ${esc(e.title||'Nuevo momento')}</b><span style="flex:1"></span>
+     <button class="icb" data-act="cmove" data-list="events" data-i="${i}" data-dir="-1" aria-label="Subir" ${i?'':'disabled'}>↑</button><button class="icb" data-act="cmove" data-list="events" data-i="${i}" data-dir="1" aria-label="Bajar" ${i<d.events.length-1?'':'disabled'}>↓</button>
+     <button class="icb d" data-act="cremove" data-list="events" data-i="${i}" aria-label="Quitar">${ic('trash')}</button></div>
+     <div class="fgrid">${fi(`events.${i}.type`,'Etiqueta',e.type,{ph:'Ceremonia, Cóctel…'})}${fi(`events.${i}.title`,'Título',e.title)}
+     ${fi(`events.${i}.timeStart`,'Empieza',e.timeStart,{ph:'13:00 h'})}${fi(`events.${i}.timeEnd`,'Termina',e.timeEnd,{ph:'13:30 h'})}
+     ${fi(`events.${i}.venue`,'Lugar',e.venue)}${sel(`events.${i}.icon`,'Icono',e.icon,ICONS_EV)}
+     ${fi(`events.${i}.address`,'Dirección',e.address,{full:1})}${fi(`events.${i}.mapsUrl`,'Enlace a Google Maps',e.mapsUrl,{full:1,ph:'https://maps.google.com/…',h:'Opcional. Si está vacío no se muestra el botón.'})}
+     ${fi(`events.${i}.dressCode`,'Vestimenta',e.dressCode,{full:1,h:'Se muestra en el primer momento del programa.'})}${fi(`events.${i}.description`,'Descripción',e.description,{full:1,ta:1})}</div></div>`).join('')}
+   <button class="btn out sm" data-act="cadd" data-list="events">${ic('plus')} Añadir momento</button></details>
+  <details class="card ced" open><summary><h3>${ic('info')} Lo que debes saber</h3></summary>
+   ${d.needToKnow.map((c,i)=>`<div class="cblock"><div class="cbh"><b>${esc(c.title||'Nueva tarjeta')}</b><span style="flex:1"></span>
+     <button class="icb" data-act="cmove" data-list="needToKnow" data-i="${i}" data-dir="-1" aria-label="Subir" ${i?'':'disabled'}>↑</button><button class="icb" data-act="cmove" data-list="needToKnow" data-i="${i}" data-dir="1" aria-label="Bajar" ${i<d.needToKnow.length-1?'':'disabled'}>↓</button>
+     <button class="icb d" data-act="cremove" data-list="needToKnow" data-i="${i}" aria-label="Quitar">${ic('trash')}</button></div>
+     <div class="fgrid">${fi(`needToKnow.${i}.title`,'Título',c.title,{full:1})}${sel(`needToKnow.${i}.icon`,'Icono',c.icon,ICONS_CARD)}${sel(`needToKnow.${i}.accent`,'Color',c.accent,ACCENTS)}
+     ${fi(`needToKnow.${i}.items`,'Puntos',c.items.join('\n'),{full:1,ta:1,rows:Math.max(4,c.items.length+1),h:'Uno por línea.'})}</div></div>`).join('')}
+   <button class="btn out sm" data-act="cadd" data-list="needToKnow">${ic('plus')} Añadir tarjeta</button></details>
+  <details class="card ced" open><summary><h3>${ic('check')} Confirmación de asistencia</h3></summary><div class="fgrid">
+   ${fi('rsvp.deadlineText','Fecha límite (texto)',d.rsvp.deadlineText,{h:'Tal como se lee: «1 de febrero de 2027».'})}${fi('rsvp.contactEmail','Correo de contacto',d.rsvp.contactEmail,{type:'email'})}</div></details>
+  <details class="card ced" open><summary><h3>${ic('wallet')} Lista de bodas</h3></summary><div class="fgrid">
+   ${fi('registry.titular','Titular',d.registry.titular)}${fi('registry.concepto','Concepto',d.registry.concepto)}
+   ${fi('registry.iban','IBAN',d.registry.iban,{full:1,ph:'ES00 0000 0000 0000 0000 0000',h:'Se comprueba antes de publicar. Vacío = la web muestra «Muy pronto publicaremos aquí los datos».'})}</div></details>
+  </div>
+  <div class="grid cside" style="position:sticky;top:20px;align-content:start">
+   <div class="card"><h3>${ic('edit')} Cambios sin publicar</h3><div id="cdiff" style="margin-top:8px">${cDiffHtml()}</div></div>
+   <div class="card"><h3>${ic('clock')} Historial</h3>${CT.history.length?`<div class="list" style="margin-top:6px">${CT.history.slice(0,10).map(h=>`<div class="row"><div class="t"><div class="tt">Versión ${h.version}</div><div class="sb">${esc(String(h.publishedAt||'').slice(0,16).replace('T',' '))}${h.by?' · '+esc(h.by):''}${h.summary?`<br>${esc(h.summary)}`:''}</div></div><button class="btn ghost sm" data-act="crestore" data-id="${esc(h.id)}">Al borrador</button></div>`).join('')}</div>`:'<p class="small muted" style="margin-top:8px">Todavía no hay publicaciones.</p>'}</div>
+  </div></div>`;
+};
 WV.comprobar=()=>{const ok=S.webChecks.filter(x=>x.ok).length;return `
  <div class="card" style="display:flex;align-items:center;gap:18px;flex-wrap:wrap"><span class="ring" style="--p:${S.webChecks.length?ok/S.webChecks.length*100:0}" data-v="${ok}/${S.webChecks.length}"></span><div style="flex:1;min-width:200px"><b style="color:var(--dark)">Comprobación manual de la información importante</b><div class="small muted">Marca cada punto tras verificarlo en la web publicada. Se guarda la fecha.</div></div>${addBtn('webChecks','Comprobación','out')}</div>
  <div class="card" style="padding:0;margin-top:14px">${S.webChecks.map(x=>`<div class="task ${x.ok?'done':''}"><input type="checkbox" data-change="wcheck" data-id="${x.id}" ${x.ok?'checked':''} aria-label="Comprobado"><div class="tt">${esc(x.text)}</div><div class="when xs muted">${x.last?'Comprobado '+fd(x.last):''}</div><div class="ops"><button class="icb" data-act="edit" data-c="webChecks" data-id="${x.id}" aria-label="Editar">${ic('edit')}</button><button class="icb d" data-act="del" data-c="webChecks" data-id="${x.id}" aria-label="Borrar">${ic('trash')}</button></div></div>`).join('')}</div>
@@ -1207,7 +1266,7 @@ WV.comprobar=()=>{const ok=S.webChecks.filter(x=>x.ok).length;return `
  ${tbl('webInfo',[{h:'Información',f:i=>`${esc(i.text)}${i.note?`<div class="xs muted">${esc(i.note)}</div>`:''}`},{h:'Estado',f:i=>`<span class="badge ${i.status==='En la web'?'b-ok':'b-warn'}">${esc(i.status)}</span>`}],S.webInfo,empty('Sin elementos.'))}</div>
  <div class="sec"><div class="hd"><h2>Textos a revisar</h2>${addBtn('webTexts','Añadir','out')}</div>
  ${tbl('webTexts',[{h:'Texto',f:t=>`${esc(t.text)}<div class="xs muted">${esc(t.section||'')}</div>`},{h:'Estado',f:t=>`<span class="badge ${t.status==='Revisado'?'b-ok':t.status==='Descartado'?'b-mute':'b-warn'}">${esc(t.status)}</span>`}],S.webTexts,empty('Ningún texto pendiente.'))}</div>`};
-WV.registro=()=>{const ST=['Previsto','Hecho en el repositorio','Publicado (comprobado en la web)','Descartado'];
+WV.registro=()=>{const ST=['Previsto','Hecho en el repositorio','Publicado (sin comprobar)','Publicado (comprobado en la web)','Descartado'];
  const rows=S.webLog.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
  return `<div class="note small">${ic('info')}<span>«Previsto» es solo una nota en esta app. Pásalo a «Hecho en el repositorio» cuando el cambio esté en el código, y a «Publicado» solo después de verlo en la web.</span></div>
  <div class="bar">${addBtn('webLog','Cambio','out')}</div>
@@ -1305,7 +1364,7 @@ async function cloudBoot(){
     const base=`https://www.gstatic.com/firebasejs/${FB_VERSION}/`;
     const [APP,A,F]=await Promise.all([import(base+'firebase-app.js'),import(base+'firebase-auth.js'),import(base+'firebase-firestore.js')]);
     const app=APP.initializeApp(cfg);const auth=A.getAuth(app);
-    CLOUD.F=F;CLOUD.db=F.getFirestore(app);
+    CLOUD.F=F;CLOUD.db=F.getFirestore(app);CLOUD.cfg=cfg;
     CLOUD.signIn=()=>A.signInWithPopup(auth,new A.GoogleAuthProvider()).catch(e=>{if(e&&e.code!=='auth/popup-closed-by-user'&&e.code!=='auth/cancelled-popup-request')toast('No se pudo iniciar sesión ('+(e.code||e.message)+')')});
     CLOUD.signOut=()=>A.signOut(auth).then(()=>location.reload());
     A.onAuthStateChanged(auth,async u=>{
@@ -1330,6 +1389,7 @@ async function cloudStart(){
     maybeReady()},e=>setSync('Sin conexión')));
   F.onSnapshot(F.collection(db,'rsvps'),qs=>{CLOUD.rsvps=qs.docs.map(d=>({id:d.id,...d.data()}));CLOUD.loaded.add('rsvps');maybeReady()},e=>console.warn('rsvps',e));
   CLOUD.applyColl=applyColl;
+  cLoad();
 }
 function maybeReady(){
   if(CLOUD.loaded.size<COLLS.length+2)return;
@@ -1399,6 +1459,120 @@ function mergeRsvps(){
   if(changed||removed){save();softRender();
     if(changed)toast(changed===1?'1 respuesta nueva de la web':`${changed} respuestas nuevas de la web`);
     else toast(removed===1?'1 respuesta borrada en Firebase':`${removed} respuestas borradas en Firebase`)}
+}
+
+/* =================== Contenido de la web (fase 4) =================== */
+const DEFAULT_CONTENT={"v": 1, "hero": {"dateText": "11 de Septiembre de 2027", "location": "Madrid, España", "countdownIso": "2027-09-11T13:00:00+02:00"}, "events": [{"id": "ceremonia", "icon": "heart", "type": "Ceremonia", "title": "Ceremonia Civil", "timeStart": "13:00 h", "timeEnd": "13:30 h", "venue": "Jardines del Negralejo", "address": "Carr. de Mejorada, km 2,5, 28522 Rivas-Vaciamadrid, Madrid", "mapsUrl": "https://www.google.com/maps/place/Jardines+del+Negralejo/@40.4085192,-3.51632,17z/data=!4m6!3m5!1s0xd423b214854bab3:0x664516d941116999!8m2!3d40.4085706!4d-3.5162788!16s%2Fg%2F11thnjv_ym?entry=ttu&g_ep=EgoyMDI2MDUxMy4wIKXMDSoASAFQAw%3D%3D", "dressCode": "Traje Formal · Evitar blanco", "description": "Os esperamos para dar comienzo a esta historia juntos. La ceremonia tendrá lugar en el precioso jardín del palacio."}, {"id": "coctel", "icon": "glass", "type": "Cóctel", "title": "Cóctel de Bienvenida", "timeStart": "13:30 h", "timeEnd": "15:00 h", "venue": "Jardines del Negralejo", "address": "Carr. de Mejorada, km 2,5, 28522 Rivas-Vaciamadrid, Madrid", "mapsUrl": "", "dressCode": "Traje Formal · Evitar blanco", "description": "Disfruta de aperitivos y bebidas en los jardines mientras celebramos juntos el inicio de nuestra nueva vida."}, {"id": "banquete", "icon": "utensils", "type": "Banquete", "title": "Comida", "timeStart": "15:00 h", "timeEnd": "18:30 h", "venue": "Gran Salón del Negralejo", "address": "Carr. de Mejorada, km 2,5, 28522 Rivas-Vaciamadrid, Madrid", "mapsUrl": "", "dressCode": "Traje Formal · Evitar blanco", "description": "La celebración continúa con una comida de gala en el Gran Salón. ¡Buen provecho!"}, {"id": "baile", "icon": "party-popper", "type": "Fiesta", "title": "Baile", "timeStart": "18:30 h", "timeEnd": "02:00 h", "venue": "Gran Salón del Negralejo", "address": "Carr. de Mejorada, km 2,5, 28522 Rivas-Vaciamadrid, Madrid", "mapsUrl": "", "dressCode": "Traje Formal · Evitar blanco", "description": "Abrimos la pista y bailamos hasta la madrugada. ¡Que empiece la fiesta!"}], "needToKnow": [{"icon": "shirt", "title": "Código de Vestimenta", "accent": "#B15C38", "items": ["Traje formal para caballeros (corbata o pajarita)", "Vestido de cóctel para señoras", "Por favor, evitar colores blanco, marfil y crudo", "Recomendamos llevar zapato de cambio para el baile"]}, {"icon": "info", "title": "Detalles del Lugar", "accent": "#5E6A49", "items": ["La ceremonia se realiza al aire libre, prever calzado cómodo para jardín", "No se permite confeti ni arroz dentro del recinto", "Zona de aparcamiento gratuita disponible dentro del recinto", "El recinto es accesible para personas con movilidad reducida"]}, {"icon": "utensils", "title": "Menú y Alergias", "accent": "#CD8A52", "items": ["Menú de cuatro tiempos con opciones vegetarianas", "Indicad vuestras alergias o intolerancias en el formulario de confirmación", "Menú infantil disponible para los más pequeños", "Barra libre durante la fiesta"]}], "rsvp": {"deadlineText": "1 de febrero de 2027", "contactEmail": "pablo.daniela2027@gmail.com"}, "registry": {"titular": "Pablo Agudo Brun", "iban": "", "concepto": "Regalo boda Daniela & Pablo"}};
+const CT={loaded:false,draft:null,published:null,pubVersion:0,pubAt:'',history:[],dirty:false,timer:null,gotPub:false,gotDraft:false,baseKey:'',conflict:false};
+const cKey=c=>stable(normContent(c));
+const clone=o=>JSON.parse(JSON.stringify(o));
+const cBase=()=>CT.published||DEFAULT_CONTENT;
+function cLoad(){
+  const F=CLOUD.F,db=CLOUD.db;let draftDoc=null;
+  // El borrador sigue a lo publicado (también si se cambia desde la consola de Firebase),
+  // salvo que tenga cambios propios sin publicar: entonces se avisa y se elige.
+  const ready=()=>{if(!CT.gotPub||!CT.gotDraft)return;
+    if(!CT.dirty){const pubKey=cKey(cBase());
+      if(!draftDoc){CT.draft=clone(cBase());CT.baseKey=pubKey;CT.conflict=false}
+      else{CT.draft=draftDoc.content;CT.baseKey=draftDoc.baseKey||pubKey;
+        if(CT.baseKey!==pubKey){
+          if(cKey(CT.draft)===CT.baseKey||cKey(CT.draft)===pubKey){CT.draft=clone(cBase());CT.baseKey=pubKey;CT.conflict=false;if(CT.loaded)cSaveDraft()}
+          else CT.conflict=true}
+        else CT.conflict=false}}
+    CT.loaded=true;if(route()==='web'&&UI.webTab==='contenido'&&!document.activeElement?.closest?.('[data-cpath],[data-ccount]'))softRender()};
+  F.onSnapshot(F.doc(db,'content','published'),d=>{const x=d.data();CT.gotPub=true;
+    if(x&&x.json){try{CT.published=normContent(JSON.parse(x.json));CT.pubVersion=x.version||0;CT.pubAt=x.publishedAt||''}catch(e){}}ready()},e=>console.warn('content',e));
+  F.onSnapshot(F.doc(db,'admin','contentDraft'),d=>{const x=d.data();CT.gotDraft=true;
+    draftDoc=null;if(x&&x.json){try{draftDoc={content:normContent(JSON.parse(x.json)),baseKey:x.baseKey||''}}catch(e){}}ready()},e=>console.warn('draft',e));
+  F.onSnapshot(F.collection(db,'admin','contentHistory','items'),qs=>{CT.history=qs.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.version||0)-(a.version||0));if(CT.loaded)softRender()},e=>console.warn('history',e));
+}
+function normContent(c){
+  const D=DEFAULT_CONTENT,o=c&&typeof c==='object'?c:{};
+  const pick=(base,inc)=>{const r={...base};if(inc&&typeof inc==='object')Object.keys(base).forEach(k=>{if(typeof inc[k]==='string')r[k]=inc[k]});return r};
+  const EV={id:'',icon:'heart',type:'',title:'',timeStart:'',timeEnd:'',venue:'',address:'',mapsUrl:'',dressCode:'',description:''};
+  return {v:1,hero:pick(D.hero,o.hero),
+    events:Array.isArray(o.events)?o.events.map(e=>pick(EV,e)):clone(D.events),
+    needToKnow:Array.isArray(o.needToKnow)?o.needToKnow.map(x=>({...pick({icon:'info',title:'',accent:'#5E6A49'},x),items:Array.isArray(x&&x.items)?x.items.filter(t=>typeof t==='string'):[]})):clone(D.needToKnow),
+    rsvp:pick(D.rsvp,o.rsvp),registry:pick(D.registry,o.registry)};
+}
+function cFlat(c){
+  const out=[];const add=(k,l,v)=>out.push([k,l,String(v??'')]);
+  add('h.d','Portada · Fecha visible',c.hero.dateText);add('h.l','Portada · Lugar',c.hero.location);add('h.c','Portada · Cuenta atrás',String(c.hero.countdownIso).slice(0,16).replace('T',' '));
+  const EF=[['type','Etiqueta'],['title','Título'],['timeStart','Empieza'],['timeEnd','Termina'],['venue','Lugar'],['address','Dirección'],['mapsUrl','Google Maps'],['dressCode','Vestimenta'],['description','Descripción'],['icon','Icono']];
+  add('e.order','Programa · Orden',c.events.map((e,i)=>e.id||i).join(','));
+  c.events.forEach((e,i)=>EF.forEach(([k,l])=>add(`e:${e.id||i}.${k}`,`Programa · ${e.title||'sin título'} · ${l}`,e[k])));
+  c.needToKnow.forEach((x,i)=>{const n=`Lo que debes saber ${i+1} (${x.title||'sin título'})`;add(`n${i}.t`,`${n} · Título`,x.title);add(`n${i}.i`,`${n} · Puntos`,x.items.join(' / '));add(`n${i}.ic`,`${n} · Icono`,x.icon);add(`n${i}.a`,`${n} · Color`,x.accent)});
+  add('r.d','Confirmación · Fecha límite',c.rsvp.deadlineText);add('r.e','Confirmación · Correo',c.rsvp.contactEmail);
+  add('g.t','Lista de bodas · Titular',c.registry.titular);add('g.i','Lista de bodas · IBAN',c.registry.iban);add('g.c','Lista de bodas · Concepto',c.registry.concepto);
+  return out;
+}
+function cDiff(a,b){const A=new Map(cFlat(a).map(([k,l,v])=>[k,[l,v]])),B=new Map(cFlat(b).map(([k,l,v])=>[k,[l,v]]));const r=[];
+  const titles=c=>c.events.map(e=>e.title||'sin título').join(' → ');
+  new Set([...A.keys(),...B.keys()]).forEach(k=>{const x=A.get(k),y=B.get(k);const xv=x?x[1]:'',yv=y?y[1]:'';if(xv!==yv)r.push(k==='e.order'?[(y||x)[0],titles(a),titles(b)]:[(y||x)[0],xv,yv])});return r}
+function ibanOk(v){const s=String(v||'').replace(/\s+/g,'').toUpperCase();if(!/^[A-Z]{2}\d{2}[A-Z0-9]{10,30}$/.test(s))return false;
+  const r=s.slice(4)+s.slice(0,4);let m=0;for(const ch of r){const n=ch>='A'?String(ch.charCodeAt(0)-55):ch;for(const dgt of n)m=(m*10+(+dgt))%97}return m===1}
+function cErrors(c){const e=[];
+  if(!c.hero.dateText.trim())e.push('Portada: falta la fecha visible.');
+  if(isNaN(new Date(c.hero.countdownIso).getTime()))e.push('Portada: la fecha u hora de la cuenta atrás no es válida.');
+  if(!c.events.length)e.push('Programa: añade al menos un momento.');
+  c.events.forEach((x,i)=>{const n=`Programa ${i+1}`;if(!x.title.trim())e.push(`${n}: falta el título.`);
+    if(!/^\d{1,2}:\d{2}( h)?$/.test(x.timeStart.trim()))e.push(`${n}: la hora de inicio debe ser como «13:00 h».`);
+    if(x.timeEnd.trim()&&!/^\d{1,2}:\d{2}( h)?$/.test(x.timeEnd.trim()))e.push(`${n}: la hora de fin debe ser como «13:30 h».`);
+    if(x.mapsUrl.trim()&&!/^https:\/\//.test(x.mapsUrl.trim()))e.push(`${n}: el enlace de Maps debe empezar por https://.`)});
+  c.needToKnow.forEach((x,i)=>{if(!x.title.trim())e.push(`Lo que debes saber ${i+1}: falta el título.`);if(!x.items.length)e.push(`Lo que debes saber ${i+1}: añade al menos un punto.`)});
+  if(!c.rsvp.deadlineText.trim())e.push('Confirmación: falta la fecha límite.');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(c.rsvp.contactEmail.trim()))e.push('Confirmación: el correo de contacto no es válido.');
+  if(c.registry.iban.trim()&&!ibanOk(c.registry.iban))e.push('Lista de bodas: el IBAN no es válido (los dígitos de control no cuadran). Revísalo antes de publicar.');
+  return e}
+function cStatusText(){const n=cDiff(cBase(),CT.draft).length;return n?`${n} cambio${n>1?'s':''} sin publicar en el borrador${CT.dirty?' · guardando…':''}`:'El borrador coincide con lo publicado.'}
+function cDiffHtml(){const df=cDiff(cBase(),CT.draft),er=cErrors(CT.draft);
+  return (er.length?`<div class="note" style="margin:0 0 8px">${ic('alert')}<div>${er.map(x=>`<div class="cerr">${esc(x)}</div>`).join('')}</div></div>`:'')+
+   (df.length?df.map(([l,a,b])=>`<div class="cdiff"><div class="k">${esc(l)}</div><div class="diff">${a?`<del>${esc(a.length>120?a.slice(0,119)+'…':a)}</del> `:''}${ic('arrow')} <ins>${esc(b?(b.length>120?b.slice(0,119)+'…':b):'(vacío)')}</ins></div></div>`).join(''):'<p class="small muted">Sin cambios.</p>')}
+function cRefresh(){const a=$('#cstatus');if(a)a.textContent=cStatusText();const b=$('#cdiff');if(b)b.innerHTML=cDiffHtml()}
+function cSetPath(obj,path,val){const ks=path.split('.');let o=obj;for(let i=0;i<ks.length-1;i++)o=o[isNaN(+ks[i])?ks[i]:+ks[i]];const last=ks[ks.length-1];o[last]=last==='items'?String(val).split('\n').map(t=>t.trim()).filter(Boolean):val}
+function madridIso(date,time){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!/^\d{2}:\d{2}$/.test(time))return '';
+  const [y,m,d]=date.split('-').map(Number),[h,mi]=time.split(':').map(Number);const guess=Date.UTC(y,m-1,d,h,mi);
+  const parts=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Madrid',hourCycle:'h23',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).formatToParts(new Date(guess)).map(p=>[p.type,p.value]));
+  const local=Date.UTC(+parts.year,+parts.month-1,+parts.day,+parts.hour,+parts.minute);const off=Math.round((local-guess)/60000);
+  const sg=off>=0?'+':'-',a=Math.abs(off);return `${date}T${time}:00${sg}${String(Math.floor(a/60)).padStart(2,'0')}:${String(a%60).padStart(2,'0')}`}
+function cTouch(){CT.dirty=true;cRefresh();clearTimeout(CT.timer);CT.timer=setTimeout(cSaveDraft,700)}
+async function cSaveDraft(){clearTimeout(CT.timer);const F=CLOUD.F;if(!F)return;
+  try{await F.setDoc(F.doc(CLOUD.db,'admin','contentDraft'),{json:JSON.stringify(CT.draft),baseKey:CT.baseKey,updatedAt:new Date().toISOString(),by:(CLOUD.user&&CLOUD.user.email)||''})}
+  catch(e){toast('No se pudo guardar el borrador ('+(e.code||e.message)+')')}
+  CT.dirty=false;cRefresh()}
+chg.cset=el=>{if(!CT.draft)return;cSetPath(CT.draft,el.dataset.cpath,el.value);cTouch()};
+document.addEventListener('change',e=>{const el=e.target.closest('[data-ccount]');if(!el||!CT.draft)return;
+  const date=$('[data-ccount="date"]').value,time=$('[data-ccount="time"]').value,v=madridIso(date,time);
+  if(!v){toast('Fecha u hora no válidas');return}CT.draft.hero.countdownIso=v;cTouch()});
+acts.cadd=(_,b)=>{const l=b.dataset.list;CT.draft[l].push(l==='events'?{id:'momento-'+uid(),icon:'clock',type:'',title:'',timeStart:'',timeEnd:'',venue:'',address:'',mapsUrl:'',dressCode:'',description:''}:{icon:'info',title:'',accent:'#5E6A49',items:[]});cTouch();render()};
+acts.cremove=(_,b)=>{const l=b.dataset.list,i=+b.dataset.i,x=CT.draft[l][i];askConfirm(`¿Quitar «${esc(x.title||'este bloque')}» del borrador? Se podrá recuperar descartando los cambios mientras no publiques.`,'Quitar',()=>{CT.draft[l].splice(i,1);cTouch();render()})};
+acts.cmove=(_,b)=>{const l=b.dataset.list,i=+b.dataset.i,j=i+(+b.dataset.dir),a=CT.draft[l];if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];cTouch();render()};
+acts.cdiscard=()=>{if(!cDiff(cBase(),CT.draft).length){toast('No hay cambios que descartar');return}
+  askConfirm('Se perderán los cambios del borrador y volverá a coincidir con lo publicado.','Descartar cambios',()=>{CT.draft=clone(cBase());CT.baseKey=cKey(cBase());CT.conflict=false;cTouch();render()})};
+acts.cusepub=()=>{CT.draft=clone(cBase());CT.baseKey=cKey(cBase());CT.conflict=false;cTouch();render();toast('El borrador ahora coincide con lo publicado')};
+acts.ckeep=()=>{CT.baseKey=cKey(cBase());CT.conflict=false;cTouch();render();toast('Se mantiene tu borrador; los cambios se comparan con lo publicado ahora')};
+acts.crestore=id=>{const h=CT.history.find(x=>x.id===id);if(!h)return;
+  askConfirm(`El borrador se sustituirá por la versión ${h.version}. La web no cambia hasta que publiques.`,'Cargar en el borrador',()=>{try{CT.draft=normContent(JSON.parse(h.json));cTouch();render();toast('Versión '+h.version+' cargada en el borrador')}catch(e){toast('No se pudo leer esa versión')}})};
+acts.cpublish=()=>{if(CT.conflict){toast('Primero elige: usar lo publicado o mantener tu borrador');return}const df=cDiff(cBase(),CT.draft),er=cErrors(CT.draft);
+  if(er.length){toast('Corrige los avisos en rojo antes de publicar');cRefresh();return}
+  if(!df.length&&CT.published){toast('No hay cambios que publicar');return}
+  askConfirm(`Se publicarán ${df.length||'todos los'} cambio${df.length===1?'':'s'} en la web. Los invitados los verán al recargar la página.`,'Publicar',cPublish)};
+async function cPublish(){
+  const F=CLOUD.F,db=CLOUD.db;const v=(CT.pubVersion||0)+1,now=new Date().toISOString(),by=(CLOUD.user&&CLOUD.user.email)||'';
+  const json=JSON.stringify(CT.draft),df=cDiff(cBase(),CT.draft);const summary=df.slice(0,3).map(x=>x[0].split(' · ').pop()).join(', ')+(df.length>3?` y ${df.length-3} más`:'');
+  try{const b=F.writeBatch(db);
+    b.set(F.doc(db,'content','published'),{json,version:v,publishedAt:now,by});
+    b.set(F.doc(db,'admin','contentHistory','items','v'+String(v).padStart(4,'0')),{json,version:v,publishedAt:now,by,summary});
+    CT.baseKey=cKey(CT.draft);CT.conflict=false;
+    b.set(F.doc(db,'admin','contentDraft'),{json,baseKey:CT.baseKey,updatedAt:now,by});
+    await b.commit();
+  }catch(e){toast('No se pudo publicar ('+(e.code||e.message)+')');return}
+  // Verificación: leer lo publicado como lo lee la web (API pública, sin sesión)
+  let ok=false;try{const c=CLOUD.cfg;const r=await fetch(`https://firestore.googleapis.com/v1/projects/${encodeURIComponent(c.projectId)}/databases/(default)/documents/content/published?key=${encodeURIComponent(c.apiKey)}`,{cache:'no-store'});
+    if(r.ok){const j=await r.json();ok=j&&j.fields&&j.fields.json&&j.fields.json.stringValue===json}}catch(e){}
+  S.webLog.push({id:uid(),date:iso(today()),section:'Contenido de la web',field:'Versión '+v,from:'',to:summary||'Primera publicación',change:`${df.length} cambio${df.length===1?'':'s'} publicados desde la app`,status:ok?'Publicado (comprobado en la web)':'Publicado (sin comprobar)'});
+  save();render();toast(ok?`Versión ${v} publicada y comprobada. Recarga la web para verla.`:`Versión ${v} publicada. No se pudo comprobar la lectura pública; revisa la web.`);
 }
 
 /* =================== Navegación =================== */

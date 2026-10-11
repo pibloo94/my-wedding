@@ -1,4 +1,5 @@
 import { Component, signal } from '@angular/core';
+import { LowerCasePipe } from '@angular/common';
 import {
   AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule,
   ValidationErrors, Validators
@@ -6,6 +7,7 @@ import {
 import { ScrollAnimateDirective } from '../../shared/scroll-animate.directive';
 import { IconComponent } from '../../shared/icon/icon.component';
 import { RsvpPerson, RsvpService, RsvpSubmission } from '../../core/services/rsvp.service';
+import { ContentService } from '../../core/services/content.service';
 
 type FormState = 'idle' | 'loading' | 'success' | 'error';
 
@@ -24,7 +26,7 @@ const MAX_KIDS = 8;
 @Component({
   selector: 'app-rsvp',
   standalone: true,
-  imports: [ReactiveFormsModule, ScrollAnimateDirective, IconComponent],
+  imports: [ReactiveFormsModule, ScrollAnimateDirective, IconComponent, LowerCasePipe],
   templateUrl: './rsvp.html',
   styleUrl: './rsvp.scss'
 })
@@ -34,7 +36,7 @@ export class RsvpComponent {
 
   form: FormGroup;
 
-  constructor(private fb: FormBuilder, private rsvpSvc: RsvpService) {
+  constructor(private fb: FormBuilder, private rsvpSvc: RsvpService, public content: ContentService) {
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(120)]],
       contact: ['', [Validators.required, Validators.maxLength(120), contactValidator]],

@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IconComponent } from '../../shared/icon/icon.component';
+import { ContentService } from '../../core/services/content.service';
 
 interface CountdownUnit {
   value: number;
@@ -15,7 +16,13 @@ interface CountdownUnit {
   styleUrl: './hero.scss'
 })
 export class HeroComponent implements OnInit, OnDestroy {
-  private weddingDate = new Date('2027-09-11T13:00:00+02:00'); // hora de la ceremonia (Madrid, CEST)
+  constructor(public content: ContentService) {}
+
+  /** Hora de la ceremonia, editable desde la app de gestión. */
+  private get weddingDate(): Date {
+    const d = new Date(this.content.data().hero.countdownIso);
+    return isNaN(d.getTime()) ? new Date('2027-09-11T13:00:00+02:00') : d;
+  }
   private intervalId: ReturnType<typeof setInterval> | null = null;
 
   countdown = signal<CountdownUnit[]>([
