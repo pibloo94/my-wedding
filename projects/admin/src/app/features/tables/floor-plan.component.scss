@@ -1,0 +1,24 @@
+:host { display: block; }
+.pbar { display: flex; align-items: center; justify-content: space-between; gap: 10px 14px; flex-wrap: wrap; margin-bottom: 12px; }
+.ptitle { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.zoom { display: inline-flex; align-items: center; background: var(--surface); border: 1px solid var(--sand-deep); border-radius: 50px; padding: 0 2px; }
+.zoom .icb { width: 34px; height: 34px; font-size: 1.1rem; }
+.zoom .btn.on { color: var(--primary); }
+.unplaced { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; padding: 10px 12px; border: 1px dashed var(--primary-soft); background: #FBF1E8; border-radius: 14px; }
+.canvas { border: 1px solid var(--line); border-radius: var(--r); background: var(--bg-alt); overflow: auto; max-height: 78vh; box-shadow: var(--shadow-s); }
+svg { display: block; height: auto; user-select: none; -webkit-user-select: none; }
+.room { fill: var(--surface); stroke: var(--sand-deep); stroke-width: 2; }
+.tg, .zone { cursor: grab; touch-action: none; outline: none; }
+.tg:active, .zone:active { cursor: grabbing; }
+.zone rect { fill: rgba(231, 220, 196, .45); stroke: var(--sand-deep); stroke-dasharray: 6 5; stroke-width: 1.5; }
+.zone text { font-family: var(--serif); font-size: 18px; fill: var(--faint); pointer-events: none; }
+.tg.sel, .tg:focus-visible { filter: drop-shadow(0 0 6px rgba(177, 92, 56, .75)); }
+.zone.sel rect, .zone:focus-visible rect { stroke: var(--primary); stroke-dasharray: none; stroke-width: 2.5; }
+.selbar { display: flex; align-items: center; gap: 4px 8px; flex-wrap: wrap; min-height: 58px; margin-bottom: 10px; padding: 8px 12px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); }
+.selbar.show { border-color: var(--primary-soft); box-shadow: 0 0 0 3px rgba(177, 92, 56, .1); }
+.selbar b { font-family: var(--serif); font-weight: 400; font-size: 1.1rem; color: var(--sage-deep); }
+.help { margin-top: 8px; }
+@media (max-width: 760px) {
+  .canvas { max-height: 64vh; }
+  .canvas.zoomed { touch-action: pan-x pan-y; }
+}

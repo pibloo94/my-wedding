@@ -1,0 +1,17 @@
+.kpi { display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: inherit; }
+a.kpi:hover { box-shadow: var(--shadow); }
+.l { font-size: .74rem; color: var(--muted); font-weight: 600; }
+.n { font-family: var(--serif); font-size: 2rem; color: var(--sage-deep); line-height: 1; font-weight: 300; overflow-wrap: anywhere; }
+.d { font-size: .8rem; color: var(--muted); }
+.alert { color: var(--primary-deep); font-weight: 600; }
+.bar-card { margin-top: 16px; }
+.prog.big { height: 14px; }
+.prog.mini { height: 4px; margin-top: 4px; width: 80px; margin-left: auto; }
+.c-pg { background: var(--sage); } .c-act { background: var(--orange); } .c-est { background: var(--sand-deep); }
+.donut { display: flex; gap: 22px; align-items: center; flex-wrap: wrap; }
+.donut svg { width: 170px; height: 170px; flex: none; }
+.lg { flex: 1; min-width: 220px; }
+.lg .list-row { padding: 7px 0; }
+.sw { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+.pc { width: 40px; text-align: right; }
+@media (max-width: 760px) { .donut { justify-content: center; } .n { font-size: 1.6rem; } }

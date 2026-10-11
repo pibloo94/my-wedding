@@ -48,8 +48,34 @@ export interface SectionConfig {
   linkUrl: string;
 }
 
+/**
+ * Colores de la web, editables desde la app de gestión (Temática). Cada uno es un HEX #RRGGBB.
+ * Los tonos derivados (suave, borde, fondo alternativo…) los calcula la web a partir de estos.
+ */
+export interface ThemeColors {
+  /** Terracota: monograma, botones y enlaces */
+  primary: string;
+  /** Terracota profundo: botones al pasar el ratón, énfasis */
+  primaryDeep: string;
+  /** Verde salvia: títulos y acentos */
+  sage: string;
+  /** Salvia profundo: títulos principales */
+  sageDeep: string;
+  /** Arena: cintas, escudo y bordes */
+  sand: string;
+  /** Naranja pintado: detalles */
+  orange: string;
+  /** Fondo de página */
+  background: string;
+  /** Tarjetas y superficies */
+  surface: string;
+}
+
+export const THEME_KEYS: (keyof ThemeColors)[] = ['primary', 'primaryDeep', 'sage', 'sageDeep', 'sand', 'orange', 'background', 'surface'];
+
 export interface WeddingContent {
   v: number;
+  theme: ThemeColors;
   /** Orden y configuración de las secciones (la portada y el pie son fijos) */
   sections: SectionConfig[];
   hero: { dateText: string; location: string; countdownIso: string };
@@ -61,6 +87,16 @@ export interface WeddingContent {
 
 export const DEFAULT_CONTENT: WeddingContent = {
   "v": 1,
+  "theme": {
+    "primary": "#B15C38",
+    "primaryDeep": "#97492A",
+    "sage": "#7E8C6A",
+    "sageDeep": "#5E6A49",
+    "sand": "#E7DCC4",
+    "orange": "#CD8A52",
+    "background": "#F5EFE3",
+    "surface": "#FBF7EF"
+  },
   "hero": {
     "dateText": "11 de Septiembre de 2027",
     "location": "Madrid, España",
@@ -286,6 +322,18 @@ function mergeSections(base: SectionConfig[], inc: unknown): SectionConfig[] {
   return out;
 }
 
+/** Colores: solo se aceptan HEX de 6 cifras; el resto se queda con el valor por defecto. */
+function mergeTheme(base: ThemeColors, inc: unknown): ThemeColors {
+  const out = { ...base };
+  if (isObj(inc)) {
+    for (const k of THEME_KEYS) {
+      const v = inc[k];
+      if (typeof v === 'string' && /^#[0-9a-f]{6}$/i.test(v)) out[k] = v.toUpperCase();
+    }
+  }
+  return out;
+}
+
 /** Combina el contenido publicado con el de respaldo, validando tipos campo a campo. */
 export function mergeContent(base: WeddingContent, inc: unknown): WeddingContent {
   if (!isObj(inc)) return base;
@@ -303,6 +351,7 @@ export function mergeContent(base: WeddingContent, inc: unknown): WeddingContent
     : [];
   return {
     v: typeof inc['v'] === 'number' ? inc['v'] : base.v,
+    theme: mergeTheme(base.theme, inc['theme']),
     sections: mergeSections(base.sections, inc['sections']),
     hero: strings(base.hero, inc['hero']),
     events: events.length ? events : base.events,

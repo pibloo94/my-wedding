@@ -64,7 +64,7 @@
   --color-dark:         #43473A; // Deep sage-charcoal (never pure black)
   --color-text:         #4C4E40; // Body text
   --color-white:        #ffffff;
-  --color-border:       rgba(126, 140, 106, 0.20); // Sage @ low opacity
+  --color-border:       color-mix(in srgb, var(--color-teal) 20%, transparent); // Sage @ low opacity
 
   // Single typeface — hierarchy is built with weight, size & tracking only
   --font-heading:      'Butler', serif;
@@ -189,7 +189,7 @@ a {
     &:hover {
       background: var(--color-primary-deep);
       transform: translateY(-2px);
-      box-shadow: 0 10px 26px rgba(177, 92, 56, 0.28);
+      box-shadow: 0 10px 26px color-mix(in srgb, var(--color-primary) 28%, transparent);
     }
   }
 
@@ -204,7 +204,7 @@ a {
     border-color: var(--color-sand-deep);
 
     &:hover {
-      background: rgba(126, 140, 106, 0.06);
+      background: color-mix(in srgb, var(--color-teal) 6%, transparent);
       border-color: var(--color-teal);
       transform: translateY(-1px);
     }
@@ -250,7 +250,7 @@ a {
     &:focus {
       border-color: var(--color-teal);
       background: var(--color-white);
-      box-shadow: 0 0 0 4px rgba(126, 140, 106, 0.08);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-teal) 8%, transparent);
     }
 
     &.ng-invalid.ng-touched {

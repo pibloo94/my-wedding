@@ -120,6 +120,121 @@
           }
         }
       }
+    },
+    "admin": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss",
+          "skipTests": true
+        },
+        "@schematics/angular:class": {
+          "skipTests": true
+        },
+        "@schematics/angular:directive": {
+          "skipTests": true
+        },
+        "@schematics/angular:guard": {
+          "skipTests": true
+        },
+        "@schematics/angular:interceptor": {
+          "skipTests": true
+        },
+        "@schematics/angular:pipe": {
+          "skipTests": true
+        },
+        "@schematics/angular:resolver": {
+          "skipTests": true
+        },
+        "@schematics/angular:service": {
+          "skipTests": true
+        }
+      },
+      "root": "projects/admin",
+      "sourceRoot": "projects/admin/src",
+      "prefix": "adm",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "projects/admin/src/main.ts",
+            "outputPath": {
+              "base": "dist/wedding-app/browser/admin",
+              "browser": ""
+            },
+            "tsConfig": "projects/admin/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "externalDependencies": [
+              "assets/*",
+              "fonts/*"
+            ],
+            "assets": [
+              {
+                "glob": "firebase-config.json",
+                "input": "public",
+                "output": "/"
+              },
+              {
+                "glob": "favicon.svg",
+                "input": "public",
+                "output": "/"
+              },
+              {
+                "glob": "Butler-{Light,Regular,Medium}.woff2",
+                "input": "public/fonts",
+                "output": "fonts"
+              },
+              {
+                "glob": "{crest,crest-cats,divider-sprig,botanical-corner,cat-grey-sleeping,cat-orange-playing,cat-black-playing,mountain-footer}.webp",
+                "input": "public/assets/brand",
+                "output": "assets/brand"
+              }
+            ],
+            "styles": [
+              "projects/admin/src/styles.scss"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "baseHref": "/my-wedding/admin/",
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "1.2MB",
+                  "maximumError": "2MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "10kB",
+                  "maximumError": "16kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "options": {
+            "port": 4300
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "admin:build:production"
+            },
+            "development": {
+              "buildTarget": "admin:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        }
+      }
     }
   }
 }

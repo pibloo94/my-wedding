@@ -1,0 +1,67 @@
+<adm-page-header title="Presupuesto" sub="Previsto, contratado y pagado">
+  <button class="btn pri" (click)="lists.add('expenses')"><adm-icon name="plus" /> Gasto</button>
+</adm-page-header>
+
+@let s = sum();
+<div class="grid g4 kpis">
+  <a class="card kpi" routerLink="/configuracion"><span class="l">Tope</span><span class="n">{{ s.B ? eur(s.B) : '—' }}</span><span class="d">{{ s.B ? 'Editar en Configuración' : 'Defínelo en Configuración' }}</span></a>
+  <div class="card kpi"><span class="l">Previsto</span><span class="n">{{ eur(s.est) }}</span>
+    <span class="d" [class.alert]="s.B && s.est > s.B">{{ s.B ? (s.est > s.B ? eur(s.est - s.B) + ' por encima' : eur(s.B - s.est) + ' de margen') : '' }}</span></div>
+  <div class="card kpi"><span class="l">Contratado</span><span class="n">{{ eur(s.act) }}</span><span class="d">{{ s.contracted }} conceptos</span></div>
+  <div class="card kpi"><span class="l">Pagado</span><span class="n">{{ eur(s.pg) }}</span><span class="d">{{ eur(s.act > s.pg ? s.act - s.pg : 0) }} por pagar</span></div>
+</div>
+
+<div class="card bar-card">
+  <div class="prog big"><i [style.width.%]="pct(s.pg)"></i><i class="o" [style.width.%]="pct(s.act - s.pg)"></i><i class="s" [style.width.%]="pct(s.est - s.act)"></i></div>
+  <div class="legend"><span><i class="c-pg"></i>Pagado</span><span><i class="c-act"></i>Contratado sin pagar</span><span><i class="c-est"></i>Previsto sin contratar</span>@if (s.B) {<span>Barra completa = tope {{ eur(s.B) }}</span>}</div>
+</div>
+
+@if (slices().length) {
+  <section class="sec">
+    <div class="sec-h"><h2>Por categoría</h2></div>
+    <div class="card donut">
+      <svg viewBox="0 0 170 170" role="img" aria-label="Gasto por categoría">
+        <circle cx="85" cy="85" r="74" fill="none" stroke="#EFE7D6" stroke-width="22" />
+        @for (p of slices(); track p.l) {
+          <circle cx="85" cy="85" r="74" fill="none" [attr.stroke]="p.c" stroke-width="22" [attr.stroke-dasharray]="p.dash" [attr.stroke-dashoffset]="p.offset" transform="rotate(-90 85 85)"><title>{{ p.l }}: {{ eur(p.v) }}</title></circle>
+        }
+      </svg>
+      <div class="lg">
+        @for (p of slices(); track p.l) {
+          <div class="list-row"><span class="sw" [style.background]="p.c"></span><span class="t">{{ p.l }}</span><b>{{ eur(p.v) }}</b><span class="xs muted pc">{{ p.pct }}%</span></div>
+        }
+      </div>
+    </div>
+  </section>
+}
+
+<section class="sec">
+  <div class="sec-h"><h2>Gastos</h2></div>
+  @if (expenses().length) {
+    <div class="tw">
+      <table>
+        <thead><tr><th>Concepto</th><th class="num">Previsto</th><th class="num">Contratado</th><th class="num">Pagado</th><th>Vence</th><th><span class="sr-only">Acciones</span></th></tr></thead>
+        <tbody>
+          @for (e of expenses(); track e.id) {
+            <tr>
+              <td data-label="Concepto"><b>{{ e.concept }}</b>@if (meta(e)) {<div class="xs muted">{{ meta(e) }}</div>}</td>
+              <td class="num" data-label="Previsto">{{ eur(e.est) }}</td>
+              <td class="num" data-label="Contratado">{{ eur(e.act) }}</td>
+              <td class="num" data-label="Pagado">{{ eur(paid(e)) }}@if (+(e.act ?? 0)) {<span class="prog mini"><i [style.width.%]="paidPct(e)"></i></span>}</td>
+              <td data-label="Vence">@if (e.due) {<span class="badge" [class.b-bad]="late(e)">{{ fmtDate(e.due) }}</span>} @else {—}</td>
+              <td class="acts">
+                <button class="btn ghost sm" (click)="ui.open({ kind: 'payments', id: e.id })" [attr.aria-label]="'Pagos de ' + e.concept"><adm-icon name="wallet" [size]="15" /> {{ e.payments.length || 0 }}</button>
+                <button class="icb" (click)="lists.edit('expenses', e.id)" aria-label="Editar"><adm-icon name="edit" /></button>
+                <button class="icb d" (click)="lists.remove('expenses', e.id)" aria-label="Borrar"><adm-icon name="trash" /></button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <adm-empty text="Aún no hay gastos. Empieza por el espacio y el catering." cat="black">
+      <button class="btn pri" (click)="lists.add('expenses')"><adm-icon name="plus" /> Primer gasto</button>
+    </adm-empty>
+  }
+</section>

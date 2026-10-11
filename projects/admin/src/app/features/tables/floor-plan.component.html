@@ -1,0 +1,73 @@
+<div class="pbar">
+  <div class="ptitle"><h3>{{ plan().title || 'Salón' }}</h3><button class="btn ghost sm" (click)="editRoom()"><adm-icon name="edit" [size]="15" /> Salón</button></div>
+  <div class="row-actions">
+    <button class="btn out sm" (click)="addZone()"><adm-icon name="plus" [size]="15" /> Zona</button>
+    <span class="zoom" role="group" aria-label="Zoom">
+      <button class="icb" (click)="zoomBy(0.8)" aria-label="Alejar">−</button>
+      <button class="btn ghost sm" (click)="zoom.set(0)" [class.on]="!zoom()">Ajustar</button>
+      <button class="icb" (click)="zoomBy(1.25)" aria-label="Acercar">+</button>
+    </span>
+    <button class="btn out sm" (click)="downloadPng()"><adm-icon name="image" [size]="15" /> PNG</button>
+    <button class="btn out sm" (click)="print()"><adm-icon name="print" [size]="15" /> Imprimir o PDF</button>
+  </div>
+</div>
+
+@if (unplaced().length) {
+  <div class="unplaced">
+    <span class="small muted">Sin colocar:</span>
+    @for (t of unplaced(); track t.id) {
+      <button class="chip" (click)="placeAll(t)" [attr.aria-label]="'Colocar ' + t.name">{{ t.name }} <adm-icon name="plus" [size]="14" /></button>
+    }
+    <button class="btn pri sm" (click)="placeAll()">Colocar todas</button>
+  </div>
+}
+
+<div class="selbar" [class.show]="selTable() || selZone()" aria-live="polite">
+  @if (selTable(); as t) {
+    <b>{{ t.name }}</b><span class="xs muted">{{ seatsOf(t).length }}/{{ t.cap }}</span>
+    <span class="spacer"></span>
+    <button class="icb" (click)="rotate(-15)" aria-label="Girar a la izquierda"><adm-icon name="reset" /></button>
+    <button class="icb" (click)="rotate(15)" aria-label="Girar a la derecha"><adm-icon name="rotate" /></button>
+    <button class="btn out sm" (click)="openTable(t.id)">Ver mesa</button>
+    <button class="btn ghost sm" (click)="removeFromPlan()">Quitar del plano</button>
+  } @else if (selZone(); as z) {
+    <b>{{ z.label }}</b><span class="spacer"></span>
+    <button class="btn out sm" (click)="editZone()">Editar</button>
+    <button class="btn ghost sm danger" (click)="removeZone()">Quitar</button>
+  } @else {
+    <span class="small muted">Toca una mesa o una zona para editarla, girarla o quitarla del plano.</span>
+  }
+</div>
+
+<div class="canvas" [class.zoomed]="zoom() > 0">
+  <svg #svg [attr.viewBox]="'0 0 ' + plan().width + ' ' + plan().height" [style.width]="svgWidth()"
+
+    role="application" aria-label="Plano del salón. Arrastra las mesas para colocarlas; con una mesa seleccionada, las flechas la mueven y la R la gira.">
+    <defs>
+      <pattern id="dots" width="50" height="50" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1.4" fill="#D8C6A4" /></pattern>
+    </defs>
+    <rect class="room" x="0" y="0" [attr.width]="plan().width" [attr.height]="plan().height" rx="18" (click)="clearSel()" />
+    <rect x="0" y="0" [attr.width]="plan().width" [attr.height]="plan().height" fill="url(#dots)" opacity=".7" pointer-events="none" />
+
+    @for (z of plan().zones; track z.id) {
+      @let zp = pos('zone', z.id, z.x, z.y);
+      <g class="zone" [class.sel]="sel()?.id === z.id" [attr.transform]="'translate(' + zp.x + ' ' + zp.y + ')'" tabindex="0" role="button"
+        [attr.aria-label]="'Zona ' + z.label" (pointerdown)="down($event, 'zone', z.id, z.x, z.y)" (keydown)="key($event, 'zone', z.id, z.x, z.y)" (click)="$event.stopPropagation()">
+        <rect [attr.width]="z.w" [attr.height]="z.h" rx="12" />
+        <text [attr.x]="z.w / 2" [attr.y]="z.h / 2 + 6" text-anchor="middle">{{ z.label }}</text>
+      </g>
+    }
+
+    @for (t of placed(); track t.id) {
+      <g class="tg" [class.sel]="sel()?.id === t.id" [attr.transform]="tableTransform(t)" tabindex="0" role="button"
+        [attr.aria-label]="t.name + ': ' + seatsOf(t).length + ' de ' + t.cap"
+        (pointerdown)="down($event, 'table', t.id, t.x!, t.y!)" (keydown)="key($event, 'table', t.id, t.x!, t.y!)"
+        (click)="$event.stopPropagation()" (dblclick)="openTable(t.id)">
+        <g admTableGlyph [table]="t" [seats]="seatsOf(t)" />
+      </g>
+    }
+  </svg>
+</div>
+
+
+<p class="xs muted help">Arrastra las mesas con el ratón o el dedo; se guarda al soltar. Con una mesa seleccionada: flechas para moverla (Mayús = más rápido), R para girarla, Intro para abrirla. Doble clic abre la mesa.</p>

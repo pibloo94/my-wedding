@@ -1,0 +1,20 @@
+/* App de gestión privada (publicada en /my-wedding/admin/). Comparte el modelo de contenido con la web. */
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../out-tsc/admin",
+    "types": [],
+    "paths": {
+      "@web/content": ["../../src/app/core/content/wedding-content.ts"],
+      "@web/theme": ["../../src/app/core/content/theme.ts"]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "../../src/app/core/content/wedding-content.ts",
+    "../../src/app/core/content/theme.ts"
+  ],
+  "exclude": [
+    "src/**/*.spec.ts"
+  ]
+}

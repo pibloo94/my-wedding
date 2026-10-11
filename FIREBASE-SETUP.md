@@ -60,7 +60,7 @@ Estos valores **no son secretos**: Google los diseña para ir en el navegador. L
 
 - `https://pibloo94.github.io/*`
 - `https://boda-daniela-pablo.firebaseapp.com/*`. Es imprescindible: la ventana de «Entrar con Google» se abre desde ese dominio. Sin él, sale «The requested action is invalid».
-- `http://localhost:4200/*`, para probar en local.
+- `http://localhost:4200/*` y `http://localhost:4300/*`, para probar en local la web y la app de gestión.
 
 ## 6. Publicar y daros de alta
 

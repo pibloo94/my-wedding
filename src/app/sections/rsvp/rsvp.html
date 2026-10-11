@@ -14,7 +14,7 @@
 
       <!-- SUCCESS STATE -->
       @if (formState() === 'success') {
-        <div class="state-card state-success">
+        <div class="state-card state-success" #stateCard tabindex="-1" role="status">
           <div class="state-icon">
             <app-icon name="check-circle" [size]="48" />
           </div>
@@ -30,7 +30,7 @@
 
       <!-- ERROR STATE -->
       @if (formState() === 'error') {
-        <div class="state-card state-error">
+        <div class="state-card state-error" #stateCard tabindex="-1" role="alert">
           <div class="state-icon">
             <app-icon name="alert-circle" [size]="48" />
           </div>

@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, ElementRef, signal, viewChild } from '@angular/core';
 import { LowerCasePipe } from '@angular/common';
 import {
   AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule,
@@ -35,6 +35,9 @@ export class RsvpComponent {
   readonly maxKids = MAX_KIDS;
 
   form: FormGroup;
+
+  /** Tarjeta de «¡Muchas gracias!» o de error */
+  private stateCard = viewChild<ElementRef<HTMLElement>>('stateCard');
 
   constructor(private fb: FormBuilder, private rsvpSvc: RsvpService, public content: ContentService) {
     this.form = this.fb.group({
@@ -183,7 +186,7 @@ export class RsvpComponent {
   submit(): void {
     // Honeypot relleno → casi seguro un bot: se muestra éxito sin enviar nada
     if (this.form.get('website')?.value) {
-      this.formState.set('success');
+      this.showResult('success');
       return;
     }
 
@@ -194,8 +197,24 @@ export class RsvpComponent {
     this.formState.set('loading');
 
     this.rsvpSvc.submit(this.buildSubmission()).subscribe({
-      next: () => this.formState.set('success'),
-      error: () => this.formState.set('error')
+      next: () => this.showResult('success'),
+      error: () => this.showResult('error')
+    });
+  }
+
+  /**
+   * El formulario es mucho más alto que la tarjeta de resultado: al cambiar uno por otra la página
+   * encoge y quien envía se quedaría mirando la sección siguiente. Se lleva la tarjeta a la vista
+   * y se le da el foco (también lo anuncia un lector de pantalla).
+   */
+  private showResult(state: 'success' | 'error'): void {
+    this.formState.set(state);
+    requestAnimationFrame(() => {
+      const card = this.stateCard()?.nativeElement;
+      if (!card) return;
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      card.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+      card.focus({ preventScroll: true });
     });
   }
 

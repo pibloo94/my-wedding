@@ -1,0 +1,63 @@
+@if (!open()) {
+  <adm-gate />
+} @else {
+  <div class="app">
+    <aside class="side" aria-label="Secciones">
+      <a class="brand" routerLink="/inicio">
+        <img src="assets/brand/crest.webp" alt="">
+        <span class="nm">{{ config().n1 }} &amp; {{ config().n2 }}</span>
+        <span class="dt">{{ dateText() }}</span>
+      </a>
+      <nav class="nav">
+        @for (n of nav; track n.path) {
+          <a [routerLink]="'/' + n.path" routerLinkActive="on" ariaCurrentWhenActive="page" [title]="n.label">
+            <adm-icon [name]="n.icon" [size]="19" />
+            <span class="lb">{{ n.label }}</span>
+            @if (counts()[n.path]) { <span class="cnt">{{ counts()[n.path] }}</span> }
+          </a>
+        }
+      </nav>
+      <div class="foot">
+        @if (publicUrl()) {
+          <a [href]="publicUrl()" target="_blank" rel="noopener noreferrer" title="Abrir la web pública"><adm-icon name="ext" /><span>Web pública</span></a>
+        }
+        <div class="tx">
+          <span class="sync" [class.err]="store.syncStatus() === 'Error al guardar' || store.syncStatus() === 'Sin conexión'">{{ store.syncStatus() }}</span>
+          @if (fb.user(); as u) { <span class="mail">{{ u.email }}</span> }
+        </div>
+        @if (fb.state() === 'ready') { <button class="btn ghost sm out-btn" (click)="signOut()">Salir</button> }
+      </div>
+    </aside>
+
+    <div class="main-col">
+      <header class="mtop">
+        <img src="assets/brand/crest.webp" alt="">
+        <div class="nm">{{ config().n1 }} &amp; {{ config().n2 }}<small>{{ sectionLabel() }}</small></div>
+        <span class="msync" [class.err]="store.syncStatus() === 'Error al guardar' || store.syncStatus() === 'Sin conexión'" [title]="store.syncStatus()"></span>
+        @if (publicUrl()) {
+          <a class="icb" [href]="publicUrl()" target="_blank" rel="noopener noreferrer" aria-label="Abrir la web pública"><adm-icon name="globe" /></a>
+        }
+      </header>
+      <main>
+        <router-outlet />
+      </main>
+    </div>
+  </div>
+
+  <nav class="tabbar" aria-label="Secciones">
+    @for (n of tabbar; track n.path) {
+      <a [routerLink]="'/' + n.path" routerLinkActive="on" ariaCurrentWhenActive="page">
+        <adm-icon [name]="n.icon" [size]="22" /><span>{{ n.label }}</span>
+      </a>
+    }
+    <button type="button" [class.on]="!inTabbar()" (click)="ui.open({ kind: 'more' })">
+      <adm-icon name="more" [size]="22" /><span>Más</span>
+    </button>
+  </nav>
+
+  <adm-dialog-host />
+}
+
+<adm-form-dialog />
+<adm-confirm-dialog />
+<div class="toast" [class.on]="!!ui.toastText()" role="status" aria-live="polite">{{ ui.toastText() }}</div>

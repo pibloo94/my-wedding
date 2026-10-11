@@ -45,3 +45,6 @@ Thumbs.db
 # Raw font extraction cruft (only the top-level Butler-*.woff2 are used)
 /public/fonts/butler-extracted/
 /public/fonts/Butler.zip
+
+# Dependencias para Linux que se pasan a Claude para compilar (borrar tras usarlas)
+nm-linux.tgz

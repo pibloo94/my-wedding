@@ -4,7 +4,11 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start:admin": "ng serve admin",
     "build": "ng build",
+    "postbuild": "ng build admin",
+    "build:web": "ng build",
+    "build:admin": "ng build admin",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -28,6 +32,7 @@
     "@angular/forms": "^20.3.0",
     "@angular/platform-browser": "^20.3.0",
     "@angular/router": "^20.3.0",
+    "firebase": "^13.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"

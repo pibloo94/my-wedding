@@ -1,9 +1,10 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, computed, effect, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { EMPTY } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { DEFAULT_CONTENT, SectionConfig, SectionKind, WeddingContent, mergeContent } from '../content/wedding-content';
 import { FirebaseConfigService } from './firebase-config.service';
+import { changedThemeVars, themeVars } from '../content/theme';
 
 interface FirestoreDoc {
   fields?: { json?: { stringValue?: string } };
@@ -32,6 +33,9 @@ export class ContentService {
   }
 
   constructor(http: HttpClient, cfg: FirebaseConfigService) {
+    // Colores publicados desde la app de gestión (Temática). Con los de por defecto no se toca nada.
+    effect(() => this.applyTheme());
+
     cfg.config$.pipe(
       switchMap(c => (c ? http.get<FirestoreDoc>(FirebaseConfigService.docUrl(c, 'content/published')) : EMPTY)),
       catchError(() => EMPTY)
@@ -44,5 +48,18 @@ export class ContentService {
         /* contenido publicado ilegible: se mantiene el de respaldo */
       }
     });
+  }
+
+  private applyTheme(): void {
+    if (typeof document === 'undefined') return;
+    const theme = this._data().theme;
+    const root = document.documentElement.style;
+    for (const name of Object.keys(themeVars(theme))) root.removeProperty(name);
+    const vars = changedThemeVars(theme);
+    for (const [name, value] of Object.entries(vars)) root.setProperty(name, value);
+    // Color de la barra del navegador en móvil y fondo antes de que carguen los estilos
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme.primary);
+    if (vars['--color-bg']) document.documentElement.style.backgroundColor = vars['--color-bg'];
+    else document.documentElement.style.removeProperty('background-color');
   }
 }

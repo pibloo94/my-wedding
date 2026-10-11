@@ -1,0 +1,13 @@
+.mrow { border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; margin-top: 10px; background: #fff; display: grid; gap: 8px; }
+.mhead { display: grid; grid-template-columns: 150px minmax(0, 1fr) 84px auto; gap: 8px; align-items: center; }
+.mdiet { display: grid; grid-template-columns: 190px auto auto minmax(0, 1fr); gap: 8px 12px; align-items: center; }
+.ck { display: flex; align-items: center; gap: 6px; font-size: .9rem; white-space: nowrap; cursor: pointer; min-height: 42px; }
+.mrow input:not([type=checkbox]), .mrow select { width: 100%; }
+input[aria-invalid=true] { border-color: var(--bad-fg); }
+.addrow { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+@media (max-width: 760px) {
+  .mhead { grid-template-columns: minmax(0, 1fr) 76px auto; }
+  .mhead select { grid-column: 1 / -1; }
+  .mdiet { grid-template-columns: 1fr 1fr; }
+  .mdiet select, .mdiet .allergies { grid-column: 1 / -1; }
+}

@@ -1,0 +1,61 @@
+<adm-modal [heading]="guestId() ? 'Editar invitación' : 'Nueva invitación'" [wide]="true" (closed)="done.emit()">
+  <form id="guest-form" class="fgrid" novalidate (submit)="$event.preventDefault(); save()">
+    <label class="f">Grupo
+      <input list="dl-groups" [value]="group()" (input)="group.set(val($event))" placeholder="Familia de Pablo, amigos…">
+      <datalist id="dl-groups">@for (g of groups(); track g) { <option [value]="g"></option> }</datalist>
+    </label>
+    <label class="f">Estado
+      <select [value]="status()" (change)="status.set($any(val($event)))">
+        @for (s of statuses; track s) { <option [value]="s" [selected]="s === status()">{{ s }}</option> }
+      </select>
+    </label>
+    <label class="f full">Correo o teléfono
+      <input [value]="contact()" (input)="contact.set(val($event))" autocomplete="off">
+      <span class="hint">Sirve para unir las respuestas de la web con esta invitación.</span>
+    </label>
+
+    <div class="full">
+      <div class="f">Personas <span class="hint">La primera da nombre a la invitación. Cada una tiene su menú y alergias.</span></div>
+      @for (p of people(); track p.id; let i = $index) {
+        <div class="mrow">
+          <div class="mhead">
+            <select [value]="p.role" (change)="setRole(i, val($event))" aria-label="Tipo">
+              @for (r of roles; track r[0]) { <option [value]="r[0]" [selected]="r[0] === p.role">{{ r[1] }}</option> }
+            </select>
+            <input [value]="p.name" (input)="setMember(i, 'name', val($event))" placeholder="Nombre y apellidos" aria-label="Nombre"
+              [attr.aria-invalid]="nameError() && !p.name.trim()">
+            @if (p.role === 'niño') {
+              <input type="number" min="0" max="17" inputmode="numeric" [value]="p.age ?? ''" (input)="setAge(i, val($event))" placeholder="Edad" aria-label="Edad">
+            } @else { <span></span> }
+            <button type="button" class="icb d" (click)="remove(i)" aria-label="Quitar persona"><adm-icon name="x" /></button>
+          </div>
+          <div class="mdiet">
+            <select [value]="p.menu" (change)="setMember(i, 'menu', $any(val($event)))" aria-label="Menú">
+              <option value="estandar" [selected]="p.menu === 'estandar'">Menú estándar</option>
+              <option value="vegetariano" [selected]="p.menu === 'vegetariano'">Vegetariano</option>
+              <option value="" [selected]="!p.menu">Infantil / sin indicar</option>
+            </select>
+            <label class="ck"><input type="checkbox" [checked]="p.gf" (change)="setMember(i, 'gf', checked($event))"> Sin gluten</label>
+            <label class="ck"><input type="checkbox" [checked]="p.lf" (change)="setMember(i, 'lf', checked($event))"> Sin lactosa</label>
+            <input class="allergies" [value]="p.allergies" (input)="setMember(i, 'allergies', val($event))" placeholder="Alergias o intolerancias" aria-label="Alergias">
+          </div>
+        </div>
+      }
+      <div class="addrow">
+        <button type="button" class="btn out sm" (click)="add('acompañante')"><adm-icon name="plus" /> Adulto</button>
+        <button type="button" class="btn out sm" (click)="add('niño')"><adm-icon name="plus" /> Niño/a</button>
+      </div>
+    </div>
+
+    @if (message()) {
+      <div class="f full">Mensaje recibido<div class="ro">{{ message() }}</div></div>
+    }
+    <label class="f full">Notas privadas
+      <textarea [value]="notes()" (input)="notes.set(val($event))"></textarea>
+    </label>
+  </form>
+  <ng-container footer>
+    <button type="button" class="btn out" (click)="done.emit()">Cancelar</button>
+    <button type="submit" form="guest-form" class="btn pri">Guardar</button>
+  </ng-container>
+</adm-modal>

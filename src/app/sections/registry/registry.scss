@@ -59,8 +59,8 @@
   margin: 0 auto;
 
   &.highlight {
-    border-color: rgba(177, 92, 56, 0.25);
-    background: linear-gradient(140deg, rgba(177, 92, 56, 0.05), var(--color-surface));
+    border-color: color-mix(in srgb, var(--color-primary) 25%, transparent);
+    background: linear-gradient(140deg, color-mix(in srgb, var(--color-primary) 5%, transparent), var(--color-surface));
 
     &::before {
       content: '';
@@ -203,7 +203,7 @@
 
 #btn-registry-bank {
   background: var(--color-primary);
-  box-shadow: 0 6px 18px rgba(177, 92, 56, 0.22);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--color-primary) 22%, transparent);
 
   &:hover {
     background: var(--color-primary-deep);
@@ -215,8 +215,8 @@
 .registry-note {
   text-align: center;
   padding: 26px 34px;
-  background: rgba(177, 92, 56, 0.08);
-  border: 1px solid rgba(177, 92, 56, 0.14);
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 14%, transparent);
   border-radius: var(--border-radius-lg);
   position: relative;
   z-index: 1;

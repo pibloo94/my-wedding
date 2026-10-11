@@ -1,0 +1,90 @@
+<adm-page-header title="Temática" sub="Los colores se publican en la web; el resto es vuestra inspiración" />
+
+@if (!store.cloud()) {
+  <div class="note"><adm-icon name="info" /><span>Cambiar los colores de la web necesita Firebase. Hazlo desde la app publicada en /my-wedding/admin/.</span></div>
+} @else if (!ct.loaded()) {
+  <p class="muted loading">Cargando los colores de la web…</p>
+} @else {
+  <section class="colors">
+    <div class="pal card">
+      <div class="card-h"><adm-icon name="palette" /><h3>Colores de la web</h3></div>
+      <p class="small muted">Se guardan en el borrador del contenido. La web no cambia hasta que pulsas «Publicar».</p>
+      <ul class="swl">
+        @for (k of keys; track k) {
+          <li class="sw">
+            <input type="color" [value]="draftTheme()[k]" (input)="setColor(k, $any($event.target).value)" [attr.aria-label]="'Color ' + label[k][0]">
+            <div class="t"><b>{{ label[k][0] }}</b><span class="xs muted">{{ label[k][1] }}</span></div>
+            <input class="hex" [value]="draftTheme()[k]" (change)="setColor(k, $any($event.target).value)" maxlength="7" [attr.aria-label]="'Código HEX de ' + label[k][0]">
+            @if (draftTheme()[k] !== pubTheme()[k]) { <span class="dot" title="Cambiado y sin publicar"></span> }
+          </li>
+        }
+      </ul>
+      <div class="row-actions">
+        <button class="btn ghost sm" (click)="resetColors()" [disabled]="isDefault()"><adm-icon name="reset" [size]="15" /> Paleta original</button>
+      </div>
+    </div>
+
+    <div class="prev">
+      <div class="prevh"><h3>Así se verá</h3><span class="badge" [class.b-warn]="themeChanges()">{{ themeChanges() ? 'Borrador sin publicar' : 'Igual que la web' }}</span></div>
+      <adm-theme-preview [theme]="draftTheme()" [n1]="names().n1" [n2]="names().n2" [date]="dateText()" />
+
+      @if (badContrast().length) {
+        <div class="note">
+          <adm-icon name="alert" />
+          <div><b>Algunos textos se leerán con dificultad</b>
+            <ul class="cl">@for (c of badContrast(); track c.what) { <li>{{ c.what }}: contraste {{ c.ratio }} (mínimo {{ c.min }})</li> }</ul>
+          </div>
+        </div>
+      } @else {
+        <p class="xs muted okc"><adm-icon name="check" [size]="14" /> Contraste suficiente en botones, textos y títulos.</p>
+      }
+
+      <div class="card pub">
+        <div class="t">
+          <b>{{ ct.diff().length ? ct.diff().length + ' cambio' + (ct.diff().length === 1 ? '' : 's') + ' sin publicar' : 'Todo publicado' }}</b>
+          <span class="xs muted">
+            @if (otherChanges()) { Incluye {{ otherChanges() }} cambio{{ otherChanges() === 1 ? '' : 's' }} de textos: <a routerLink="/web/contenido">revisar en Contenido</a>. }
+            @else { Publicar actualiza la web para todos los invitados. }
+          </span>
+        </div>
+        <div class="row-actions">
+          <button class="btn out" (click)="discardColors()" [disabled]="!themeChanges()"><adm-icon name="x" /> Descartar cambios</button>
+          <button class="btn pri" (click)="ct.publish()" [disabled]="!ct.diff().length || ct.conflict()"><adm-icon name="up" /> Publicar</button>
+        </div>
+      </div>
+      @if (ct.conflict()) { <p class="small muted">Hay un conflicto con lo publicado: resuélvelo en <a routerLink="/web/contenido">Contenido</a>.</p> }
+    </div>
+  </section>
+}
+
+<section class="sec">
+  <div class="sec-h"><h2>Ilustraciones de la web</h2><span class="xs muted">public/assets/brand</span></div>
+  <div class="card ill">
+    @for (i of illustrations; track i[0]) {
+      <figure><img [src]="'assets/brand/' + i[0]" [alt]="i[1]" loading="lazy"><figcaption class="xs muted">{{ i[1] }}</figcaption></figure>
+    }
+  </div>
+</section>
+
+<section class="sec">
+  <div class="sec-h"><h2>Notas de estilo</h2></div>
+  <textarea class="notes" [value]="store.meta().theme.notes" (change)="setNotes($any($event.target).value)" aria-label="Notas de estilo"></textarea>
+</section>
+
+<section class="sec">
+  <div class="sec-h"><h2>Inspiración</h2><button class="btn out" (click)="lists.add('inspo')"><adm-icon name="plus" /> Idea</button></div>
+  @if (store.state().inspo.length) {
+    <div class="card">
+      @for (i of store.state().inspo; track i.id) {
+        <div class="list-row">
+          <div class="t"><div class="tt">{{ i.title }}</div>@if (i.note) {<div class="sb">{{ i.note }}</div>}</div>
+          @if (safeUrl(i.url)) { <a class="btn ghost sm" [href]="safeUrl(i.url)" target="_blank" rel="noopener noreferrer">Abrir <adm-icon name="ext" [size]="14" /></a> }
+          <button class="icb" (click)="lists.edit('inspo', i.id)" aria-label="Editar"><adm-icon name="edit" /></button>
+          <button class="icb d" (click)="lists.remove('inspo', i.id)" aria-label="Borrar"><adm-icon name="trash" /></button>
+        </div>
+      }
+    </div>
+  } @else {
+    <adm-empty text="Guarda aquí enlaces e ideas." cat="orange" />
+  }
+</section>

@@ -1,0 +1,58 @@
+<adm-page-header title="Mesas" [sub]="capT() + ' sillas · ' + seated() + ' de ' + need() + ' personas sentadas'">
+  <button class="btn pri" (click)="lists.add('tables')"><adm-icon name="plus" /> Mesa</button>
+</adm-page-header>
+
+@if (capT() && capT() < need()) {
+  <div class="note"><adm-icon name="alert" /><span>Faltan {{ need() - capT() }} sillas para todas las personas que vienen o están pendientes.</span></div>
+}
+
+@if (!tables().length) {
+  <adm-empty text="Crea tu primera mesa: elige forma y número de sillas y verás aquí cómo queda." cat="orange">
+    <button class="btn pri" (click)="lists.add('tables')"><adm-icon name="plus" /> Crear mesa</button>
+  </adm-empty>
+} @else {
+  <nav class="tabs" aria-label="Vista">
+    <button [class.on]="view() === 'reparto'" [attr.aria-pressed]="view() === 'reparto'" (click)="setView('reparto')"><adm-icon name="users" /> Quién se sienta dónde</button>
+    <button [class.on]="view() === 'plano'" [attr.aria-pressed]="view() === 'plano'" (click)="setView('plano')"><adm-icon name="map" /> Plano del salón</button>
+  </nav>
+
+  @if (view() === 'plano') {
+    <adm-floor-plan />
+  } @else {
+    <div class="seat-layout">
+      <section class="card pool" aria-labelledby="pool-h">
+        <h3 id="pool-h"><adm-icon name="users" /> Sin mesa</h3>
+        <p class="xs muted">{{ freePeople() }} personas en {{ free().length }} invitaciones. Arrastra o pulsa para elegir mesa; si quitas a alguien de una mesa vuelve aquí.</p>
+        <div class="gl">
+          @for (g of free(); track g.id) {
+            <button class="gchip" draggable="true" (dragstart)="dragStart($event, g)" (click)="pick(g)" [title]="'Elegir mesa para ' + g.name">
+              <span class="avatar" [style.background]="colorOf(g.group || g.name)">{{ initials(g.name) }}</span>
+              <span class="nm">{{ g.name }}</span>
+              @if (chipExtra(g)) { <span class="plus">{{ chipExtra(g) }}</span> }
+              @if (dietOf(g)) { <span class="dietdot" title="Menú especial o alergias"></span> }
+            </button>
+          } @empty {
+            <p class="small muted done">Todo el mundo tiene sitio ✓</p>
+          }
+        </div>
+      </section>
+
+      <div>
+        <div class="tables">
+          @for (t of tables(); track t.id) {
+            <button class="card tcard" [class.over]="used(t) > t.cap" [class.drop]="dropTarget() === t.id"
+              (click)="openTable(t.id)" (dragover)="dragOver($event, t)" (dragleave)="dropTarget.set('')" (drop)="drop($event, t)"
+              [attr.aria-label]="'Abrir ' + t.name + ', ' + used(t) + ' de ' + t.cap + ' sillas'">
+              <adm-table-figure [table]="t" [seats]="seatsOf(t)" />
+              <span class="ts">
+                <span>{{ SHAPE_NAMES[t.shape] || 'Redonda' }}</span>·
+                <span class="badge" [class.b-bad]="used(t) > t.cap" [class.b-ok]="used(t) === t.cap">{{ used(t) === t.cap ? 'Completa' : used(t) > t.cap ? 'Excede' : (t.cap - used(t)) + ' libres' }}</span>
+              </span>
+            </button>
+          }
+        </div>
+        <div class="legend"><span><i class="free"></i>Silla libre</span><span><i class="diet"></i>Menú especial o alergias</span><span>Iniciales coloreadas por grupo</span></div>
+      </div>
+    </div>
+  }
+}

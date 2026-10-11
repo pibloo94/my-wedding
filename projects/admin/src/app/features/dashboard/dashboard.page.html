@@ -1,0 +1,86 @@
+<h1 class="sr-only">Inicio</h1>
+<section class="card hero">
+  <div class="mnt" aria-hidden="true"></div>
+  <div class="in">
+    <span class="kicker">{{ days() > 0 ? 'Faltan' : days() === 0 ? 'Hoy es el día' : 'Ya sois matrimonio' }}</span>
+    <div class="big">{{ days() > 0 ? days() : days() === 0 ? '♥' : abs(days()) }}@if (days() !== 0) {<small>{{ days() > 0 ? 'días' : 'días casados' }}</small>}</div>
+    <div class="when">{{ longDate() }}</div>
+    <div class="meta">
+      <span><adm-icon name="clock" [size]="16" />{{ config().ceremonyTime }} h</span>
+      <span><adm-icon name="pin" [size]="16" />{{ config().venue }}</span>
+      @if (days() > 0) { <span><adm-icon name="cal" [size]="16" />{{ floor(days() / 7) }} semanas · {{ floor(days() / 30.44) }} meses</span> }
+    </div>
+    <div class="acts">
+      @if (publicUrl()) { <a class="btn pri" [href]="publicUrl()" target="_blank" rel="noopener noreferrer"><adm-icon name="globe" /> Abrir la web pública</a> }
+      <a class="btn light" routerLink="/web"><adm-icon name="list" /> Gestión de la web</a>
+    </div>
+  </div>
+  <div class="art" aria-hidden="true"><img src="assets/brand/crest-cats.webp" alt=""></div>
+</section>
+
+<div class="grid g4 kpis">
+  <a class="card kpi" routerLink="/invitados">
+    <span class="top"><span class="l">Invitados</span><span class="icw"><adm-icon name="users" /></span></span>
+    <span class="n">{{ g().conf }}<small>de {{ g().inv }} confirmados</small></span>
+    <span class="prog"><i [style.width.%]="pct(g().conf, g().inv)"></i><i class="o" [style.width.%]="pct(g().pend, g().inv)"></i><i class="s" [style.width.%]="pct(g().dec, g().inv)"></i></span>
+    <span class="d">{{ g().pend }} pendientes · {{ g().dec }} no vienen</span>
+  </a>
+  <a class="card kpi" routerLink="/mesas">
+    <span class="top"><span class="l">Mesas</span><span class="icw"><adm-icon name="table" /></span></span>
+    <span class="n">{{ g().seated }}<small>de {{ g().need }} sentados</small></span>
+    <span class="prog"><i [style.width.%]="pct(g().seated, g().need)"></i></span>
+    <span class="d">{{ tableCount() }} mesas · {{ chairs() }} sillas</span>
+  </a>
+  <a class="card kpi" routerLink="/presupuesto">
+    <span class="top"><span class="l">Presupuesto</span><span class="icw"><adm-icon name="wallet" /></span></span>
+    <span class="n">{{ eur(money().pg) }}<small>pagado</small></span>
+    <span class="prog"><i [style.width.%]="pct(money().pg, money().ref)"></i><i class="o" [style.width.%]="pct(money().act - money().pg, money().ref)"></i></span>
+    <span class="d">{{ money().act ? eur(money().act) + ' contratado' : 'Sin gastos' }}{{ money().B ? ' · tope ' + eur(money().B) : '' }}</span>
+  </a>
+  <a class="card kpi" routerLink="/tareas">
+    <span class="top"><span class="l">Tareas</span><span class="ring" [style.--p]="tasks().pct" [attr.data-v]="tasks().pct + '%'"></span></span>
+    <span class="n">{{ tasks().open }}<small>abiertas</small></span>
+    <span class="d" [class.alert]="tasks().late">{{ tasks().late ? tasks().late + ' vencidas' : 'Ninguna vencida' }}</span>
+  </a>
+</div>
+
+<section class="sec">
+  <div class="sec-h"><h2>Camino al gran día</h2><a class="btn ghost sm" routerLink="/tareas">Ver tareas <adm-icon name="arrow" [size]="15" /></a></div>
+  <div class="card tlwrap">
+    <ol class="tl">
+      @for (p of phases(); track p.id) {
+        <li [class.now]="p.now" [class.past]="p.past">
+          @if (p.now) { <span class="nowtag">Ahora</span> }
+          <span class="dt">{{ p.when }}</span>
+          <span class="nm">{{ p.name }}</span>
+          <span class="prog"><i [style.width.%]="p.pct"></i></span>
+          <span class="ct">{{ p.done }}/{{ p.total }} tareas</span>
+        </li>
+      }
+    </ol>
+  </div>
+</section>
+
+<div class="grid g21 sec">
+  <section class="card">
+    <h3><adm-icon name="check" /> Próximas tareas</h3>
+    <div class="flush">
+      @for (t of tasks().next; track t.id) { <adm-task-row [task]="t" [actions]="false" /> }
+      @empty { <p class="muted small pad">Todo al día.</p> }
+    </div>
+  </section>
+  <div class="grid col">
+    <section class="card">
+      <h3><adm-icon name="wallet" /> Próximos pagos</h3>
+      @for (p of money().pays; track p.id) {
+        <div class="list-row"><div class="t"><div class="tt">{{ p.concept }}</div><div class="sb" [class.alert]="p.late">{{ p.due }}</div></div><b>{{ p.left }}</b></div>
+      } @empty { <p class="small muted pad">Sin vencimientos. Añade la fecha del próximo pago en cada gasto.</p> }
+    </section>
+    <a class="card kpi webcard" routerLink="/web">
+      <span class="top"><h3><adm-icon name="globe" /> Web de la boda</h3><span class="badge" [class.b-ok]="web().status === 'publicada'" [class.b-warn]="web().status !== 'publicada'">{{ web().status }}</span></span>
+      <span class="d">Plan de cambios: {{ web().done }}/{{ web().total }} pasos hechos</span>
+      <span class="prog"><i class="p" [style.width.%]="pct(web().done, web().total)"></i></span>
+      <span class="xs muted">{{ web().planned }} cambios de texto previstos</span>
+    </a>
+  </div>
+</div>

@@ -10,8 +10,9 @@ Hecha con Angular 20 (componentes standalone) y SCSS. Se publica en GitHub Pages
 
 ```bash
 npm install
-npm start        # ng serve → http://localhost:4200/
-npm run build    # compilación de producción en dist/wedding-app/browser
+npm start              # web → http://localhost:4200/
+npm run start:admin    # app de gestión → http://localhost:4300/
+npm run build          # compila la web y, a continuación, la app (postbuild) en dist/wedding-app/browser/admin
 ```
 
 ## Publicación
@@ -37,6 +38,8 @@ Cada **push a `main`** lanza el workflow `.github/workflows/deploy.yml`, que com
 | `public/fonts` | Tipografía Butler (woff2) |
 | `scripts/process_assets.py` | Procesado de las ilustraciones |
 
+Los colores también se publican desde la app (Temática): la web los aplica como variables CSS (`src/app/core/content/theme.ts`); con los colores por defecto no cambia nada.
+
 Los textos editables (fecha, programa del día, información práctica, fecha límite y correo de contacto, datos de la lista de bodas) **se editan y publican desde la app de gestión** (Web de la boda → Contenido). La web los lee de Firestore al cargar; si Firebase no responde, usa los de `wedding-content.ts`. Si cambias la estructura del contenido, actualiza también la app (`DEFAULT_CONTENT`) y [docs/MODELO-DATOS.md](docs/MODELO-DATOS.md).
 
 ## Confirmaciones (RSVP) y Firebase
@@ -49,11 +52,18 @@ El formulario incluye un campo oculto anti-spam (`website`). Los campos comparti
 
 ## App de gestión (privada)
 
-`public/admin/index.html` se publica en **https://pibloo94.github.io/my-wedding/admin/**. Es una página independiente de Angular, con login de Google, que usa el SDK de Firebase cargado desde gstatic.com.
+Segunda aplicación Angular del mismo proyecto, en `projects/admin`. Se publica en **https://pibloo94.github.io/my-wedding/admin/** con el mismo despliegue que la web.
 
-- Solo entran las cuentas dadas de alta en la colección `admins` de Firestore.
-- Los datos (invitados, mesas, presupuesto, tareas…) viven en Firestore y no en el código.
+- Solo entran las cuentas dadas de alta en la colección `admins` de Firestore (login con Google).
+- Los datos (invitados, mesas y plano, presupuesto, tareas…) viven en Firestore y no en el código. Firestore usa caché persistente: si se corta la conexión, los cambios quedan en el navegador y se suben al volver.
 - Si `firebase-config.json` no tiene proyecto, funciona en modo local, guardando en el navegador.
+- Comparte con la web el modelo de contenido (`@web/content` → `src/app/core/content/wedding-content.ts`) y el cálculo de colores (`@web/theme` → `theme.ts`).
+
+| Ruta | Contenido |
+|---|---|
+| `projects/admin/src/app/core` | Servicios: Firebase, estado y sincronización (`store.service`), respuestas de la web (`rsvp-sync.service`), editor de contenido, formularios y reglas de negocio |
+| `projects/admin/src/app/shared` | Componentes comunes: diálogo, formulario, iconos, cabecera, dibujo de mesas |
+| `projects/admin/src/app/features` | Una carpeta por sección: inicio, invitados, mesas (reparto y plano del salón), presupuesto, proveedores, tareas, temática, web, configuración |
 
 ## A tener en cuenta
 

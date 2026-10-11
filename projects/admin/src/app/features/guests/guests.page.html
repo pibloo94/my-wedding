@@ -1,0 +1,125 @@
+<adm-page-header title="Invitados" [sub]="sub()">
+  <button class="btn out" (click)="importCsv()"><adm-icon name="up" /> Importar CSV</button>
+  <button class="btn out" (click)="exportCsv()"><adm-icon name="down" /> Exportar</button>
+  <button class="btn pri" (click)="lists.add('guests')"><adm-icon name="plus" /> Invitación</button>
+</adm-page-header>
+
+@if (catering(); as c) {
+  @if (c.total) {
+    <section class="card catering">
+      <div class="card-h"><adm-icon name="dish" /><h3>Para el catering</h3><span class="xs muted">solo confirmados</span>
+        <span class="spacer"></span><button class="btn ghost sm" (click)="exportCsv()"><adm-icon name="down" /> CSV por persona</button></div>
+      <div class="grid g4 kpis">
+        <div class="kpi"><span class="l">Adultos</span><span class="n">{{ c.adults }}</span><span class="d">{{ c.adults - c.veg }} estándar · {{ c.veg }} vegetariano</span></div>
+        <div class="kpi"><span class="l">Niños</span><span class="n">{{ c.kids }}</span><span class="d">{{ c.kids ? 'Edades: ' + c.ages : 'Ninguno' }}</span></div>
+        <div class="kpi"><span class="l">Sin gluten · sin lactosa</span><span class="n">{{ c.gf }} · {{ c.lf }}</span><span class="d">personas</span></div>
+        <div class="kpi"><span class="l">Con alergias</span><span class="n">{{ c.allergic }}</span><span class="d">{{ c.allergicText }}</span></div>
+      </div>
+    </section>
+  }
+}
+
+<div class="bar">
+  <div class="chips" role="group" aria-label="Filtrar">
+    @for (ch of chips(); track ch.k) {
+      <button class="chip" [class.on]="filter() === ch.k" [attr.aria-pressed]="filter() === ch.k" (click)="filter.set(ch.k)">
+        @if (ch.dot) { <span class="dot" [style.background]="ch.dot"></span> }{{ ch.l }} <b>{{ ch.n }}</b>
+      </button>
+    }
+  </div>
+  <span class="spacer"></span>
+  <label class="search"><adm-icon name="search" [size]="16" /><input [value]="q()" (input)="q.set($any($event.target).value)" placeholder="Buscar persona, grupo o contacto" aria-label="Buscar"></label>
+</div>
+
+@if (rows().length) {
+<div class="glist">
+  <div class="tw">
+    <table>
+      <thead><tr><th>Invitación</th><th>Estado</th><th>Personas</th><th>Menú y alergias</th><th>Mesa</th><th>Contacto</th><th><span class="sr-only">Acciones</span></th></tr></thead>
+      <tbody>
+        @for (g of rows(); track g.id) {
+          <tr>
+            <td data-label="Invitación">
+              <div class="who">
+                <span class="avatar" [style.background]="colorOf(g.group || g.name)">{{ initials(g.name) }}</span>
+                <div><b>{{ g.name }}</b>
+                  @if (members(g).length > 1) { <div class="small muted">+ {{ companions(g) }}</div> }
+                  <div class="xs muted">{{ g.group }}{{ g.source === 'web' ? (g.group ? ' · ' : '') + 'respuesta web' : '' }}</div>
+                </div>
+              </div>
+            </td>
+            <td data-label="Estado"><span class="badge" [class]="'badge ' + statusClass(g.status)">{{ g.status }}</span></td>
+            <td data-label="Personas">{{ peopleLabel(g) }}</td>
+            <td data-label="Menú y alergias">
+              @for (m of diets(g); track m.id) { <div class="small"><b>{{ m.name.split(' ')[0] }}</b>: {{ dietText(m) }}</div> }
+              @empty { <span class="muted">Estándar</span> }
+            </td>
+            <td data-label="Mesa">
+              <div class="stack">
+                @for (t of tablesOf(g); track t.id) { <button class="linkbtn" (click)="openTable(t.id)">{{ t.name }}</button> }
+                @if (unseatedCount(g)) { <span class="xs muted">{{ unseatedCount(g) }} sin mesa</span> }
+                @else if (!tablesOf(g).length) { <span class="muted">—</span> }
+              </div>
+            </td>
+            <td data-label="Contacto">{{ g.contact || '—' }}</td>
+            <td class="acts">
+              <button class="icb" (click)="lists.edit('guests', g.id)" aria-label="Editar"><adm-icon name="edit" /></button>
+              <button class="icb d" (click)="lists.remove('guests', g.id)" aria-label="Borrar"><adm-icon name="trash" /></button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Móvil y columnas estrechas: una tarjeta por invitación, con cada persona en su línea -->
+  <ul class="gcards">
+    @for (g of rows(); track g.id) {
+      <li class="gcard">
+        <div class="gh">
+          <span class="avatar" [style.background]="colorOf(g.group || g.name)">{{ initials(g.name) }}</span>
+          <div class="gt">
+            <b>{{ g.name }}</b>
+            <span class="xs muted">{{ g.group || 'Sin grupo' }}{{ g.source === 'web' ? ' · respuesta web' : '' }}</span>
+          </div>
+          <span class="badge" [class]="'badge ' + statusClass(g.status)">{{ g.status }}</span>
+        </div>
+        <ul class="people">
+          @for (m of members(g); track m.id) {
+            <li>
+              <div class="pl">
+                <span class="pn">{{ m.name }}</span>
+                @if (m.role !== 'adulto') { <span class="role">{{ m.role === 'niño' ? (m.age != null ? 'niño · ' + m.age + ' años' : 'niño') : 'acompañante' }}</span> }
+                @if (g.status !== 'rechazado') {
+                  @if (m.table) { <button class="tbl" (click)="openTable(m.table)">{{ tableNames().get(m.table) ?? 'Mesa' }}</button> }
+                  @else { <span class="tbl none" [class.alert]="g.status === 'confirmado'">Sin mesa</span> }
+                }
+              </div>
+              @if (tags(m).length) {
+                <div class="tags">@for (t of tags(m); track t.t) { <span class="tag" [class.warn]="t.warn">{{ t.t }}</span> }</div>
+              }
+            </li>
+          }
+        </ul>
+        <div class="gf">
+          @if (contactHref(g.contact); as href) { <a class="contact" [href]="href">{{ g.contact }}</a> }
+          @else { <span class="contact muted">{{ g.contact || 'Sin contacto' }}</span> }
+          <button class="icb" (click)="lists.edit('guests', g.id)" [attr.aria-label]="'Editar ' + g.name"><adm-icon name="edit" /></button>
+          <button class="icb d" (click)="lists.remove('guests', g.id)" [attr.aria-label]="'Borrar ' + g.name"><adm-icon name="trash" /></button>
+        </div>
+      </li>
+    }
+  </ul>
+</div>
+} @else if (guests().length) {
+  <adm-empty text="Nadie coincide con el filtro." />
+} @else {
+  <adm-empty [text]="store.cloud() ? 'Aún no hay invitaciones. Llegarán solas cuando los invitados respondan en la web, o añádelas a mano.' : 'Aún no hay invitaciones. Añádelas a mano o importa las respuestas antiguas (CSV).'">
+    <button class="btn pri" (click)="lists.add('guests')"><adm-icon name="plus" /> Primera invitación</button>
+  </adm-empty>
+}
+
+<div class="note sage small">
+  <adm-icon name="shield" />
+  <span>{{ store.cloud() ? 'Las respuestas del formulario de la web llegan aquí solas y se unen por correo o teléfono. Mesas, grupo y notas son vuestros y no se pisan.' : 'Los datos se guardan solo en este navegador.' }} Teléfonos, alergias y notas son privados: la web no puede leerlos.</span>
+</div>

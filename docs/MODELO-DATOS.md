@@ -78,8 +78,15 @@ El campo `json` guarda un objeto con esta forma (por defecto: `src/app/core/cont
 | `needToKnow[]` | `icon`, `title`, `accent`, `items[]` | Lo que debes saber |
 | `rsvp` | `deadlineText`, `contactEmail` | Formulario de confirmación |
 | `registry` | `titular`, `iban`, `concepto` | Lista de bodas (con `iban` vacío se muestra «Muy pronto…») |
+| `theme` | `primary`, `primaryDeep`, `sage`, `sageDeep`, `sand`, `orange`, `background`, `surface` (HEX `#RRGGBB`) | Colores de toda la web. Se editan en la app → Temática |
 
 La web valida cada campo al leerlo. Si algo falta o tiene un tipo inesperado, usa el valor por defecto; si una lista llega vacía, usa la de respaldo. La app comprueba antes de publicar las horas, los enlaces, el correo y el IBAN (dígitos de control).
+
+### Colores (`theme`)
+
+- La web solo aplica los colores que difieren de los de por defecto (`DEFAULT_CONTENT.theme`, que coinciden con `src/styles.scss`). Los tonos derivados (suave, claro, borde, fondo alternativo) se calculan en `src/app/core/content/theme.ts`, el mismo archivo que usa la vista previa de la app.
+- Las ilustraciones son imágenes en acuarela y no cambian de color.
+- La app avisa (sin bloquear) si el contraste de botones, textos o títulos baja de lo recomendado (WCAG).
 
 ### Secciones (`sections[]`)
 
@@ -104,3 +111,13 @@ La portada y el pie son fijos. El resto de la página se pinta en el orden de `s
 - Si `content/published` cambia fuera del editor (consola de Firebase u otro dispositivo) y el borrador **no tiene cambios propios**, el editor pasa a mostrar lo publicado.
 - Si el borrador **sí tiene cambios propios**, la app avisa y no deja publicar hasta elegir entre «Usar lo publicado» o «Mantener mi borrador».
 - Los cambios hechos a mano en `admin/contentDraft` también aparecen en el editor al momento.
+
+## Mesas y plano del salón
+
+| Dónde | Campo | Notas |
+|---|---|---|
+| `admin/state/tables/{id}` | `name`, `shape` (`redonda`/`rectangular`/`presidencial`), `cap`, `notes` | |
+| `admin/state/tables/{id}` | `x`, `y`, `rot` | Posición del centro en el plano (unidades del plano) y giro en grados. Sin `x`/`y` = sin colocar |
+| `admin/state` → `plan` | `title`, `width`, `height`, `zones[]` (`id`, `label`, `x`, `y`, `w`, `h`) | Salón y zonas fijas (pista de baile, entrada…) |
+
+Quién se sienta en cada mesa sigue en cada persona de la invitación (`members[].table`). La posición se guarda al soltar la mesa.

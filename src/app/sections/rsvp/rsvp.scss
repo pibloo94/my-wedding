@@ -168,7 +168,7 @@
 
   &.selected {
     border-color: var(--color-primary);
-    background: rgba(177, 92, 56, 0.06);
+    background: color-mix(in srgb, var(--color-primary) 6%, transparent);
     color: var(--color-primary);
     font-weight: 400;
 
@@ -372,11 +372,11 @@
     height: 0;
   }
 
-  &:focus-within { box-shadow: 0 0 0 4px rgba(126, 140, 106, 0.12); }
+  &:focus-within { box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-teal) 12%, transparent); }
 
   &.selected {
     border-color: var(--color-primary);
-    background: rgba(177, 92, 56, 0.06);
+    background: color-mix(in srgb, var(--color-primary) 6%, transparent);
     color: var(--color-primary);
     font-weight: 400;
   }
@@ -444,3 +444,6 @@
 
   .nowrap { white-space: nowrap; }
 }
+
+// Recibe el foco al enviar (ver showResult); no es interactiva, así que sin anillo de foco
+.state-card:focus { outline: none; }

@@ -1,0 +1,181 @@
+@if (!store.cloud()) {
+  <div class="note"><adm-icon name="info" /><span>Editar y publicar los textos de la web necesita Firebase. Hazlo desde la app publicada en <b>/my-wedding/admin/</b>.</span></div>
+} @else if (!ct.loaded() || !d()) {
+  <p class="muted loading">Cargando el contenido…</p>
+} @else {
+  @let c = draft();
+  <section class="card status">
+    <div class="t">
+      <span class="lab">Publicado en la web</span>
+      <b>{{ pubText() }}</b>
+      <span class="small muted" aria-live="polite">{{ statusText() }}</span>
+    </div>
+    <div class="row-actions">
+      <button class="btn out" (click)="ct.discard()"><adm-icon name="x" /> Descartar cambios</button>
+      <button class="btn pri" (click)="ct.publish()"><adm-icon name="up" /> Publicar</button>
+    </div>
+  </section>
+
+  @if (ct.conflict()) {
+    <div class="note">
+      <adm-icon name="alert" />
+      <div><b>Lo publicado ha cambiado fuera de este editor</b> (desde la consola de Firebase o desde otro dispositivo) mientras tenías cambios sin publicar. Revisa la lista de cambios antes de decidir.
+        <div class="row-actions mt"><button class="btn pri sm" (click)="ct.usePublished()">Usar lo publicado</button><button class="btn out sm" (click)="ct.keepMine()">Mantener mi borrador</button></div>
+      </div>
+    </div>
+  }
+  <div class="note sage small"><adm-icon name="info" /><span>Lo que escribes se guarda solo como <b>borrador</b>, compartido entre los dos. La web no cambia hasta que pulsas <b>Publicar</b>. Cada publicación queda en el historial y se puede recuperar. Los colores se editan en <b>Temática</b>.</span></div>
+
+  <div class="layout">
+    <div class="edit">
+      <!-- Secciones -->
+      <details class="card ced" open>
+        <summary><h3><adm-icon name="list" /> Secciones de la web</h3></summary>
+        <p class="small muted">En el orden en que aparecen, después de la portada. El menú de la web y los botones de la portada se adaptan solos. Los contenidos de cada sección propia se editan más abajo.</p>
+        @for (s of c.sections; track s.id; let i = $index, last = $last) {
+          @let p = 'sections.' + i;
+          <div class="cblock" [class.off]="!s.visible">
+            <div class="cbh">
+              <div class="cbt"><b>{{ i + 1 }}. {{ s.title || 'Nueva sección' }}</b><span class="ckind">{{ secName[s.kind] }}</span></div>
+              <label class="vis"><input type="checkbox" [checked]="s.visible" (change)="set(p + '.visible', $event)">{{ s.visible ? 'Visible' : 'Oculta' }}</label>
+              <button class="icb" (click)="move('sections', i, -1)" [disabled]="i === 0" aria-label="Subir">↑</button>
+              <button class="icb" (click)="move('sections', i, 1)" [disabled]="last" aria-label="Bajar">↓</button>
+              @if (s.kind === 'text') { <button class="icb d" (click)="remove('sections', i)" aria-label="Quitar sección"><adm-icon name="trash" /></button> }
+            </div>
+            <div class="fgrid">
+              <label class="f">Texto en el menú<input [value]="s.navLabel" (input)="set(p + '.navLabel', $event)" [placeholder]="s.title"><span class="hint">Vacío = se usa el título.</span></label>
+              <label class="f">Etiqueta<input [value]="s.label" (input)="set(p + '.label', $event)"><span class="hint">Texto pequeño sobre el título. Opcional.</span></label>
+              <label class="f full">Título<input data-sec-title [value]="s.title" (input)="set(p + '.title', $event)"></label>
+              <label class="f full">Subtítulo<textarea rows="2" [value]="s.subtitle" (input)="set(p + '.subtitle', $event)"></textarea><span class="hint">{{ s.kind === 'rsvp' ? 'Va seguido de la fecha límite en negrita.' : 'Opcional.' }}</span></label>
+              @if (s.kind === 'text') {
+                <label class="f full">Texto<textarea rows="5" [value]="s.body" (input)="set(p + '.body', $event)"></textarea><span class="hint">Deja una línea en blanco entre párrafos.</span></label>
+                <label class="f full">Puntos<textarea [rows]="rows(s, 3)" [value]="items(s)" (change)="set(p + '.items', $event)"></textarea><span class="hint">Opcional. Uno por línea.</span></label>
+                <label class="f">Texto del botón<input [value]="s.linkText" (input)="set(p + '.linkText', $event)" placeholder="Más información"></label>
+                <label class="f">Enlace del botón<input type="url" [value]="s.linkUrl" (input)="set(p + '.linkUrl', $event)" placeholder="https://…"><span class="hint">Opcional. Vacío = sin botón.</span></label>
+              }
+            </div>
+          </div>
+        }
+        <button class="btn out sm addb" (click)="add('sections')"><adm-icon name="plus" /> Añadir sección de texto</button>
+      </details>
+
+      <!-- Portada -->
+      <details class="card ced" open>
+        <summary><h3><adm-icon name="home" /> Portada</h3></summary>
+        <div class="fgrid">
+          <label class="f">Fecha visible<input [value]="c.hero.dateText" (input)="set('hero.dateText', $event)"></label>
+          <label class="f">Lugar<input [value]="c.hero.location" (input)="set('hero.location', $event)"></label>
+          <label class="f">Día de la cuenta atrás<input #cd type="date" [value]="countDate()" (change)="setCountdown(cd.value, ct2.value)"></label>
+          <label class="f">Hora de la cuenta atrás<input #ct2 type="time" [value]="countTime()" (change)="setCountdown(cd.value, ct2.value)"><span class="hint">Hora de Madrid.</span></label>
+        </div>
+      </details>
+
+      <!-- Programa -->
+      <details class="card ced" open>
+        <summary><h3><adm-icon name="clock" /> Programa del día</h3></summary>
+        @for (e of c.events; track e.id || $index; let i = $index, last = $last) {
+          @let p = 'events.' + i;
+          <div class="cblock">
+            <div class="cbh">
+              <div class="cbt"><b>{{ i + 1 }}. {{ e.title || 'Nuevo momento' }}</b></div>
+              <button class="icb" (click)="move('events', i, -1)" [disabled]="i === 0" aria-label="Subir">↑</button>
+              <button class="icb" (click)="move('events', i, 1)" [disabled]="last" aria-label="Bajar">↓</button>
+              <button class="icb d" (click)="remove('events', i)" aria-label="Quitar"><adm-icon name="trash" /></button>
+            </div>
+            <div class="fgrid">
+              <label class="f">Etiqueta<input [value]="e.type" (input)="set(p + '.type', $event)" placeholder="Ceremonia, Cóctel…"></label>
+              <label class="f">Título<input [value]="e.title" (input)="set(p + '.title', $event)"></label>
+              <label class="f">Empieza<input [value]="e.timeStart" (input)="set(p + '.timeStart', $event)" placeholder="13:00 h"></label>
+              <label class="f">Termina<input [value]="e.timeEnd" (input)="set(p + '.timeEnd', $event)" placeholder="13:30 h"></label>
+              <label class="f">Lugar<input [value]="e.venue" (input)="set(p + '.venue', $event)"></label>
+              <label class="f">Icono<select (change)="set(p + '.icon', $event)">@for (o of iconsEv; track o[0]) { <option [value]="o[0]" [selected]="o[0] === e.icon">{{ o[1] }}</option> }</select></label>
+              <label class="f full">Dirección<input [value]="e.address" (input)="set(p + '.address', $event)"></label>
+              <label class="f full">Enlace a Google Maps<input type="url" [value]="e.mapsUrl" (input)="set(p + '.mapsUrl', $event)" placeholder="https://maps.google.com/…"><span class="hint">Opcional. Si está vacío no se muestra el botón.</span></label>
+              <label class="f full">Vestimenta<input [value]="e.dressCode" (input)="set(p + '.dressCode', $event)"><span class="hint">Se muestra en el primer momento del programa.</span></label>
+              <label class="f full">Descripción<textarea rows="3" [value]="e.description" (input)="set(p + '.description', $event)"></textarea></label>
+            </div>
+          </div>
+        }
+        <button class="btn out sm addb" (click)="add('events')"><adm-icon name="plus" /> Añadir momento</button>
+      </details>
+
+      <!-- Lo que debes saber -->
+      <details class="card ced" open>
+        <summary><h3><adm-icon name="info" /> Lo que debes saber</h3></summary>
+        @for (x of c.needToKnow; track $index; let i = $index, last = $last) {
+          @let p = 'needToKnow.' + i;
+          <div class="cblock">
+            <div class="cbh">
+              <div class="cbt"><b>{{ x.title || 'Nueva tarjeta' }}</b></div>
+              <button class="icb" (click)="move('needToKnow', i, -1)" [disabled]="i === 0" aria-label="Subir">↑</button>
+              <button class="icb" (click)="move('needToKnow', i, 1)" [disabled]="last" aria-label="Bajar">↓</button>
+              <button class="icb d" (click)="remove('needToKnow', i)" aria-label="Quitar"><adm-icon name="trash" /></button>
+            </div>
+            <div class="fgrid">
+              <label class="f full">Título<input [value]="x.title" (input)="set(p + '.title', $event)"></label>
+              <label class="f">Icono<select (change)="set(p + '.icon', $event)">@for (o of iconsCard; track o[0]) { <option [value]="o[0]" [selected]="o[0] === x.icon">{{ o[1] }}</option> }</select></label>
+              <label class="f">Color<select (change)="set(p + '.accent', $event)">@for (o of accents; track o[0]) { <option [value]="o[0]" [selected]="o[0] === x.accent">{{ o[1] }}</option> }</select></label>
+              <label class="f full">Puntos<textarea [rows]="rows(x, 4)" [value]="items(x)" (change)="set(p + '.items', $event)"></textarea><span class="hint">Uno por línea.</span></label>
+            </div>
+          </div>
+        }
+        <button class="btn out sm addb" (click)="add('needToKnow')"><adm-icon name="plus" /> Añadir tarjeta</button>
+      </details>
+
+      <!-- Confirmación -->
+      <details class="card ced" open>
+        <summary><h3><adm-icon name="check" /> Confirmación de asistencia</h3></summary>
+        <div class="fgrid">
+          <label class="f">Fecha límite (texto)<input [value]="c.rsvp.deadlineText" (input)="set('rsvp.deadlineText', $event)"><span class="hint">Tal como se lee: «1 de febrero de 2027».</span></label>
+          <label class="f">Correo de contacto<input type="email" [value]="c.rsvp.contactEmail" (input)="set('rsvp.contactEmail', $event)"></label>
+        </div>
+      </details>
+
+      <!-- Lista de bodas -->
+      <details class="card ced" open>
+        <summary><h3><adm-icon name="wallet" /> Lista de bodas</h3></summary>
+        <div class="fgrid">
+          <label class="f">Titular<input [value]="c.registry.titular" (input)="set('registry.titular', $event)"></label>
+          <label class="f">Concepto<input [value]="c.registry.concepto" (input)="set('registry.concepto', $event)"></label>
+          <label class="f full">IBAN<input [value]="c.registry.iban" (input)="set('registry.iban', $event)" placeholder="ES00 0000 0000 0000 0000 0000" autocomplete="off">
+            <span class="hint">Se comprueba antes de publicar. Vacío = la web muestra «Muy pronto publicaremos aquí los datos».</span></label>
+        </div>
+      </details>
+    </div>
+
+    <aside class="side">
+      <section class="card" id="cambios">
+        <h3><adm-icon name="edit" /> Cambios sin publicar</h3>
+        @if (ct.warnings().length) {
+          <div class="note sage small"><adm-icon name="info" /><div>@for (w of ct.warnings(); track w) { <div>{{ w }}</div> }</div></div>
+        }
+        @if (ct.errors().length) {
+          <div class="note small"><adm-icon name="alert" /><div>@for (er of ct.errors(); track er) { <div class="err">{{ er }}</div> }</div></div>
+        }
+        @for (l of ct.diff(); track l.key) {
+          <div class="cdiff">
+            <div class="k">{{ l.label }}</div>
+            <div class="diff">@if (l.from) {<del>{{ cut(l.from) }}</del> }<adm-icon name="arrow" [size]="13" /> <ins>{{ l.to ? cut(l.to) : '(vacío)' }}</ins></div>
+          </div>
+        } @empty { <p class="small muted">Sin cambios.</p> }
+      </section>
+      <section class="card">
+        <h3><adm-icon name="clock" /> Historial</h3>
+        @for (h of history(); track h.id) {
+          <div class="list-row">
+            <div class="t"><div class="tt">Versión {{ h.version }}</div><div class="sb">{{ h.publishedAt.slice(0, 16).replace('T', ' ') }}{{ h.by ? ' · ' + h.by : '' }}@if (h.summary) {<br>{{ h.summary }}}</div></div>
+            <button class="btn ghost sm" (click)="restore(h)">Al borrador</button>
+          </div>
+        } @empty { <p class="small muted">Todavía no hay publicaciones.</p> }
+      </section>
+    </aside>
+  </div>
+
+  <!-- Barra fija en móvil: siempre a mano publicar y ver los cambios -->
+  @if (ct.diff().length) {
+  <div class="mbar">
+    <button class="btn ghost sm" (click)="scrollToChanges()">{{ ct.diff().length }} cambio{{ ct.diff().length === 1 ? '' : 's' }}@if (ct.errors().length) { · {{ ct.errors().length }} aviso{{ ct.errors().length === 1 ? '' : 's' }} }</button>
+    <button class="btn pri sm" (click)="ct.publish()"><adm-icon name="up" [size]="15" /> Publicar</button>
+  </div>
+  }
+}
