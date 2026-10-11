@@ -9,16 +9,12 @@ import { PageHeaderComponent } from '../../shared/page-header.component';
 import { IconComponent } from '../../shared/icon.component';
 import { WebSummaryComponent } from './web-summary.component';
 import { ContentEditorComponent } from './content-editor.component';
-import { WebPlanComponent } from './web-plan.component';
-import { WebChecksComponent } from './web-checks.component';
 import { WebLogComponent } from './web-log.component';
 import { WebResourcesComponent } from './web-resources.component';
 
 export const WEB_TABS = [
   { id: 'resumen', label: 'Cómo funciona' },
   { id: 'contenido', label: 'Contenido' },
-  { id: 'plan', label: 'Plan de cambios' },
-  { id: 'comprobar', label: 'Comprobaciones' },
   { id: 'registro', label: 'Registro' },
   { id: 'recursos', label: 'Recursos' }
 ];
@@ -26,7 +22,7 @@ export const WEB_TABS = [
 /** Web de la boda. Cada pestaña tiene su dirección (#/web/contenido…) y se ven todas siempre. */
 @Component({
   selector: 'adm-web-page',
-  imports: [RouterLink, PageHeaderComponent, IconComponent, WebSummaryComponent, ContentEditorComponent, WebPlanComponent, WebChecksComponent, WebLogComponent, WebResourcesComponent],
+  imports: [RouterLink, PageHeaderComponent, IconComponent, WebSummaryComponent, ContentEditorComponent, WebLogComponent, WebResourcesComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <adm-page-header title="Web de la boda" sub="La web es para los invitados; aquí se edita, se publica y se comprueba">
@@ -41,8 +37,6 @@ export const WEB_TABS = [
     </nav>
     @switch (tab()) {
       @case ('contenido') { <adm-content-editor /> }
-      @case ('plan') { <adm-web-plan /> }
-      @case ('comprobar') { <adm-web-checks /> }
       @case ('registro') { <adm-web-log /> }
       @case ('recursos') { <adm-web-resources /> }
       @default { <adm-web-summary /> }
@@ -52,14 +46,12 @@ export class WebPage {
   private store = inject(StoreService);
   private ct = inject(ContentEditorService);
   protected tabs = WEB_TABS;
-  protected tab = toSignal(inject(ActivatedRoute).paramMap.pipe(map(p => p.get('tab') || 'resumen')), { initialValue: 'resumen' });
+  protected tab = toSignal(inject(ActivatedRoute).paramMap.pipe(map(p => { const t = p.get('tab'); return WEB_TABS.some(x => x.id === t) ? t! : 'resumen'; })), { initialValue: 'resumen' });
   protected publicUrl = computed(() => safeUrl(this.store.config().publicUrl));
   protected badge = computed<Record<string, number>>(() => {
     const s = this.store.state();
     return {
       contenido: this.ct.diff().length,
-      plan: s.webPlan.filter(p => p.status !== 'Hecho' && p.status !== 'Descartado').length,
-      comprobar: s.webChecks.filter(x => !x.ok).length,
       registro: s.webLog.filter(l => l.status === 'Previsto').length
     };
   });

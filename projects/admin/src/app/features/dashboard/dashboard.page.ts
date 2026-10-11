@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { StoreService } from '../../core/store.service';
+import { ContentEditorService } from '../../core/content-editor.service';
 import { PHASES, attending, currentPhase, dueOf, members, paid, seats } from '../../core/domain';
 import { addDays, dayDiff, eur, fmtDate, fmtLongDate, parseDate, safeUrl, today } from '../../core/util';
 import { IconComponent } from '../../shared/icon.component';
@@ -15,6 +16,7 @@ import { TaskRowComponent } from '../tasks/task-row.component';
 })
 export class DashboardPage {
   private store = inject(StoreService);
+  private ct = inject(ContentEditorService);
   protected config = this.store.config;
   protected publicUrl = computed(() => safeUrl(this.config().publicUrl));
   protected days = computed(() => dayDiff(this.store.wedding(), today()));
@@ -65,8 +67,7 @@ export class DashboardPage {
   protected chairs = computed(() => this.store.tables().reduce((a, t) => a + (+t.cap || 0), 0));
   protected web = computed(() => {
     const s = this.store.state();
-    const plan = s.webPlan.filter(p => p.status !== 'Descartado');
-    return { status: s.meta.webStatus, done: plan.filter(p => p.status === 'Hecho').length, total: plan.length, planned: s.webLog.filter(l => l.status === 'Previsto').length };
+    return { status: s.meta.webStatus, version: this.ct.pubVersion(), pending: this.ct.diff().length };
   });
 
   protected pct(a: number, b: number): number { return b ? Math.min(100, a / b * 100) : 0; }

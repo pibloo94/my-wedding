@@ -78,9 +78,8 @@
     </section>
     <a class="card kpi webcard" routerLink="/web">
       <span class="top"><h3><adm-icon name="globe" /> Web de la boda</h3><span class="badge" [class.b-ok]="web().status === 'publicada'" [class.b-warn]="web().status !== 'publicada'">{{ web().status }}</span></span>
-      <span class="d">Plan de cambios: {{ web().done }}/{{ web().total }} pasos hechos</span>
-      <span class="prog"><i class="p" [style.width.%]="pct(web().done, web().total)"></i></span>
-      <span class="xs muted">{{ web().planned }} cambios de texto previstos</span>
+      <span class="d">{{ web().version ? 'Versión ' + web().version + ' publicada' : 'Sin publicaciones desde la app' }}</span>
+      <span class="xs" [class.alert]="web().pending" [class.muted]="!web().pending">{{ web().pending ? web().pending + ' cambio' + (web().pending === 1 ? '' : 's') + ' sin publicar' : 'Todo publicado' }}</span>
     </a>
   </div>
 </div>

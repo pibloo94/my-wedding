@@ -23,7 +23,7 @@ import { IconComponent } from '../../shared/icon.component';
       <section class="card">
         <h3><adm-icon name="info" /> Qué se hace aquí</h3>
         <p class="small">En <a routerLink="/web/contenido">Contenido</a> se cambian los textos, el orden de las secciones y los datos de la web sin tocar código; los colores, en <a routerLink="/tematica">Temática</a>. Todo queda en un borrador compartido hasta que pulsáis <b>Publicar</b>.</p>
-        <p class="small">Las <a routerLink="/web/comprobar">Comprobaciones</a> son una lista para revisar la web publicada, y el <a routerLink="/web/registro">Registro</a> guarda cada publicación.</p>
+        <p class="small">El <a routerLink="/web/registro">Registro</a> guarda cada publicación, y en el <a routerLink="/web/contenido">historial de Contenido</a> se puede recuperar cualquier versión anterior.</p>
       </section>
     </div>
     <section class="sec">
