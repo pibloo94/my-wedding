@@ -35,6 +35,11 @@ export class ContentService {
   constructor(http: HttpClient, cfg: FirebaseConfigService) {
     // Colores publicados desde la app de gestión (Temática). Con los de por defecto no se toca nada.
     effect(() => this.applyTheme());
+    // Título de la pestaña con los nombres y la fecha publicados
+    effect(() => {
+      const h = this._data().hero;
+      if (typeof document !== 'undefined') document.title = `${h.name1} & ${h.name2} — ${h.dateText}`;
+    });
 
     cfg.config$.pipe(
       switchMap(c => (c ? http.get<FirestoreDoc>(FirebaseConfigService.docUrl(c, 'content/published')) : EMPTY)),

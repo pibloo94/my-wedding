@@ -18,7 +18,6 @@ export interface FormContext {
 }
 
 export const LOG_STATUSES = ['Previsto', 'Hecho en el repositorio', 'Publicado (sin comprobar)', 'Publicado (comprobado en la web)', 'Descartado'];
-export const PLAN_STATUSES = ['Pendiente', 'En curso', 'Hecho', 'Descartado'];
 
 export const FORMS: Partial<Record<CollKey, CollForm>> = {
   tables: {
@@ -69,28 +68,6 @@ export const FORMS: Partial<Record<CollKey, CollForm>> = {
       { k: 'notes', l: 'Notas', type: 'textarea', full: true }
     ]
   },
-  day: {
-    t: 'hito del día', def: () => ({ origin: 'Interno' }),
-    fields: () => [
-      { k: 'time', l: 'Inicio', type: 'time', r: true },
-      { k: 'end', l: 'Fin', type: 'time' },
-      { k: 'title', l: 'Qué ocurre', r: true, full: true },
-      { k: 'place', l: 'Lugar' },
-      { k: 'who', l: 'Responsable' },
-      { k: 'origin', l: 'Origen', type: 'select', o: ['Interno', 'Web pública'] },
-      { k: 'notes', l: 'Notas', type: 'textarea', full: true }
-    ]
-  },
-  logistics: {
-    t: 'elemento de logística', def: () => ({ status: 'Pendiente' }),
-    fields: () => [
-      { k: 'title', l: 'Elemento', r: true, full: true },
-      { k: 'cat', l: 'Tipo', list: () => ['Transporte', 'Alojamiento', 'Montaje', 'Decoración', 'Documentación', 'Otro'] },
-      { k: 'who', l: 'Responsable' },
-      { k: 'status', l: 'Estado', type: 'select', o: ['Pendiente', 'En curso', 'Resuelto'] },
-      { k: 'notes', l: 'Notas', type: 'textarea', full: true }
-    ]
-  },
   inspo: {
     t: 'idea', def: () => ({}),
     fields: () => [
@@ -99,21 +76,6 @@ export const FORMS: Partial<Record<CollKey, CollForm>> = {
       { k: 'note', l: 'Nota', type: 'textarea', full: true }
     ]
   },
-  webPlan: {
-    t: 'paso del plan', def: () => ({ phase: '0', status: 'Pendiente', where: 'Repositorio de la web' }),
-    fields: () => [
-      { k: 'title', l: 'Paso', r: true, full: true },
-      { k: 'phase', l: 'Fase', type: 'select', o: [['0', '0 · Ajustes rápidos'], ['1', '1 · Proyecto Firebase'], ['2', '2 · App en Firebase'], ['3', '3 · Confirmaciones'], ['4', '4 · Contenido web']] },
-      { k: 'status', l: 'Estado', type: 'select', o: PLAN_STATUSES },
-      { k: 'where', l: 'Dónde', list: () => ['Repositorio de la web', 'App de gestión', 'Tú (git)', 'Tú (consola)'] },
-      { k: 'file', l: 'Archivo', full: true },
-      { k: 'detail', l: 'Detalle', type: 'textarea', full: true }
-    ]
-  },
-  webChecks: {
-    t: 'comprobación', def: () => ({ ok: false, last: '' }),
-    fields: () => [{ k: 'text', l: 'Qué hay que comprobar', r: true, full: true }]
-  },
   webResources: {
     t: 'recurso', def: () => ({ type: 'Enlace' }),
     fields: () => [
@@ -121,22 +83,6 @@ export const FORMS: Partial<Record<CollKey, CollForm>> = {
       { k: 'url', l: 'URL', type: 'url', full: true },
       { k: 'type', l: 'Tipo', type: 'select', o: ['Enlace', 'Código', 'Documentación', 'Gráficos', 'Otro'] },
       { k: 'note', l: 'Nota', type: 'textarea', full: true }
-    ]
-  },
-  webTexts: {
-    t: 'texto a revisar', def: () => ({ status: 'Pendiente' }),
-    fields: () => [
-      { k: 'section', l: 'Sección', full: true },
-      { k: 'text', l: 'Qué revisar', type: 'textarea', r: true, full: true },
-      { k: 'status', l: 'Estado', type: 'select', o: ['Pendiente', 'Revisado', 'Descartado'] }
-    ]
-  },
-  webInfo: {
-    t: 'información para invitados', def: () => ({ status: 'Pendiente de decidir' }),
-    fields: () => [
-      { k: 'text', l: 'Información', type: 'textarea', r: true, full: true },
-      { k: 'status', l: 'Estado', type: 'select', o: ['En la web', 'Pendiente de decidir', 'Pendiente de confirmar', 'Pendiente de añadir a la web'] },
-      { k: 'note', l: 'Notas', type: 'textarea', full: true }
     ]
   },
   webLog: {

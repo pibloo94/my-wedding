@@ -1,6 +1,7 @@
-import { Component, output, signal } from '@angular/core';
+import { Component, inject, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ContentService } from '../../core/services/content.service';
 
 @Component({
   selector: 'app-password-gate',
@@ -11,6 +12,9 @@ import { FormsModule } from '@angular/forms';
 })
 export class PasswordGateComponent {
   authenticated = output<void>();
+  /** La contraseña es correcta: la web empieza a cargarse mientras se abre el sobre. */
+  unlocked = output<void>();
+  protected content = inject(ContentService);
 
   password = signal('');
   error = signal(false);
@@ -33,6 +37,7 @@ export class PasswordGateComponent {
     if (hashHex === this.EXPECTED_HASH) {
       this.error.set(false);
       this.opening.set(true);
+      this.unlocked.emit();
 
       // Let the card slowly draw out and be read (~3.8s), then fade the gate (0.8s)
       setTimeout(() => {

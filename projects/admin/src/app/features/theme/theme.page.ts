@@ -34,7 +34,11 @@ export class ThemePage {
   protected themeChanges = computed(() => this.ct.diff().filter(d => d.key.startsWith('t.')).length);
   protected otherChanges = computed(() => this.ct.diff().length - this.themeChanges());
   protected isDefault = computed(() => THEME_KEYS.every(k => this.draftTheme()[k] === DEFAULT_CONTENT.theme[k]));
-  protected names = computed(() => this.store.config());
+  protected names = computed(() => {
+    const h = this.ct.draft()?.hero;
+    const c = this.store.config();
+    return { n1: h?.name1 || c.n1, n2: h?.name2 || c.n2 };
+  });
   protected dateText = computed(() => this.ct.draft()?.hero.dateText ?? '');
 
   /** Avisos de legibilidad (WCAG): texto de botones, cuerpo y títulos sobre el fondo. */
@@ -44,6 +48,7 @@ export class ThemePage {
       { what: 'Texto blanco de los botones sobre terracota', r: contrastRatio('#FFFFFF', t.primary), min: 4.5 },
       { what: 'Texto del cuerpo sobre el fondo', r: contrastRatio('#4C4E40', t.background), min: 4.5 },
       { what: 'Títulos (salvia profundo) sobre el fondo', r: contrastRatio(t.sageDeep, t.background), min: 3 },
+      { what: 'Etiquetas pequeñas (terracota profundo) sobre el fondo', r: contrastRatio(t.primaryDeep, t.background), min: 4.5 },
       { what: 'Texto sobre las tarjetas', r: contrastRatio('#4C4E40', t.surface), min: 4.5 }
     ];
     return checks.map(c => ({ ...c, ok: c.r >= c.min, ratio: c.r.toFixed(1) }));

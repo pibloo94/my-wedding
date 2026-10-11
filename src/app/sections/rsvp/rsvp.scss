@@ -26,6 +26,7 @@
   pointer-events: none;
   z-index: 0;
   filter: drop-shadow(0 16px 24px rgba(94, 106, 73, 0.14));
+  height: auto;
 }
 
 .cat-peek-rsvp {
@@ -337,7 +338,7 @@
   font-weight: 500;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   padding: 0 8px;
   margin-left: -8px;
 }

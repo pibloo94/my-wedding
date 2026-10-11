@@ -1,13 +1,10 @@
 /** Datos iniciales (primera vez) y migración de copias antiguas. */
-import { AppState, Collections, FloorPlan, Guest, Meta, Task, WebPlanStep } from './models';
+import { AppState, Collections, FloorPlan, Guest, Meta, Task } from './models';
 import { mkMember } from './domain';
 import { uid } from './util';
 
 const T = (title: string, phase: string, offset: number, cat = 'General', extra: Partial<Task> = {}): Task =>
   ({ id: uid(), title, phase, who: '', offset, due: '', cat, notes: '', done: false, ...extra });
-
-const P = (phase: string, title: string, detail: string, file = '', where = 'Repositorio de la web'): WebPlanStep =>
-  ({ id: uid(), phase, title, detail, file, where, status: 'Pendiente' });
 
 export function defaultPlan(): FloorPlan {
   return {
@@ -69,28 +66,11 @@ export function seedCollections(): Collections {
       T('Entregar alianzas y documentos a oficiante / testigos', 'day', 0),
       T('Enviar agradecimientos a los invitados', 'post', -14, 'Invitados')
     ],
-    day: [
-      { id: uid(), time: '13:00', end: '13:30', title: 'Ceremonia civil', place: 'Jardines del Negralejo', origin: 'Web pública' },
-      { id: uid(), time: '13:30', end: '15:00', title: 'Cóctel de bienvenida', place: 'Jardines del Negralejo', origin: 'Web pública' },
-      { id: uid(), time: '15:00', end: '18:30', title: 'Comida', place: 'Gran Salón del Negralejo', origin: 'Web pública' },
-      { id: uid(), time: '18:30', end: '02:00', title: 'Baile', place: 'Gran Salón del Negralejo', origin: 'Web pública' }
-    ],
-    logistics: [],
     inspo: [],
-    webPlan: [
-      P('4', 'Contenido de la web en Firestore', 'Borrador, publicar e historial desde esta app.', 'content/published', 'App + web')
-    ],
-    webChecks: [
-      'Fecha y hora de la ceremonia coinciden con lo contratado', 'Dirección y enlace de Google Maps correctos',
-      'Código de vestimenta definitivo', 'Fecha límite de confirmación coherente con catering y mesas',
-      'El correo de contacto de la web funciona', 'Datos de transferencia correctos', 'Revisión en móvil de todas las secciones'
-    ].map(text => ({ id: uid(), text, ok: false, last: '' })),
     webResources: [
       { id: uid(), title: 'Web pública', url: 'https://pibloo94.github.io/my-wedding/', type: 'Enlace', note: 'Lo que ven los invitados.' },
       { id: uid(), title: 'Repositorio en GitHub', url: 'https://github.com/pibloo94/my-wedding', type: 'Código', note: 'Angular · despliegue automático al hacer push a main.' }
     ],
-    webTexts: [],
-    webInfo: [],
     webLog: []
   };
 }

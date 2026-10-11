@@ -15,13 +15,13 @@
   <div class="hero-content container">
     <!-- The crest — the centrepiece of the whole identity -->
     <img class="hero-crest" src="assets/brand/crest-cats.webp"
-         alt="Escudo de Daniela y Pablo con sus tres gatos, flores de azahar y naranjas"
+         [alt]="'Escudo de ' + content.data().hero.name1 + ' y ' + content.data().hero.name2 + ' con sus tres gatos, flores de azahar y naranjas'"
          width="460" height="447" fetchpriority="high" />
 
     <h1 class="hero-names">
-      <span class="name">Daniela</span>
+      <span class="name">{{ content.data().hero.name1 }}</span>
       <span class="ampersand-hero">&</span>
-      <span class="name">Pablo</span>
+      <span class="name">{{ content.data().hero.name2 }}</span>
     </h1>
 
     <div class="sprig-divider" aria-hidden="true"></div>

@@ -58,7 +58,9 @@ export class ContentEditorService {
       this.gotPub = true;
       if (x?.json) {
         try {
-          this.published.set(normContent(JSON.parse(x.json)));
+          const pub = normContent(JSON.parse(x.json));
+          this.published.set(pub);
+          this.store.webFacts.set({ n1: pub.hero.name1, n2: pub.hero.name2, iso: pub.hero.countdownIso });
           this.pubVersion.set(x.version || 0);
           this.pubAt.set(x.publishedAt || '');
         } catch { /* JSON ilegible: se ignora */ }

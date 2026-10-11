@@ -52,7 +52,7 @@
   --color-teal:         #7E8C6A; // Sage green (headings)  — name kept for compatibility
   --color-teal-deep:    #5E6A49; // Deep sage
   --color-light:        #B9C2A8; // Light sage (fine dividers)
-  --color-muted:        #86876F; // Muted sage-grey (subtitles / captions)
+  --color-muted:        #686956; // Muted sage-grey (subtitles / captions) — 4,9:1 sobre el fondo (WCAG AA)
 
   --color-sand:         #E7DCC4; // Arena (shield / ribbon)
   --color-sand-deep:    #D8C6A4; // Arena, deeper (borders, dotted rule)
@@ -61,6 +61,8 @@
   --color-bg:           #F5EFE3; // Page — warm arena
   --color-bg-alt:       #EFE7D6; // Alternate section — deeper arena
   --color-surface:      #FBF7EF; // Cards — warm white
+  // Texto pequeño en terracota (etiquetas, datos): el tono profundo para cumplir WCAG AA (5,6:1)
+  --color-primary-text: var(--color-primary-deep);
   --color-dark:         #43473A; // Deep sage-charcoal (never pure black)
   --color-text:         #4C4E40; // Body text
   --color-white:        #ffffff;
@@ -151,7 +153,7 @@ p {
   font-size: 0.72rem;
   letter-spacing: 0.42em;
   text-transform: uppercase;
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   font-weight: 500;
   display: inline-block;
 }
@@ -368,6 +370,12 @@ a {
   opacity: 0.04;
   pointer-events: none;
   z-index: 0;
+}
+
+// Texto solo para lectores de pantalla
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
 
 // ── Scroll Animations ─────────────────────────────────────────────────────────

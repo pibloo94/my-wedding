@@ -1,7 +1,9 @@
 @if (!authenticated()) {
-  <app-password-gate (authenticated)="onAuthenticated()" />
+  <app-password-gate (unlocked)="siteReady.set(true)" (authenticated)="onAuthenticated()" />
 }
 
+<!-- La web solo se monta (y descarga sus imágenes) tras la contraseña -->
+@if (siteReady()) {
 <div class="site-wrapper" [class.revealed]="authenticated()">
   <app-navbar></app-navbar>
   <main>
@@ -19,3 +21,4 @@
   </main>
   <app-footer></app-footer>
 </div>
+}

@@ -1,25 +1,27 @@
 /**
  * Contenido de la web en la app: normalizar, comparar y validar.
- * Mismas reglas que mergeContent() de la web (src/app/core/content/wedding-content.ts), salvo
- * que aquí se conservan las secciones de texto sin título mientras se escriben: cErrors()
- * impide publicarlas así.
+ * La normalización es la misma que usa la web (normalizeContent en
+ * src/app/core/content/wedding-content.ts), en modo borrador: se conserva lo que aún se está
+ * escribiendo y contentErrors() impide publicarlo así.
  */
-import { DEFAULT_CONTENT, SectionConfig, SectionKind, THEME_KEYS, ThemeColors, WeddingContent, WeddingEvent } from '@web/content';
-import { clone, stable } from './util';
+import {
+  DEFAULT_CONTENT, EMPTY_EVENT_TEMPLATE, EMPTY_SECTION_TEMPLATE, SectionConfig, SectionKind, THEME_KEYS,
+  ThemeColors, WeddingContent, WeddingEvent, normalizeContent
+} from '@web/content';
+import { stable } from './util';
 
 export type Content = WeddingContent;
 export { DEFAULT_CONTENT };
 
-export const SEC_KINDS: SectionKind[] = ['events', 'needToKnow', 'rsvp', 'registry', 'text'];
 export const SEC_NAME: Record<SectionKind, string> = {
   events: 'Programa del día', needToKnow: 'Lo que debes saber', rsvp: 'Confirmación', registry: 'Lista de bodas', text: 'Sección de texto'
 };
-export const SEC_EMPTY: SectionConfig = { id: '', kind: 'text', visible: true, navLabel: '', label: '', title: '', subtitle: '', body: '', items: [], linkText: '', linkUrl: '' };
-export const EMPTY_EVENT: WeddingEvent = { id: '', icon: 'heart', type: '', title: '', timeStart: '', timeEnd: '', venue: '', address: '', mapsUrl: '', dressCode: '', description: '' };
+export const SEC_EMPTY: SectionConfig = EMPTY_SECTION_TEMPLATE;
+export const EMPTY_EVENT: WeddingEvent = EMPTY_EVENT_TEMPLATE;
 
 export const THEME_LABEL: Record<keyof ThemeColors, [string, string]> = {
   primary: ['Terracota', 'Botones, enlaces y monograma'],
-  primaryDeep: ['Terracota profundo', 'Botones al pasar el ratón'],
+  primaryDeep: ['Terracota profundo', 'Etiquetas pequeñas y botones al pasar el ratón'],
   sage: ['Verde salvia', 'Títulos y acentos'],
   sageDeep: ['Salvia profundo', 'Títulos principales'],
   sand: ['Arena', 'Cintas, escudo y bordes'],
@@ -28,74 +30,7 @@ export const THEME_LABEL: Record<keyof ThemeColors, [string, string]> = {
   surface: ['Tarjetas', 'Tarjetas y superficies']
 };
 
-type Obj = Record<string, unknown>;
-const isObj = (v: unknown): v is Obj => !!v && typeof v === 'object' && !Array.isArray(v);
-
-function pick<T extends object>(base: T, inc: unknown): T {
-  const r = { ...base } as Obj;
-  if (isObj(inc)) for (const k of Object.keys(base)) if (typeof inc[k] === 'string') r[k] = inc[k];
-  return r as T;
-}
-
-export function normSections(base: SectionConfig[], inc: unknown): SectionConfig[] {
-  if (!Array.isArray(inc)) return clone(base);
-  const out: SectionConfig[] = [];
-  const seen = new Set<SectionKind>();
-  const ids = new Set<string>();
-  inc.filter(isObj).forEach((raw, i) => {
-    const kind = raw['kind'] as SectionKind;
-    if (!SEC_KINDS.includes(kind)) return;
-    if (kind !== 'text' && seen.has(kind)) return;
-    const def = kind === 'text' ? SEC_EMPTY : (base.find(b => b.kind === kind) ?? SEC_EMPTY);
-    const sec: SectionConfig = {
-      ...pick(def, raw), kind,
-      visible: typeof raw['visible'] === 'boolean' ? raw['visible'] as boolean : true,
-      items: Array.isArray(raw['items']) ? (raw['items'] as unknown[]).filter((t): t is string => typeof t === 'string') : []
-    };
-    if (kind === 'text') {
-      let id = /^[a-z0-9-]{1,40}$/.test(sec.id) ? sec.id : `seccion-${i + 1}`;
-      while (ids.has(id) || base.some(b => b.id === id)) id += '-x';
-      sec.id = id;
-    } else {
-      sec.id = def.id;
-      seen.add(kind);
-    }
-    if (!/^https:\/\//.test(sec.linkUrl)) sec.linkUrl = '';
-    ids.add(sec.id);
-    out.push(sec);
-  });
-  for (const d of base) if (d.kind !== 'text' && !seen.has(d.kind)) out.push(clone(d));
-  return out;
-}
-
-export function normTheme(inc: unknown): ThemeColors {
-  const out = { ...DEFAULT_CONTENT.theme };
-  if (isObj(inc)) for (const k of THEME_KEYS) {
-    const v = inc[k];
-    if (typeof v === 'string' && /^#[0-9a-f]{6}$/i.test(v)) out[k] = v.toUpperCase();
-  }
-  return out;
-}
-
-export function normContent(c: unknown): Content {
-  const D = DEFAULT_CONTENT;
-  const o = isObj(c) ? c : {};
-  return {
-    v: 1,
-    theme: normTheme(o['theme']),
-    sections: normSections(D.sections, o['sections']),
-    hero: pick(D.hero, o['hero']),
-    events: Array.isArray(o['events']) ? (o['events'] as unknown[]).map(e => pick(EMPTY_EVENT, e)) : clone(D.events),
-    needToKnow: Array.isArray(o['needToKnow'])
-      ? (o['needToKnow'] as unknown[]).map(x => ({
-          ...pick({ icon: 'info', title: '', accent: '#5E6A49' }, x),
-          items: isObj(x) && Array.isArray(x['items']) ? (x['items'] as unknown[]).filter((t): t is string => typeof t === 'string') : []
-        }))
-      : clone(D.needToKnow),
-    rsvp: pick(D.rsvp, o['rsvp']),
-    registry: pick(D.registry, o['registry'])
-  };
-}
+export const normContent = (c: unknown): Content => normalizeContent(c, { draft: true });
 
 export const contentKey = (c: unknown): string => stable(normContent(c));
 
@@ -111,6 +46,8 @@ export function flatten(c: Content): [string, string, string][] {
     const v = k === 'visible' ? (x.visible ? 'Visible' : 'Oculta') : k === 'items' ? x.items.join(' / ') : x[k];
     add(`s:${x.id}.${k}`, `Sección ${x.title || SEC_NAME[x.kind]} · ${l}`, v);
   }
+  add('h.n1', 'Portada · Nombre 1', c.hero.name1);
+  add('h.n2', 'Portada · Nombre 2', c.hero.name2);
   add('h.d', 'Portada · Fecha visible', c.hero.dateText);
   add('h.l', 'Portada · Lugar', c.hero.location);
   add('h.c', 'Portada · Cuenta atrás', String(c.hero.countdownIso).slice(0, 16).replace('T', ' '));
@@ -177,6 +114,7 @@ export function contentErrors(c: Content): string[] {
       if (x.linkUrl.trim() && !/^https:\/\//.test(x.linkUrl.trim())) e.push(`${n}: el enlace del botón debe empezar por https://.`);
     }
   });
+  if (!c.hero.name1.trim() || !c.hero.name2.trim()) e.push('Portada: faltan los nombres.');
   if (!c.hero.dateText.trim()) e.push('Portada: falta la fecha visible.');
   if (isNaN(new Date(c.hero.countdownIso).getTime())) e.push('Portada: la fecha u hora de la cuenta atrás no es válida.');
   if (!c.events.length) e.push('Programa: añade al menos un momento.');
@@ -204,6 +142,7 @@ export function contentWarnings(c: Content): string[] {
   if (!v('rsvp')) w.push('La confirmación de asistencia está oculta: los invitados no podrán responder y la portada no mostrará el botón «Confirmar».');
   if (!v('events')) w.push('El programa del día está oculto: el botón «Ver detalles» de la portada llevará a la primera sección visible.');
   for (const x of c.sections) if (x.kind === 'text' && x.linkText.trim() && !x.linkUrl.trim()) w.push(`Sección ${x.title || 'de texto'}: el botón no se mostrará porque no tiene enlace.`);
+  if (!dateTextMatches(c.hero.dateText, c.hero.countdownIso)) w.push('Portada: la fecha visible no coincide con el día de la cuenta atrás. La app usa la de la cuenta atrás para fases y vencimientos.');
   return w;
 }
 
@@ -220,4 +159,34 @@ export function madridIso(date: string, time: string): string {
   const off = Math.round((local - guess) / 60000);
   const sg = off >= 0 ? '+' : '-', a = Math.abs(off);
   return `${date}T${time}:00${sg}${String(Math.floor(a / 60)).padStart(2, '0')}:${String(a % 60).padStart(2, '0')}`;
+}
+
+const MONTHS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+/**
+ * ¿La fecha escrita («11 de Septiembre de 2027», «11/09/2027»…) es el mismo día que la cuenta
+ * atrás? Si no se reconoce día, mes y año en el texto, no se avisa.
+ */
+export function dateTextMatches(text: string, iso: string): boolean {
+  const mp = madridParts(iso);
+  if (!mp) return true;
+  const [y, mo, d] = mp.date.split('-').map(Number) as [number, number, number];
+  const t = (text || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  let r = /(\d{1,2})\s*[/.-]\s*(\d{1,2})\s*[/.-]\s*(\d{4})/.exec(t);
+  if (r) return +r[1]! === d && +r[2]! === mo && +r[3]! === y;
+  r = /(\d{1,2})\s+(?:de\s+)?([a-z]+)\s+(?:de\s+|del\s+)?(\d{4})/.exec(t);
+  if (!r) return true;
+  const mi = MONTHS.findIndex(x => x.startsWith(r![2]!.slice(0, 3)));
+  if (mi < 0) return true;
+  return +r[1]! === d && mi + 1 === mo && +r[3]! === y;
+}
+
+/** Fecha (AAAA-MM-DD) y hora (HH:MM) en Madrid de un instante ISO; null si no es válido. */
+export function madridParts(iso: string): { date: string; time: string } | null {
+  const d = new Date(iso);
+  if (!iso || isNaN(d.getTime())) return null;
+  const p = Object.fromEntries(new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/Madrid', hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+  }).formatToParts(d).map(x => [x.type, x.value]));
+  return { date: `${p['year']}-${p['month']}-${p['day']}`, time: `${p['hour']}:${p['minute']}` };
 }

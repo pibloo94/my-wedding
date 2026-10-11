@@ -20,6 +20,7 @@
   pointer-events: none;
   z-index: 0;
   filter: drop-shadow(0 16px 24px rgba(94, 106, 73, 0.14));
+  height: auto;
 }
 
 .cat-peek-registry {
@@ -78,7 +79,7 @@
   position: absolute;
   top: 16px;
   right: 16px;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-soft));
+  background: linear-gradient(135deg, var(--color-primary-deep), var(--color-primary));
   color: white;
   font-family: var(--font-accent);
   font-size: 0.65rem;
@@ -177,7 +178,7 @@
     font-family: 'Butler', serif;
     letter-spacing: 0.06em;
     font-size: 1rem;
-    color: var(--color-primary);
+    color: var(--color-primary-text);
     font-weight: 500;
     word-break: break-all;
   }

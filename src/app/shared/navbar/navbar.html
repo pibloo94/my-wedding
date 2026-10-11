@@ -1,13 +1,13 @@
 <nav class="navbar" [class.scrolled]="scrolled()" [class.menu-open]="menuOpen()">
   <div class="nav-inner container">
 
-    <button class="nav-brand" (click)="scrollTo('hero')" aria-label="Inicio">
-      <span class="initials">D</span>
+    <button class="nav-brand" (click)="scrollTo('hero')" aria-label="Ir al inicio">
+      <span class="initials">{{ initial1 }}</span>
       <span class="ampersand">&amp;</span>
-      <span class="initials">P</span>
+      <span class="initials">{{ initial2 }}</span>
     </button>
 
-    <ul class="nav-links" [class.open]="menuOpen()">
+    <ul class="nav-links" id="nav-links" [class.open]="menuOpen()">
       @for (link of navLinks; track link.anchor) {
         <li>
           <button class="nav-link" (click)="scrollTo(link.anchor)">{{ link.label }}</button>
@@ -15,7 +15,8 @@
       }
     </ul>
 
-    <button class="hamburger" [class.active]="menuOpen()" (click)="toggleMenu()" aria-label="Abrir menú">
+    <button class="hamburger" [class.active]="menuOpen()" (click)="toggleMenu()"
+      [attr.aria-label]="menuOpen() ? 'Cerrar menú' : 'Abrir menú'" [attr.aria-expanded]="menuOpen()" aria-controls="nav-links">
       <span></span>
       <span></span>
       <span></span>

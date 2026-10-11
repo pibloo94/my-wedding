@@ -24,6 +24,15 @@ export class NavbarComponent {
     return this.content.visibleSections().map(s => ({ label: s.navLabel || s.title, anchor: s.id }));
   }
 
+  protected get initial1(): string { return this.content.data().hero.name1.trim().charAt(0).toUpperCase(); }
+  protected get initial2(): string { return this.content.data().hero.name2.trim().charAt(0).toUpperCase(); }
+
+  /** Escape cierra el menú móvil. */
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.menuOpen()) this.menuOpen.set(false);
+  }
+
   @HostListener('window:scroll')
   onScroll(): void {
     this.scrolled.set(window.scrollY > 60);

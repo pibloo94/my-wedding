@@ -106,32 +106,8 @@ export interface Task {
   done: boolean;
 }
 
-export interface DayItem {
-  id: string;
-  time: string;
-  end?: string;
-  title: string;
-  place?: string;
-  who?: string;
-  notes?: string;
-  origin: 'Interno' | 'Web pública' | string;
-}
-
-export interface LogisticsItem {
-  id: string;
-  title: string;
-  cat?: string;
-  who?: string;
-  status: string;
-  notes?: string;
-}
-
 export interface Inspo { id: string; title: string; url?: string; note?: string; }
-export interface WebPlanStep { id: string; phase: string; title: string; detail?: string; file?: string; where?: string; status: string; }
-export interface WebCheck { id: string; text: string; ok: boolean; last: string; }
 export interface WebResource { id: string; title: string; url?: string; type: string; note?: string; }
-export interface WebText { id: string; section?: string; text: string; status: string; }
-export interface WebInfo { id: string; text: string; status: string; note?: string; }
 export interface WebLogEntry {
   id: string; date: string; status: string; section?: string; field?: string;
   file?: string; from?: string; to?: string; change?: string;
@@ -189,20 +165,18 @@ export interface Collections {
   expenses: Expense[];
   vendors: Vendor[];
   tasks: Task[];
-  day: DayItem[];
-  logistics: LogisticsItem[];
   inspo: Inspo[];
-  webPlan: WebPlanStep[];
-  webChecks: WebCheck[];
   webResources: WebResource[];
-  webTexts: WebText[];
-  webInfo: WebInfo[];
   webLog: WebLogEntry[];
 }
 
 export type CollKey = keyof Collections;
 
-export const COLLECTIONS: CollKey[] = ['guests', 'tables', 'expenses', 'vendors', 'tasks', 'day', 'logistics', 'inspo', 'webPlan', 'webChecks', 'webResources', 'webTexts', 'webInfo', 'webLog'];
+/**
+ * Colecciones que sincroniza la app. Las de versiones anteriores (day, logistics, webPlan,
+ * webChecks, webTexts, webInfo) ya no se leen ni se escriben; sus datos siguen en Firestore.
+ */
+export const COLLECTIONS: CollKey[] = ['guests', 'tables', 'expenses', 'vendors', 'tasks', 'inspo', 'webResources', 'webLog'];
 
 export interface AppState extends Collections {
   meta: Meta;

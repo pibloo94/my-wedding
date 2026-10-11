@@ -3,14 +3,15 @@ import { StoreService } from '../../core/store.service';
 import { UiService } from '../../core/ui.service';
 import { Config } from '../../core/models';
 import { seedState } from '../../core/seed';
-import { isoDate, parseDate, today } from '../../core/util';
+import { fmtDate, isoDate, parseDate, today } from '../../core/util';
+import { RouterLink } from '@angular/router';
 import { downloadText, pickTextFile } from '../../core/files';
 import { PageHeaderComponent } from '../../shared/page-header.component';
 import { IconComponent } from '../../shared/icon.component';
 
 @Component({
   selector: 'adm-settings-page',
-  imports: [PageHeaderComponent, IconComponent],
+  imports: [PageHeaderComponent, IconComponent, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <adm-page-header title="Configuración" />
@@ -18,10 +19,18 @@ import { IconComponent } from '../../shared/icon.component';
     <section class="card">
       <h3><adm-icon name="heart" /> La boda</h3>
       <div class="fgrid">
-        <label class="f">Nombre 1<input [value]="c.n1" (change)="set('n1', $event)"></label>
-        <label class="f">Nombre 2<input [value]="c.n2" (change)="set('n2', $event)"></label>
-        <label class="f">Fecha de la boda<input type="date" [value]="c.weddingDate" (change)="set('weddingDate', $event)"><span class="hint">Mueve la cuenta atrás, las fases, los vencimientos automáticos y la semana de la boda. La fecha que ven los invitados se cambia en Web de la boda → Contenido.</span></label>
-        <label class="f">Hora de la ceremonia<input type="time" [value]="c.ceremonyTime" (change)="set('ceremonyTime', $event)"></label>
+        @if (store.webFacts()) {
+          <div class="full facts">
+            <span class="fl">Nombres, fecha y hora</span>
+            <b>{{ c.n1 }} &amp; {{ c.n2 }} · {{ fmtDate(c.weddingDate, { day: 'numeric', month: 'long', year: 'numeric' }) }} · {{ c.ceremonyTime }} h</b>
+            <span class="hint">Salen de lo publicado en la web, así la app y los invitados ven siempre lo mismo. Se cambian en <a routerLink="/web/contenido">Web de la boda → Contenido → Portada</a> y, al publicar, se recalculan la cuenta atrás, las fases y los vencimientos.</span>
+          </div>
+        } @else {
+          <label class="f">Nombre 1<input [value]="c.n1" (change)="set('n1', $event)"></label>
+          <label class="f">Nombre 2<input [value]="c.n2" (change)="set('n2', $event)"></label>
+          <label class="f">Fecha de la boda<input type="date" [value]="c.weddingDate" (change)="set('weddingDate', $event)"><span class="hint">Mueve la cuenta atrás, las fases y los vencimientos. Cuando publiquéis la web, la fecha pasa a salir de ahí.</span></label>
+          <label class="f">Hora de la ceremonia<input type="time" [value]="c.ceremonyTime" (change)="set('ceremonyTime', $event)"></label>
+        }
         <label class="f">Lugar<input [value]="c.venue" (change)="set('venue', $event)"></label>
         <label class="f">Presupuesto máximo (€)<input type="number" min="0" step="any" inputmode="decimal" [value]="c.budget" (change)="set('budget', $event)"></label>
       </div>
@@ -44,10 +53,11 @@ import { IconComponent } from '../../shared/icon.component';
         <button class="btn ghost danger" (click)="reset()"><adm-icon name="trash" /> Borrar todo</button>
       </div>
     </section>`,
-  styles: `.card h3 { display: flex; gap: 8px; align-items: center; } .card h3 adm-icon { color: var(--primary); } .mt { margin-top: 16px; }`
+  styles: `.facts { display: flex; flex-direction: column; gap: 4px; } .facts .fl { font-size: .8rem; color: var(--muted); } .facts b { font-weight: 600; } .card h3 { display: flex; gap: 8px; align-items: center; } .card h3 adm-icon { color: var(--primary); } .mt { margin-top: 16px; }`
 })
 export class SettingsPage {
   protected store = inject(StoreService);
+  protected fmtDate = fmtDate;
   private ui = inject(UiService);
 
   protected set(k: keyof Config, e: Event): void {

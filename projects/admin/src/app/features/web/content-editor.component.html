@@ -63,6 +63,8 @@
       <details class="card ced" open>
         <summary><h3><adm-icon name="home" /> Portada</h3></summary>
         <div class="fgrid">
+          <label class="f">Nombre 1<input [value]="c.hero.name1" (input)="set('hero.name1', $event)" autocomplete="off"></label>
+          <label class="f">Nombre 2<input [value]="c.hero.name2" (input)="set('hero.name2', $event)" autocomplete="off"></label>
           <label class="f">Fecha visible<input [value]="c.hero.dateText" (input)="set('hero.dateText', $event)"></label>
           <label class="f">Lugar<input [value]="c.hero.location" (input)="set('hero.location', $event)"></label>
           <label class="f">Día de la cuenta atrás<input #cd type="date" [value]="countDate()" (change)="setCountdown(cd.value, ct2.value)"></label>

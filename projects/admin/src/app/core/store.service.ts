@@ -1,10 +1,13 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { AppState, COLLECTIONS, CollKey, Collections, Meta, RsvpDoc } from './models';
+import { AppState, COLLECTIONS, CollKey, Collections, Config, Meta, RsvpDoc } from './models';
 import { FirebaseService, fs } from './firebase.service';
 import { UiService } from './ui.service';
 import { normalizeItem, normalizeMeta, seedState } from './seed';
 import { clone, stable, uid } from './util';
 import { weddingDay } from './domain';
+import { madridParts } from './content-model';
+
+export interface WebFacts { n1: string; n2: string; iso: string; }
 
 const LS_KEY = 'boda-gestion-v2';
 const LS_OLD = 'boda-gestion-v1';
@@ -35,7 +38,19 @@ export class StoreService {
   readonly cloud = computed(() => this.fb.state() === 'ready');
 
   readonly meta = computed(() => this.state().meta);
-  readonly config = computed(() => this.state().meta.config);
+  /**
+   * Nombres y fecha/hora de la boda tal como están publicados en la web (los fija
+   * ContentEditorService). Son la única fuente: mandan sobre lo guardado en la configuración,
+   * que solo se usa sin Firebase o mientras no hay nada publicado.
+   */
+  readonly webFacts = signal<WebFacts | null>(null);
+  readonly config = computed<Config>(() => {
+    const c = this.state().meta.config;
+    const w = this.webFacts();
+    if (!w) return c;
+    const m = madridParts(w.iso);
+    return { ...c, n1: w.n1 || c.n1, n2: w.n2 || c.n2, weddingDate: m?.date ?? c.weddingDate, ceremonyTime: m?.time ?? c.ceremonyTime };
+  });
   readonly wedding = computed(() => weddingDay(this.config().weddingDate));
   readonly guests = computed(() => this.state().guests);
   readonly tables = computed(() => this.state().tables);

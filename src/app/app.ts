@@ -31,6 +31,8 @@ import { ContentService } from './core/services/content.service';
 })
 export class App implements OnInit {
   authenticated = signal(false);
+  /** Se monta la web: al acertar la contraseña o si ya se había entrado antes. */
+  siteReady = signal(false);
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object, public content: ContentService) {}
 
@@ -41,6 +43,7 @@ export class App implements OnInit {
         const now = new Date().getTime();
         if (now < parseInt(expDateStr, 10)) {
           this.authenticated.set(true);
+          this.siteReady.set(true);
         } else {
           localStorage.removeItem('wedding_auth_v1_exp');
         }
@@ -49,6 +52,7 @@ export class App implements OnInit {
   }
 
   onAuthenticated() {
+    this.siteReady.set(true);
     this.authenticated.set(true);
     if (isPlatformBrowser(this.platformId)) {
       // Establecemos la expiración en 30 días

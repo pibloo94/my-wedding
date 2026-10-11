@@ -78,7 +78,8 @@ export interface WeddingContent {
   theme: ThemeColors;
   /** Orden y configuración de las secciones (la portada y el pie son fijos) */
   sections: SectionConfig[];
-  hero: { dateText: string; location: string; countdownIso: string };
+  /** Portada. name1/name2: los nombres de la pareja (portada, pie, pantalla de entrada y título). */
+  hero: { name1: string; name2: string; dateText: string; location: string; countdownIso: string };
   events: WeddingEvent[];
   needToKnow: InfoCard[];
   rsvp: { deadlineText: string; contactEmail: string };
@@ -98,6 +99,8 @@ export const DEFAULT_CONTENT: WeddingContent = {
     "surface": "#FBF7EF"
   },
   "hero": {
+    "name1": "Daniela",
+    "name2": "Pablo",
     "dateText": "11 de Septiembre de 2027",
     "location": "Madrid, España",
     "countdownIso": "2027-09-11T13:00:00+02:00"
@@ -285,10 +288,12 @@ const strList = (v: unknown): string[] =>
 
 /**
  * Valida la lista de secciones: cada sección propia aparece una sola vez y con su ancla fija;
- * las de texto necesitan título; si falta alguna sección propia, se añade al final visible.
+ * si falta alguna sección propia, se añade al final. En modo borrador (app de gestión) se
+ * conservan las secciones de texto sin título mientras se escriben; en la web se descartan.
  */
-function mergeSections(base: SectionConfig[], inc: unknown): SectionConfig[] {
-  if (!Array.isArray(inc)) return base;
+function mergeSections(base: SectionConfig[], inc: unknown, draft: boolean): SectionConfig[] {
+  const copy = (x: SectionConfig): SectionConfig => ({ ...x, items: [...x.items] });
+  if (!Array.isArray(inc)) return base.map(copy);
   const out: SectionConfig[] = [];
   const seenKinds = new Set<SectionKind>();
   const ids = new Set<string>();
@@ -304,7 +309,7 @@ function mergeSections(base: SectionConfig[], inc: unknown): SectionConfig[] {
       items: strList(raw['items'])
     };
     if (kind === 'text') {
-      if (!sec.title.trim()) return;
+      if (!draft && !sec.title.trim()) return;
       let id = /^[a-z0-9-]{1,40}$/.test(sec.id) ? sec.id : `seccion-${i + 1}`;
       while (ids.has(id) || base.some(b => b.id === id)) id += '-x';
       sec.id = id;
@@ -317,7 +322,7 @@ function mergeSections(base: SectionConfig[], inc: unknown): SectionConfig[] {
     out.push(sec);
   });
   for (const d of base) {
-    if (d.kind !== 'text' && !seenKinds.has(d.kind)) out.push(d);
+    if (d.kind !== 'text' && !seenKinds.has(d.kind)) out.push(copy(d));
   }
   return out;
 }
@@ -334,29 +339,55 @@ function mergeTheme(base: ThemeColors, inc: unknown): ThemeColors {
   return out;
 }
 
-/** Combina el contenido publicado con el de respaldo, validando tipos campo a campo. */
-export function mergeContent(base: WeddingContent, inc: unknown): WeddingContent {
-  if (!isObj(inc)) return base;
-  const events = Array.isArray(inc['events'])
-    ? (inc['events'] as unknown[]).filter(isObj).map((e, i) => {
+export interface NormalizeOptions {
+  /** Contenido de respaldo (por defecto, DEFAULT_CONTENT) */
+  base?: WeddingContent;
+  /**
+   * Modo borrador, para la app de gestión: conserva lo que aún se está escribiendo (momentos,
+   * tarjetas o secciones sin título, listas vacías). La app impide publicarlo así.
+   * Sin él (la web), lo incompleto se descarta y las listas vacías vuelven al respaldo.
+   */
+  draft?: boolean;
+}
+
+/**
+ * Única validación del contenido, compartida por la web y la app de gestión: comprueba tipos
+ * campo a campo y completa con el respaldo lo que falte.
+ */
+export function normalizeContent(inc: unknown, opts: NormalizeOptions = {}): WeddingContent {
+  const base = opts.base ?? DEFAULT_CONTENT;
+  const draft = !!opts.draft;
+  const src: Obj = isObj(inc) ? inc : {};
+  const events = Array.isArray(src['events'])
+    ? (src['events'] as unknown[]).filter(isObj).map((e, i) => {
         const ev = strings(EMPTY_EVENT, e);
         return { ...ev, id: ev.id || `momento-${i + 1}` };
-      }).filter(e => e.title)
-    : [];
-  const cards = Array.isArray(inc['needToKnow'])
-    ? (inc['needToKnow'] as unknown[]).filter(isObj).map(c => ({
+      }).filter(e => draft || e.title)
+    : null;
+  const cards = Array.isArray(src['needToKnow'])
+    ? (src['needToKnow'] as unknown[]).filter(isObj).map(c => ({
         ...strings({ icon: 'info', title: '', accent: '#5E6A49' }, c),
-        items: Array.isArray(c['items']) ? (c['items'] as unknown[]).filter((x): x is string => typeof x === 'string' && x.trim().length > 0) : []
-      })).filter(c => c.title)
-    : [];
+        items: strList(c['items'])
+      })).filter(c => draft || c.title)
+    : null;
+  const keep = <T>(list: T[] | null, fallback: T[]): T[] =>
+    list && (draft || list.length) ? list : fallback.map(x => ({ ...x }));
   return {
-    v: typeof inc['v'] === 'number' ? inc['v'] : base.v,
-    theme: mergeTheme(base.theme, inc['theme']),
-    sections: mergeSections(base.sections, inc['sections']),
-    hero: strings(base.hero, inc['hero']),
-    events: events.length ? events : base.events,
-    needToKnow: cards.length ? cards : base.needToKnow,
-    rsvp: strings(base.rsvp, inc['rsvp']),
-    registry: strings(base.registry, inc['registry'])
+    v: typeof src['v'] === 'number' ? src['v'] : base.v,
+    theme: mergeTheme(base.theme, src['theme']),
+    sections: mergeSections(base.sections, src['sections'], draft),
+    hero: strings(base.hero, src['hero']),
+    events: keep(events, base.events),
+    needToKnow: keep(cards, base.needToKnow).map(c => ({ ...c, items: [...c.items] })),
+    rsvp: strings(base.rsvp, src['rsvp']),
+    registry: strings(base.registry, src['registry'])
   };
 }
+
+/** Lo que usa la web: combina el contenido publicado con el de respaldo. */
+export function mergeContent(base: WeddingContent, inc: unknown): WeddingContent {
+  return isObj(inc) ? normalizeContent(inc, { base }) : base;
+}
+
+export const EMPTY_EVENT_TEMPLATE: WeddingEvent = { ...EMPTY_EVENT };
+export const EMPTY_SECTION_TEMPLATE: SectionConfig = { ...EMPTY_SECTION, items: [] };

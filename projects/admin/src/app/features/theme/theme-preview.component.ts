@@ -11,7 +11,7 @@ import { themeVars } from '@web/theme';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '[style]': 'vars()', role: 'img', '[attr.aria-label]': '"Vista previa de la web con estos colores"' },
   template: `
-    <div class="nav"><span class="mono">D&amp;P</span><span>El Gran Día</span><span>Lo Que Debes Saber</span><span class="cta">Confirmar</span></div>
+    <div class="nav"><span class="mono">{{ n1().charAt(0) }}&amp;{{ n2().charAt(0) }}</span><span>El Gran Día</span><span>Lo Que Debes Saber</span><span class="cta">Confirmar</span></div>
     <div class="hero">
       <span class="kick">Nos casamos</span>
       <span class="names">{{ n1() }} &amp; {{ n2() }}</span>
@@ -37,7 +37,7 @@ import { themeVars } from '@web/theme';
     .cta { color: var(--color-primary); }
     .hero { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 26px 16px 24px; text-align: center;
       background: radial-gradient(ellipse at 50% 30%, var(--color-surface) 0%, var(--color-bg) 60%, var(--color-bg-alt) 100%); }
-    .kick { font-family: var(--sans); font-size: .62rem; letter-spacing: .3em; text-transform: uppercase; color: var(--color-primary); }
+    .kick { font-family: var(--sans); font-size: .62rem; letter-spacing: .3em; text-transform: uppercase; color: var(--color-primary-deep); }
     .names { font-size: clamp(1.6rem, 4vw, 2.3rem); font-weight: 300; color: var(--color-teal-deep); line-height: 1.1; }
     .date { font-style: italic; color: var(--color-teal); }
     .btns { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
@@ -45,7 +45,7 @@ import { themeVars } from '@web/theme';
     .b.pri { background: var(--color-primary); color: #fff; }
     .b.out { border: 1px solid var(--color-teal); color: var(--color-teal-deep); }
     .sec { background: var(--color-bg-alt); padding: 20px 16px 22px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-    .lab { font-family: var(--sans); font-size: .6rem; letter-spacing: .28em; text-transform: uppercase; color: var(--color-primary); }
+    .lab { font-family: var(--sans); font-size: .6rem; letter-spacing: .28em; text-transform: uppercase; color: var(--color-primary-deep); }
     .h2 { font-size: 1.35rem; color: var(--color-teal-deep); }
     .rule { width: 70px; height: 1px; background: var(--color-sand-deep); margin: 6px 0 10px; }
     .card { display: flex; gap: 12px; align-items: flex-start; background: var(--color-surface); border: 1px solid color-mix(in srgb, var(--color-teal) 20%, transparent); border-radius: 14px; padding: 14px 16px; width: min(320px, 100%); text-align: left; }

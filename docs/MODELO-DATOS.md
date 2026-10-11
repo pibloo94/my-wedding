@@ -8,7 +8,7 @@ La web y la app usan los mismos nombres de campo. Este documento es la referenci
 |---|---|---|---|
 | `rsvps/{id}` | Cualquiera (solo crear, validado por reglas) | Los novios | Una respuesta del formulario por documento |
 | `admin/state` | Los novios | Los novios | Configuración, paleta, estado de la web |
-| `admin/state/{colección}/{id}` | Los novios | Los novios | `guests`, `tables`, `expenses`, `vendors`, `tasks`, `day`, `logistics`, `inspo`, `webPlan`, `webChecks`, `webResources`, `webTexts`, `webInfo`, `webLog` |
+| `admin/state/{colección}/{id}` | Los novios | Los novios | `guests`, `tables`, `expenses`, `vendors`, `tasks`, `inspo`, `webResources`, `webLog` (las antiguas `day`, `logistics`, `webPlan`, `webChecks`, `webTexts` y `webInfo` ya no se usan; sus datos siguen en Firestore) |
 | `admins/{uid}` | Nadie desde fuera (se crea en la consola) | El propio usuario | Quién tiene acceso a la app |
 | `content/published` | Los novios | Cualquiera | Contenido publicado de la web: `{ json, version, publishedAt, by }` |
 | `admin/contentDraft` | Los novios | Los novios | Borrador del contenido, compartido entre los dos |
@@ -73,14 +73,21 @@ El campo `json` guarda un objeto con esta forma (por defecto: `src/app/core/cont
 | Bloque | Campos | Dónde se ve |
 |---|---|---|
 | `sections[]` | `id`, `kind`, `visible`, `navLabel`, `label`, `title`, `subtitle`, `body`, `items[]`, `linkText`, `linkUrl` | Orden, visibilidad y títulos de las secciones; menú de la web (ver abajo) |
-| `hero` | `dateText`, `location`, `countdownIso` (fecha y hora de Madrid con su desfase, p. ej. `2027-09-11T13:00:00+02:00`) | Portada, cuenta atrás, pie y mensaje de gracias |
+| `hero` | `name1`, `name2`, `dateText`, `location`, `countdownIso` (fecha y hora de Madrid con su desfase, p. ej. `2027-09-11T13:00:00+02:00`) | Portada, menú, pantalla de contraseña, título de la pestaña, cuenta atrás, pie y mensaje de gracias |
 | `events[]` | `id`, `icon`, `type`, `title`, `timeStart`, `timeEnd`, `venue`, `address`, `mapsUrl`, `dressCode`, `description` | Programa del día |
 | `needToKnow[]` | `icon`, `title`, `accent`, `items[]` | Lo que debes saber |
 | `rsvp` | `deadlineText`, `contactEmail` | Formulario de confirmación |
 | `registry` | `titular`, `iban`, `concepto` | Lista de bodas (con `iban` vacío se muestra «Muy pronto…») |
 | `theme` | `primary`, `primaryDeep`, `sage`, `sageDeep`, `sand`, `orange`, `background`, `surface` (HEX `#RRGGBB`) | Colores de toda la web. Se editan en la app → Temática |
 
-La web valida cada campo al leerlo. Si algo falta o tiene un tipo inesperado, usa el valor por defecto; si una lista llega vacía, usa la de respaldo. La app comprueba antes de publicar las horas, los enlaces, el correo y el IBAN (dígitos de control).
+La validación es una sola, `normalizeContent()` en `src/app/core/content/wedding-content.ts`, y la usan la web y la app:
+
+- **Web:** si algo falta o tiene un tipo inesperado, usa el valor por defecto; si una lista llega vacía, usa la de respaldo; descarta momentos, tarjetas y secciones de texto sin título.
+- **App (modo borrador, `{ draft: true }`):** conserva lo que aún se está escribiendo. Antes de publicar comprueba nombres, horas, enlaces, correo e IBAN (dígitos de control), y avisa si la fecha visible no coincide con el día de la cuenta atrás.
+
+### Nombres y fecha de la boda
+
+Lo publicado en `hero` es la única fuente: `name1`/`name2` y el día y la hora de `countdownIso` (en Madrid) son los que usa la app para su cabecera, la cuenta atrás, las fases y los vencimientos de tareas. Configuración solo los muestra y enlaza a Web de la boda → Contenido. Los campos `n1`, `n2`, `weddingDate` y `ceremonyTime` de `admin/state` quedan como respaldo sin Firebase o mientras no hay nada publicado.
 
 ### Colores (`theme`)
 
