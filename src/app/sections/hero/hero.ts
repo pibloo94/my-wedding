@@ -72,11 +72,14 @@ export class HeroComponent implements OnInit, OnDestroy {
     }
   }
 
+  /** Baja al programa del día o, si está oculto, a la primera sección visible. */
   scrollToEvents(): void {
-    const el = document.getElementById('eventos');
+    const target = this.content.isVisible('events') ? 'eventos' : this.content.visibleSections()[0]?.id;
+    const el = target ? document.getElementById(target) : null;
     if (el) {
       const top = el.getBoundingClientRect().top + window.scrollY - 72;
       window.scrollTo({ top, behavior: 'smooth' });
     }
   }
+
 }

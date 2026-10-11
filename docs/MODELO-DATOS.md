@@ -72,6 +72,7 @@ El campo `json` guarda un objeto con esta forma (por defecto: `src/app/core/cont
 
 | Bloque | Campos | Dónde se ve |
 |---|---|---|
+| `sections[]` | `id`, `kind`, `visible`, `navLabel`, `label`, `title`, `subtitle`, `body`, `items[]`, `linkText`, `linkUrl` | Orden, visibilidad y títulos de las secciones; menú de la web (ver abajo) |
 | `hero` | `dateText`, `location`, `countdownIso` (fecha y hora de Madrid con su desfase, p. ej. `2027-09-11T13:00:00+02:00`) | Portada, cuenta atrás, pie y mensaje de gracias |
 | `events[]` | `id`, `icon`, `type`, `title`, `timeStart`, `timeEnd`, `venue`, `address`, `mapsUrl`, `dressCode`, `description` | Programa del día |
 | `needToKnow[]` | `icon`, `title`, `accent`, `items[]` | Lo que debes saber |
@@ -79,6 +80,23 @@ El campo `json` guarda un objeto con esta forma (por defecto: `src/app/core/cont
 | `registry` | `titular`, `iban`, `concepto` | Lista de bodas (con `iban` vacío se muestra «Muy pronto…») |
 
 La web valida cada campo al leerlo. Si algo falta o tiene un tipo inesperado, usa el valor por defecto; si una lista llega vacía, usa la de respaldo. La app comprueba antes de publicar las horas, los enlaces, el correo y el IBAN (dígitos de control).
+
+### Secciones (`sections[]`)
+
+La portada y el pie son fijos. El resto de la página se pinta en el orden de `sections`, solo las que tienen `visible: true`.
+
+| `kind` | `id` (ancla) | Qué es |
+|---|---|---|
+| `events` | `eventos` | Programa del día (contenido en `events[]`) |
+| `needToKnow` | `detalles` | Lo que debes saber (contenido en `needToKnow[]`) |
+| `rsvp` | `rsvp` | Formulario; `subtitle` va seguido de la fecha límite |
+| `registry` | `registro` | Lista de bodas |
+| `text` | `sec-…` | Sección libre: `body` (párrafos separados por línea en blanco), `items[]`, botón opcional `linkText` + `linkUrl` |
+
+- Las cuatro propias aparecen una sola vez y su `id` es fijo; si falta alguna en lo publicado, la web la añade al final con sus textos por defecto.
+- Las de texto sin `title` se descartan; `linkUrl` solo se admite si empieza por `https://`.
+- El menú usa `navLabel` (o `title` si está vacío). Si `rsvp` está oculta, la portada no muestra «Confirmar»; si `events` está oculta, «Ver detalles» baja a la primera sección visible.
+- La app no deja publicar sin ninguna sección visible, con secciones visibles sin título o con secciones de texto vacías.
 
 ### Sincronización del contenido (Firestore manda)
 

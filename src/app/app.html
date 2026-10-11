@@ -6,10 +6,16 @@
   <app-navbar></app-navbar>
   <main>
     <app-hero></app-hero>
-    <app-event-details></app-event-details>
-    <app-need-to-know></app-need-to-know>
-    <app-rsvp></app-rsvp>
-    <app-registry></app-registry>
+    <!-- Orden, visibilidad y secciones de texto: se configuran desde la app de gestión -->
+    @for (section of content.visibleSections(); track section.id) {
+      @switch (section.kind) {
+        @case ('events') { <app-event-details></app-event-details> }
+        @case ('needToKnow') { <app-need-to-know></app-need-to-know> }
+        @case ('rsvp') { <app-rsvp></app-rsvp> }
+        @case ('registry') { <app-registry></app-registry> }
+        @case ('text') { <app-text-section [section]="section"></app-text-section> }
+      }
+    }
   </main>
   <app-footer></app-footer>
 </div>

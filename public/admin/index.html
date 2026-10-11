@@ -404,6 +404,14 @@ details.ced>summary::-webkit-details-marker{display:none}
 .cblock{border:1px solid var(--line);border-radius:14px;padding:6px 14px 14px;margin-top:12px;background:#fff}
 .cbh{display:flex;align-items:center;gap:4px;padding-top:6px}
 .cbh .icb[disabled]{opacity:.3;cursor:default}
+.cblock.off{background:var(--bg,#faf7f2);border-style:dashed}
+.cblock.off .fgrid{opacity:.55}
+.cbh .vis{display:inline-flex;align-items:center;gap:6px;font-size:.82rem;color:var(--muted);margin-right:6px;cursor:pointer;white-space:nowrap}
+.cbh .vis input{width:18px;height:18px;accent-color:var(--sage,#5E6A49);margin:0}
+.cbh b{min-width:0;overflow-wrap:anywhere}
+.cbt{flex:1;min-width:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px}
+.ckind{font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;color:var(--faint);white-space:nowrap}
+.cwarn{color:var(--muted)}
 .cdiff{font-size:.84rem;padding:7px 0;border-top:1px solid var(--line);min-width:0;overflow-wrap:anywhere}
 .cside{grid-template-columns:minmax(0,1fr)}
 .cdiff:first-child{border-top:0}
@@ -1227,6 +1235,17 @@ WV.contenido=()=>{
   <div class="note sage small">${ic('info')}<span>Lo que escribes se guarda solo como <b>borrador</b>, compartido entre los dos. La web no cambia hasta que pulsas <b>Publicar</b>. Cada publicación queda en el historial y se puede recuperar.</span></div>
   <div class="grid g21" style="align-items:start">
   <div>
+  <details class="card ced" open><summary><h3>${ic('list')} Secciones de la web</h3></summary>
+   <p class="small muted" style="margin:2px 0 0">En el orden en que aparecen, después de la portada. El menú de la web y los botones de la portada se adaptan solos. Los contenidos de cada sección propia se editan más abajo.</p>
+   ${d.sections.map((x,i)=>{const T=x.kind==='text',p=`sections.${i}`;return `<div class="cblock ${x.visible?'':'off'}"><div class="cbh"><div class="cbt"><b>${i+1}. ${esc(x.title||'Nueva sección')}</b><span class="ckind">${SEC_NAME[x.kind]}</span></div>
+     <label class="vis"><input type="checkbox" data-cpath="${p}.visible" data-change="cset" ${x.visible?'checked':''}>${x.visible?'Visible':'Oculta'}</label>
+     <button class="icb" data-act="cmove" data-list="sections" data-i="${i}" data-dir="-1" aria-label="Subir" ${i?'':'disabled'}>↑</button><button class="icb" data-act="cmove" data-list="sections" data-i="${i}" data-dir="1" aria-label="Bajar" ${i<d.sections.length-1?'':'disabled'}>↓</button>
+     ${T?`<button class="icb d" data-act="cremove" data-list="sections" data-i="${i}" aria-label="Quitar">${ic('trash')}</button>`:''}</div>
+     <div class="fgrid">${fi(`${p}.navLabel`,'Texto en el menú',x.navLabel,{ph:x.title||'',h:'Vacío = se usa el título.'})}${fi(`${p}.label`,'Etiqueta',x.label,{h:'Texto pequeño sobre el título. Opcional.'})}
+     ${fi(`${p}.title`,'Título',x.title,{full:1})}${fi(`${p}.subtitle`,'Subtítulo',x.subtitle,{full:1,ta:1,rows:2,h:x.kind==='rsvp'?'Va seguido de la fecha límite en negrita.':'Opcional.'})}
+     ${T?`${fi(`${p}.body`,'Texto',x.body,{full:1,ta:1,rows:5,h:'Deja una línea en blanco entre párrafos.'})}${fi(`${p}.items`,'Puntos',x.items.join('\n'),{full:1,ta:1,rows:Math.max(3,x.items.length+1),h:'Opcional. Uno por línea.'})}
+     ${fi(`${p}.linkText`,'Texto del botón',x.linkText,{ph:'Más información'})}${fi(`${p}.linkUrl`,'Enlace del botón',x.linkUrl,{ph:'https://…',h:'Opcional. Vacío = sin botón.'})}`:''}</div></div>`}).join('')}
+   <button class="btn out sm" data-act="cadd" data-list="sections">${ic('plus')} Añadir sección de texto</button></details>
   <details class="card ced" open><summary><h3>${ic('home')} Portada</h3></summary><div class="fgrid">
    ${fi('hero.dateText','Fecha visible',d.hero.dateText)}${fi('hero.location','Lugar',d.hero.location)}
    <label class="f">Día de la cuenta atrás<input type="date" data-ccount="date" value="${esc(cd.slice(0,10))}"></label>
@@ -1462,7 +1481,7 @@ function mergeRsvps(){
 }
 
 /* =================== Contenido de la web (fase 4) =================== */
-const DEFAULT_CONTENT={"v": 1, "hero": {"dateText": "11 de Septiembre de 2027", "location": "Madrid, España", "countdownIso": "2027-09-11T13:00:00+02:00"}, "events": [{"id": "ceremonia", "icon": "heart", "type": "Ceremonia", "title": "Ceremonia Civil", "timeStart": "13:00 h", "timeEnd": "13:30 h", "venue": "Jardines del Negralejo", "address": "Carr. de Mejorada, km 2,5, 28522 Rivas-Vaciamadrid, Madrid", "mapsUrl": "https://www.google.com/maps/place/Jardines+del+Negralejo/@40.4085192,-3.51632,17z/data=!4m6!3m5!1s0xd423b214854bab3:0x664516d941116999!8m2!3d40.4085706!4d-3.5162788!16s%2Fg%2F11thnjv_ym?entry=ttu&g_ep=EgoyMDI2MDUxMy4wIKXMDSoASAFQAw%3D%3D", "dressCode": "Traje Formal · Evitar blanco", "description": "Os esperamos para dar comienzo a esta historia juntos. La ceremonia tendrá lugar en el precioso jardín del palacio."}, {"id": "coctel", "icon": "glass", "type": "Cóctel", "title": "Cóctel de Bienvenida", "timeStart": "13:30 h", "timeEnd": "15:00 h", "venue": "Jardines del Negralejo", "address": "Carr. de Mejorada, km 2,5, 28522 Rivas-Vaciamadrid, Madrid", "mapsUrl": "", "dressCode": "Traje Formal · Evitar blanco", "description": "Disfruta de aperitivos y bebidas en los jardines mientras celebramos juntos el inicio de nuestra nueva vida."}, {"id": "banquete", "icon": "utensils", "type": "Banquete", "title": "Comida", "timeStart": "15:00 h", "timeEnd": "18:30 h", "venue": "Gran Salón del Negralejo", "address": "Carr. de Mejorada, km 2,5, 28522 Rivas-Vaciamadrid, Madrid", "mapsUrl": "", "dressCode": "Traje Formal · Evitar blanco", "description": "La celebración continúa con una comida de gala en el Gran Salón. ¡Buen provecho!"}, {"id": "baile", "icon": "party-popper", "type": "Fiesta", "title": "Baile", "timeStart": "18:30 h", "timeEnd": "02:00 h", "venue": "Gran Salón del Negralejo", "address": "Carr. de Mejorada, km 2,5, 28522 Rivas-Vaciamadrid, Madrid", "mapsUrl": "", "dressCode": "Traje Formal · Evitar blanco", "description": "Abrimos la pista y bailamos hasta la madrugada. ¡Que empiece la fiesta!"}], "needToKnow": [{"icon": "shirt", "title": "Código de Vestimenta", "accent": "#B15C38", "items": ["Traje formal para caballeros (corbata o pajarita)", "Vestido de cóctel para señoras", "Por favor, evitar colores blanco, marfil y crudo", "Recomendamos llevar zapato de cambio para el baile"]}, {"icon": "info", "title": "Detalles del Lugar", "accent": "#5E6A49", "items": ["La ceremonia se realiza al aire libre, prever calzado cómodo para jardín", "No se permite confeti ni arroz dentro del recinto", "Zona de aparcamiento gratuita disponible dentro del recinto", "El recinto es accesible para personas con movilidad reducida"]}, {"icon": "utensils", "title": "Menú y Alergias", "accent": "#CD8A52", "items": ["Menú de cuatro tiempos con opciones vegetarianas", "Indicad vuestras alergias o intolerancias en el formulario de confirmación", "Menú infantil disponible para los más pequeños", "Barra libre durante la fiesta"]}], "rsvp": {"deadlineText": "1 de febrero de 2027", "contactEmail": "pablo.daniela2027@gmail.com"}, "registry": {"titular": "Pablo Agudo Brun", "iban": "", "concepto": "Regalo boda Daniela & Pablo"}};
+const DEFAULT_CONTENT={"v": 1, "hero": {"dateText": "11 de Septiembre de 2027", "location": "Madrid, España", "countdownIso": "2027-09-11T13:00:00+02:00"}, "events": [{"id": "ceremonia", "icon": "heart", "type": "Ceremonia", "title": "Ceremonia Civil", "timeStart": "13:00 h", "timeEnd": "13:30 h", "venue": "Jardines del Negralejo", "address": "Carr. de Mejorada, km 2,5, 28522 Rivas-Vaciamadrid, Madrid", "mapsUrl": "https://www.google.com/maps/place/Jardines+del+Negralejo/@40.4085192,-3.51632,17z/data=!4m6!3m5!1s0xd423b214854bab3:0x664516d941116999!8m2!3d40.4085706!4d-3.5162788!16s%2Fg%2F11thnjv_ym?entry=ttu&g_ep=EgoyMDI2MDUxMy4wIKXMDSoASAFQAw%3D%3D", "dressCode": "Traje Formal · Evitar blanco", "description": "Os esperamos para dar comienzo a esta historia juntos. La ceremonia tendrá lugar en el precioso jardín del palacio."}, {"id": "coctel", "icon": "glass", "type": "Cóctel", "title": "Cóctel de Bienvenida", "timeStart": "13:30 h", "timeEnd": "15:00 h", "venue": "Jardines del Negralejo", "address": "Carr. de Mejorada, km 2,5, 28522 Rivas-Vaciamadrid, Madrid", "mapsUrl": "", "dressCode": "Traje Formal · Evitar blanco", "description": "Disfruta de aperitivos y bebidas en los jardines mientras celebramos juntos el inicio de nuestra nueva vida."}, {"id": "banquete", "icon": "utensils", "type": "Banquete", "title": "Comida", "timeStart": "15:00 h", "timeEnd": "18:30 h", "venue": "Gran Salón del Negralejo", "address": "Carr. de Mejorada, km 2,5, 28522 Rivas-Vaciamadrid, Madrid", "mapsUrl": "", "dressCode": "Traje Formal · Evitar blanco", "description": "La celebración continúa con una comida de gala en el Gran Salón. ¡Buen provecho!"}, {"id": "baile", "icon": "party-popper", "type": "Fiesta", "title": "Baile", "timeStart": "18:30 h", "timeEnd": "02:00 h", "venue": "Gran Salón del Negralejo", "address": "Carr. de Mejorada, km 2,5, 28522 Rivas-Vaciamadrid, Madrid", "mapsUrl": "", "dressCode": "Traje Formal · Evitar blanco", "description": "Abrimos la pista y bailamos hasta la madrugada. ¡Que empiece la fiesta!"}], "needToKnow": [{"icon": "shirt", "title": "Código de Vestimenta", "accent": "#B15C38", "items": ["Traje formal para caballeros (corbata o pajarita)", "Vestido de cóctel para señoras", "Por favor, evitar colores blanco, marfil y crudo", "Recomendamos llevar zapato de cambio para el baile"]}, {"icon": "info", "title": "Detalles del Lugar", "accent": "#5E6A49", "items": ["La ceremonia se realiza al aire libre, prever calzado cómodo para jardín", "No se permite confeti ni arroz dentro del recinto", "Zona de aparcamiento gratuita disponible dentro del recinto", "El recinto es accesible para personas con movilidad reducida"]}, {"icon": "utensils", "title": "Menú y Alergias", "accent": "#CD8A52", "items": ["Menú de cuatro tiempos con opciones vegetarianas", "Indicad vuestras alergias o intolerancias en el formulario de confirmación", "Menú infantil disponible para los más pequeños", "Barra libre durante la fiesta"]}], "rsvp": {"deadlineText": "1 de febrero de 2027", "contactEmail": "pablo.daniela2027@gmail.com"}, "registry": {"titular": "Pablo Agudo Brun", "iban": "", "concepto": "Regalo boda Daniela & Pablo"}, "sections": [{"id": "eventos", "kind": "events", "visible": true, "navLabel": "El Gran Día", "label": "El Gran Día", "title": "Detalles del Evento", "subtitle": "Todo lo que necesitas saber para acompañarnos en este día tan especial", "body": "", "items": [], "linkText": "", "linkUrl": ""}, {"id": "detalles", "kind": "needToKnow", "visible": true, "navLabel": "Lo Que Debes Saber", "label": "Información Práctica", "title": "Lo Que Debes Saber", "subtitle": "Todo lo que necesitas para disfrutar al máximo de nuestra celebración", "body": "", "items": [], "linkText": "", "linkUrl": ""}, {"id": "rsvp", "kind": "rsvp", "visible": true, "navLabel": "Confirmar Asistencia", "label": "Confirmación de Asistencia", "title": "¿Nos acompañas?", "subtitle": "Por favor confirma antes del", "body": "", "items": [], "linkText": "", "linkUrl": ""}, {"id": "registro", "kind": "registry", "visible": true, "navLabel": "Lista de Bodas", "label": "Lista de Bodas", "title": "Vuestra Generosidad", "subtitle": "Vuestro regalo más importante es vuestra presencia. Si aun así queréis tener un detalle con nosotros, aquí encontraréis una cuenta bancaria para hacer una transferencia.", "body": "", "items": [], "linkText": "", "linkUrl": ""}]};
 const CT={loaded:false,draft:null,published:null,pubVersion:0,pubAt:'',history:[],dirty:false,timer:null,gotPub:false,gotDraft:false,baseKey:'',conflict:false};
 const cKey=c=>stable(normContent(c));
 const clone=o=>JSON.parse(JSON.stringify(o));
@@ -1486,17 +1505,41 @@ function cLoad(){
     draftDoc=null;if(x&&x.json){try{draftDoc={content:normContent(JSON.parse(x.json)),baseKey:x.baseKey||''}}catch(e){}}ready()},e=>console.warn('draft',e));
   F.onSnapshot(F.collection(db,'admin','contentHistory','items'),qs=>{CT.history=qs.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.version||0)-(a.version||0));if(CT.loaded)softRender()},e=>console.warn('history',e));
 }
+const SEC_KINDS=['events','needToKnow','rsvp','registry','text'];
+const SEC_NAME={events:'Programa del día',needToKnow:'Lo que debes saber',rsvp:'Confirmación',registry:'Lista de bodas',text:'Sección de texto'};
+const SEC_EMPTY={id:'',kind:'text',visible:true,navLabel:'',label:'',title:'',subtitle:'',body:'',items:[],linkText:'',linkUrl:''};
+// Mismas reglas que mergeSections() en la web (src/app/core/content/wedding-content.ts), salvo que aquí
+// se conservan las secciones de texto sin título mientras se escriben: cErrors() impide publicarlas así.
+function normSections(base,inc){
+  if(!Array.isArray(inc))return clone(base);
+  const out=[],seen=new Set(),ids=new Set();
+  inc.filter(x=>x&&typeof x==='object'&&!Array.isArray(x)).forEach((raw,i)=>{const kind=raw.kind;
+    if(!SEC_KINDS.includes(kind))return;if(kind!=='text'&&seen.has(kind))return;
+    const def=kind==='text'?SEC_EMPTY:(base.find(b=>b.kind===kind)||SEC_EMPTY);const sec={...def};
+    Object.keys(def).forEach(k=>{if(typeof def[k]==='string'&&typeof raw[k]==='string')sec[k]=raw[k]});
+    sec.kind=kind;sec.visible=typeof raw.visible==='boolean'?raw.visible:true;sec.items=Array.isArray(raw.items)?raw.items.filter(t=>typeof t==='string'):[];
+    if(kind==='text'){let id=/^[a-z0-9-]{1,40}$/.test(sec.id)?sec.id:`seccion-${i+1}`;
+      while(ids.has(id)||base.some(b=>b.id===id))id+='-x';sec.id=id}
+    else{sec.id=def.id;seen.add(kind)}
+    if(!/^https:\/\//.test(sec.linkUrl))sec.linkUrl='';
+    ids.add(sec.id);out.push(sec)});
+  base.forEach(d=>{if(d.kind!=='text'&&!seen.has(d.kind))out.push(clone(d))});
+  return out}
 function normContent(c){
   const D=DEFAULT_CONTENT,o=c&&typeof c==='object'?c:{};
   const pick=(base,inc)=>{const r={...base};if(inc&&typeof inc==='object')Object.keys(base).forEach(k=>{if(typeof inc[k]==='string')r[k]=inc[k]});return r};
   const EV={id:'',icon:'heart',type:'',title:'',timeStart:'',timeEnd:'',venue:'',address:'',mapsUrl:'',dressCode:'',description:''};
-  return {v:1,hero:pick(D.hero,o.hero),
+  return {v:1,sections:normSections(D.sections,o.sections),hero:pick(D.hero,o.hero),
     events:Array.isArray(o.events)?o.events.map(e=>pick(EV,e)):clone(D.events),
     needToKnow:Array.isArray(o.needToKnow)?o.needToKnow.map(x=>({...pick({icon:'info',title:'',accent:'#5E6A49'},x),items:Array.isArray(x&&x.items)?x.items.filter(t=>typeof t==='string'):[]})):clone(D.needToKnow),
     rsvp:pick(D.rsvp,o.rsvp),registry:pick(D.registry,o.registry)};
 }
 function cFlat(c){
   const out=[];const add=(k,l,v)=>out.push([k,l,String(v??'')]);
+  const SF=[['visible','Visible'],['navLabel','Texto en el menú'],['label','Etiqueta'],['title','Título'],['subtitle','Subtítulo'],['body','Texto'],['items','Puntos'],['linkText','Texto del botón'],['linkUrl','Enlace del botón']];
+  add('s.order','Secciones · Orden',c.sections.map(x=>x.id).join(','));
+  c.sections.forEach(x=>SF.forEach(([k,l])=>{if(x.kind!=='text'&&['body','items','linkText','linkUrl'].includes(k))return;
+    add(`s:${x.id}.${k}`,`Sección ${x.title||SEC_NAME[x.kind]} · ${l}`,k==='visible'?(x.visible?'Visible':'Oculta'):k==='items'?x.items.join(' / '):x[k])}));
   add('h.d','Portada · Fecha visible',c.hero.dateText);add('h.l','Portada · Lugar',c.hero.location);add('h.c','Portada · Cuenta atrás',String(c.hero.countdownIso).slice(0,16).replace('T',' '));
   const EF=[['type','Etiqueta'],['title','Título'],['timeStart','Empieza'],['timeEnd','Termina'],['venue','Lugar'],['address','Dirección'],['mapsUrl','Google Maps'],['dressCode','Vestimenta'],['description','Descripción'],['icon','Icono']];
   add('e.order','Programa · Orden',c.events.map((e,i)=>e.id||i).join(','));
@@ -1507,11 +1550,22 @@ function cFlat(c){
   return out;
 }
 function cDiff(a,b){const A=new Map(cFlat(a).map(([k,l,v])=>[k,[l,v]])),B=new Map(cFlat(b).map(([k,l,v])=>[k,[l,v]]));const r=[];
-  const titles=c=>c.events.map(e=>e.title||'sin título').join(' → ');
-  new Set([...A.keys(),...B.keys()]).forEach(k=>{const x=A.get(k),y=B.get(k);const xv=x?x[1]:'',yv=y?y[1]:'';if(xv!==yv)r.push(k==='e.order'?[(y||x)[0],titles(a),titles(b)]:[(y||x)[0],xv,yv])});return r}
+  const titles=c=>c.events.map(e=>e.title||'sin título').join(' → '),stitles=c=>c.sections.map(x=>(x.title||SEC_NAME[x.kind])+(x.visible?'':' (oculta)')).join(' → ');
+  new Set([...A.keys(),...B.keys()]).forEach(k=>{const x=A.get(k),y=B.get(k);const xv=x?x[1]:'',yv=y?y[1]:'';if(xv!==yv)r.push(k==='e.order'?[(y||x)[0],titles(a),titles(b)]:k==='s.order'?[(y||x)[0],stitles(a),stitles(b)]:[(y||x)[0],xv,yv])});return r}
 function ibanOk(v){const s=String(v||'').replace(/\s+/g,'').toUpperCase();if(!/^[A-Z]{2}\d{2}[A-Z0-9]{10,30}$/.test(s))return false;
   const r=s.slice(4)+s.slice(0,4);let m=0;for(const ch of r){const n=ch>='A'?String(ch.charCodeAt(0)-55):ch;for(const dgt of n)m=(m*10+(+dgt))%97}return m===1}
+function cWarnings(c){const w=[];const v=k=>c.sections.some(x=>x.kind===k&&x.visible);
+  if(!v('rsvp'))w.push('La confirmación de asistencia está oculta: los invitados no podrán responder y la portada no mostrará el botón «Confirmar».');
+  if(!v('events'))w.push('El programa del día está oculto: el botón «Ver detalles» de la portada llevará a la primera sección visible.');
+  c.sections.forEach(x=>{if(x.kind==='text'&&x.linkText.trim()&&!x.linkUrl.trim())w.push(`Sección ${x.title||'de texto'}: el botón no se mostrará porque no tiene enlace.`)});
+  return w}
 function cErrors(c){const e=[];
+  if(!c.sections.some(x=>x.visible))e.push('Secciones: deja al menos una visible.');
+  c.sections.forEach((x,i)=>{const n=`Sección ${i+1}${x.title?` (${x.title})`:''}`;
+    if(x.visible&&!x.title.trim())e.push(`${n}: falta el título.`);
+    if(x.kind==='text'){if(!x.title.trim()&&!x.visible)e.push(`${n}: falta el título.`);
+      if(!x.body.trim()&&!x.items.length)e.push(`${n}: escribe un texto o algún punto.`);
+      if(x.linkUrl.trim()&&!/^https:\/\//.test(x.linkUrl.trim()))e.push(`${n}: el enlace del botón debe empezar por https://.`)}});
   if(!c.hero.dateText.trim())e.push('Portada: falta la fecha visible.');
   if(isNaN(new Date(c.hero.countdownIso).getTime()))e.push('Portada: la fecha u hora de la cuenta atrás no es válida.');
   if(!c.events.length)e.push('Programa: añade al menos un momento.');
@@ -1525,8 +1579,8 @@ function cErrors(c){const e=[];
   if(c.registry.iban.trim()&&!ibanOk(c.registry.iban))e.push('Lista de bodas: el IBAN no es válido (los dígitos de control no cuadran). Revísalo antes de publicar.');
   return e}
 function cStatusText(){const n=cDiff(cBase(),CT.draft).length;return n?`${n} cambio${n>1?'s':''} sin publicar en el borrador${CT.dirty?' · guardando…':''}`:'El borrador coincide con lo publicado.'}
-function cDiffHtml(){const df=cDiff(cBase(),CT.draft),er=cErrors(CT.draft);
-  return (er.length?`<div class="note" style="margin:0 0 8px">${ic('alert')}<div>${er.map(x=>`<div class="cerr">${esc(x)}</div>`).join('')}</div></div>`:'')+
+function cDiffHtml(){const df=cDiff(cBase(),CT.draft),er=cErrors(CT.draft),wa=cWarnings(CT.draft);
+  return (wa.length?`<div class="note sage small" style="margin:0 0 8px">${ic('info')}<div>${wa.map(x=>`<div class="cwarn">${esc(x)}</div>`).join('')}</div></div>`:'')+(er.length?`<div class="note" style="margin:0 0 8px">${ic('alert')}<div>${er.map(x=>`<div class="cerr">${esc(x)}</div>`).join('')}</div></div>`:'')+
    (df.length?df.map(([l,a,b])=>`<div class="cdiff"><div class="k">${esc(l)}</div><div class="diff">${a?`<del>${esc(a.length>120?a.slice(0,119)+'…':a)}</del> `:''}${ic('arrow')} <ins>${esc(b?(b.length>120?b.slice(0,119)+'…':b):'(vacío)')}</ins></div></div>`).join(''):'<p class="small muted">Sin cambios.</p>')}
 function cRefresh(){const a=$('#cstatus');if(a)a.textContent=cStatusText();const b=$('#cdiff');if(b)b.innerHTML=cDiffHtml()}
 function cSetPath(obj,path,val){const ks=path.split('.');let o=obj;for(let i=0;i<ks.length-1;i++)o=o[isNaN(+ks[i])?ks[i]:+ks[i]];const last=ks[ks.length-1];o[last]=last==='items'?String(val).split('\n').map(t=>t.trim()).filter(Boolean):val}
@@ -1541,11 +1595,13 @@ async function cSaveDraft(){clearTimeout(CT.timer);const F=CLOUD.F;if(!F)return;
   try{await F.setDoc(F.doc(CLOUD.db,'admin','contentDraft'),{json:JSON.stringify(CT.draft),baseKey:CT.baseKey,updatedAt:new Date().toISOString(),by:(CLOUD.user&&CLOUD.user.email)||''})}
   catch(e){toast('No se pudo guardar el borrador ('+(e.code||e.message)+')')}
   CT.dirty=false;cRefresh()}
-chg.cset=el=>{if(!CT.draft)return;cSetPath(CT.draft,el.dataset.cpath,el.value);cTouch()};
+chg.cset=el=>{if(!CT.draft)return;cSetPath(CT.draft,el.dataset.cpath,el.type==='checkbox'?el.checked:el.value);cTouch();if(el.type==='checkbox')render()};
 document.addEventListener('change',e=>{const el=e.target.closest('[data-ccount]');if(!el||!CT.draft)return;
   const date=$('[data-ccount="date"]').value,time=$('[data-ccount="time"]').value,v=madridIso(date,time);
   if(!v){toast('Fecha u hora no válidas');return}CT.draft.hero.countdownIso=v;cTouch()});
-acts.cadd=(_,b)=>{const l=b.dataset.list;CT.draft[l].push(l==='events'?{id:'momento-'+uid(),icon:'clock',type:'',title:'',timeStart:'',timeEnd:'',venue:'',address:'',mapsUrl:'',dressCode:'',description:''}:{icon:'info',title:'',accent:'#5E6A49',items:[]});cTouch();render()};
+acts.cadd=(_,b)=>{const l=b.dataset.list;if(l==='sections'){CT.draft.sections.push({...SEC_EMPTY,items:[],id:'sec-'+uid().replace(/[^a-z0-9]/g,'')});cTouch();render();
+    setTimeout(()=>{const a=document.querySelectorAll('[data-cpath$=".title"][data-cpath^="sections."]');const el=a[a.length-1];if(el){el.scrollIntoView({block:'center'});el.focus()}},30);return}
+  CT.draft[l].push(l==='events'?{id:'momento-'+uid(),icon:'clock',type:'',title:'',timeStart:'',timeEnd:'',venue:'',address:'',mapsUrl:'',dressCode:'',description:''}:{icon:'info',title:'',accent:'#5E6A49',items:[]});cTouch();render()};
 acts.cremove=(_,b)=>{const l=b.dataset.list,i=+b.dataset.i,x=CT.draft[l][i];askConfirm(`¿Quitar «${esc(x.title||'este bloque')}» del borrador? Se podrá recuperar descartando los cambios mientras no publiques.`,'Quitar',()=>{CT.draft[l].splice(i,1);cTouch();render()})};
 acts.cmove=(_,b)=>{const l=b.dataset.list,i=+b.dataset.i,j=i+(+b.dataset.dir),a=CT.draft[l];if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];cTouch();render()};
 acts.cdiscard=()=>{if(!cDiff(cBase(),CT.draft).length){toast('No hay cambios que descartar');return}

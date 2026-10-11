@@ -1,0 +1,37 @@
+<section [id]="section().id" class="section text-section">
+  <div class="container">
+    <div class="section-header" scrollAnimate animClass="fade-up">
+      @if (section().label) {
+        <span class="label-accent">{{ section().label }}</span>
+      }
+      <h2>{{ section().title }}</h2>
+      <div class="sprig-divider" aria-hidden="true"></div>
+      @if (section().subtitle) {
+        <p class="subtitle">{{ section().subtitle }}</p>
+      }
+    </div>
+
+    <div class="text-card card" scrollAnimate animClass="fade-up">
+      @for (p of paragraphs; track $index) {
+        <p class="text-paragraph">{{ p }}</p>
+      }
+      @if (section().items.length) {
+        <ul class="text-list">
+          @for (item of section().items; track $index) {
+            <li>
+              <app-icon name="chevron-right" [size]="14" [strokeWidth]="2" />
+              <span>{{ item }}</span>
+            </li>
+          }
+        </ul>
+      }
+      @if (section().linkUrl) {
+        <div class="text-link">
+          <a class="btn btn-primary" [href]="section().linkUrl" target="_blank" rel="noopener">
+            {{ section().linkText || 'Más información' }}
+          </a>
+        </div>
+      }
+    </div>
+  </div>
+</section>

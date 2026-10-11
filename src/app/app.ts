@@ -8,6 +8,8 @@ import { RsvpComponent } from './sections/rsvp/rsvp';
 import { NeedToKnowComponent } from './sections/need-to-know/need-to-know';
 import { RegistryComponent } from './sections/registry/registry';
 import { PasswordGateComponent } from './shared/password-gate/password-gate';
+import { TextSectionComponent } from './sections/text-section/text-section';
+import { ContentService } from './core/services/content.service';
 
 @Component({
   selector: 'app-root',
@@ -21,7 +23,8 @@ import { PasswordGateComponent } from './shared/password-gate/password-gate';
     RsvpComponent,
     NeedToKnowComponent,
     RegistryComponent,
-    PasswordGateComponent
+    PasswordGateComponent,
+    TextSectionComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss'
@@ -29,7 +32,7 @@ import { PasswordGateComponent } from './shared/password-gate/password-gate';
 export class App implements OnInit {
   authenticated = signal(false);
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+  constructor(@Inject(PLATFORM_ID) private platformId: Object, public content: ContentService) {}
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {

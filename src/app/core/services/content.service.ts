@@ -1,8 +1,8 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, computed, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { EMPTY } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
-import { DEFAULT_CONTENT, WeddingContent, mergeContent } from '../content/wedding-content';
+import { DEFAULT_CONTENT, SectionConfig, SectionKind, WeddingContent, mergeContent } from '../content/wedding-content';
 import { FirebaseConfigService } from './firebase-config.service';
 
 interface FirestoreDoc {
@@ -17,6 +17,19 @@ interface FirestoreDoc {
 export class ContentService {
   private readonly _data = signal<WeddingContent>(DEFAULT_CONTENT);
   readonly data = this._data.asReadonly();
+
+  /** Secciones visibles, en el orden elegido desde la app de gestión. */
+  readonly visibleSections = computed(() => this._data().sections.filter(s => s.visible));
+
+  /** Configuración (títulos) de una sección propia. */
+  section(kind: SectionKind): SectionConfig {
+    return this._data().sections.find(s => s.kind === kind)
+      ?? DEFAULT_CONTENT.sections.find(s => s.kind === kind)!;
+  }
+
+  isVisible(kind: SectionKind): boolean {
+    return this.visibleSections().some(s => s.kind === kind);
+  }
 
   constructor(http: HttpClient, cfg: FirebaseConfigService) {
     cfg.config$.pipe(

@@ -3,10 +3,12 @@
   <div class="container">
     <div class="section-header" scrollAnimate animClass="fade-up">
       <img class="cat-header" src="assets/brand/cat-grey-sleeping.webp" alt="" aria-hidden="true" width="220" height="159" />
-      <span class="label-accent">El Gran Día</span>
-      <h2>Detalles del Evento</h2>
+      <span class="label-accent">{{ sec.label }}</span>
+      <h2>{{ sec.title }}</h2>
       <div class="sprig-divider" aria-hidden="true"></div>
-      <p class="subtitle">Todo lo que necesitas saber para acompañarnos en este día tan especial</p>
+      @if (sec.subtitle) {
+        <p class="subtitle">{{ sec.subtitle }}</p>
+      }
     </div>
 
     <!-- Timeline -->

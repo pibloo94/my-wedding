@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ScrollAnimateDirective } from '../../shared/scroll-animate.directive';
 import { IconComponent } from '../../shared/icon/icon.component';
 import { ContentService } from '../../core/services/content.service';
+import { SectionConfig } from '../../core/content/wedding-content';
 
 interface RegistryItem {
   id: string;
@@ -41,6 +42,10 @@ export class RegistryComponent {
    * Titular, IBAN y concepto se editan desde la app de gestión (Web de la boda → Contenido).
    * Mientras el IBAN esté vacío, la web muestra un aviso en lugar de los datos.
    */
+  get sec(): SectionConfig {
+    return this.content.section('registry');
+  }
+
   get bankDetails(): { titular: string; iban: string; concepto: string } {
     return this.content.data().registry;
   }

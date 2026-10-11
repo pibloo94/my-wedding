@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ScrollAnimateDirective } from '../../shared/scroll-animate.directive';
 import { IconComponent } from '../../shared/icon/icon.component';
 import { ContentService } from '../../core/services/content.service';
-import { WeddingEvent } from '../../core/content/wedding-content';
+import { SectionConfig, WeddingEvent } from '../../core/content/wedding-content';
 
 @Component({
   selector: 'app-event-details',
@@ -15,6 +15,10 @@ export class EventDetailsComponent {
   constructor(private content: ContentService) {}
 
   /** Programa del día: se edita desde la app de gestión (ver ContentService). */
+  get sec(): SectionConfig {
+    return this.content.section('events');
+  }
+
   get events(): WeddingEvent[] {
     return this.content.data().events;
   }

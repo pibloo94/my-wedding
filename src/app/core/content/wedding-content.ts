@@ -27,8 +27,31 @@ export interface InfoCard {
   items: string[];
 }
 
+/** Tipos de sección. Las cuatro primeras son fijas (solo se muestran u ocultan); `text` son secciones libres. */
+export type SectionKind = 'events' | 'needToKnow' | 'rsvp' | 'registry' | 'text';
+
+export interface SectionConfig {
+  /** Ancla en la página (#eventos, #detalles…). Fija en las secciones propias. */
+  id: string;
+  kind: SectionKind;
+  visible: boolean;
+  /** Texto del enlace en el menú */
+  navLabel: string;
+  /** Etiqueta pequeña sobre el título */
+  label: string;
+  title: string;
+  subtitle: string;
+  /** Solo secciones de texto: párrafos separados por una línea en blanco */
+  body: string;
+  items: string[];
+  linkText: string;
+  linkUrl: string;
+}
+
 export interface WeddingContent {
   v: number;
+  /** Orden y configuración de las secciones (la portada y el pie son fijos) */
+  sections: SectionConfig[];
   hero: { dateText: string; location: string; countdownIso: string };
   events: WeddingEvent[];
   needToKnow: InfoCard[];
@@ -140,7 +163,61 @@ export const DEFAULT_CONTENT: WeddingContent = {
     "titular": "Pablo Agudo Brun",
     "iban": "",
     "concepto": "Regalo boda Daniela & Pablo"
-  }
+  },
+  "sections": [
+    {
+      "id": "eventos",
+      "kind": "events",
+      "visible": true,
+      "navLabel": "El Gran Día",
+      "label": "El Gran Día",
+      "title": "Detalles del Evento",
+      "subtitle": "Todo lo que necesitas saber para acompañarnos en este día tan especial",
+      "body": "",
+      "items": [],
+      "linkText": "",
+      "linkUrl": ""
+    },
+    {
+      "id": "detalles",
+      "kind": "needToKnow",
+      "visible": true,
+      "navLabel": "Lo Que Debes Saber",
+      "label": "Información Práctica",
+      "title": "Lo Que Debes Saber",
+      "subtitle": "Todo lo que necesitas para disfrutar al máximo de nuestra celebración",
+      "body": "",
+      "items": [],
+      "linkText": "",
+      "linkUrl": ""
+    },
+    {
+      "id": "rsvp",
+      "kind": "rsvp",
+      "visible": true,
+      "navLabel": "Confirmar Asistencia",
+      "label": "Confirmación de Asistencia",
+      "title": "¿Nos acompañas?",
+      "subtitle": "Por favor confirma antes del",
+      "body": "",
+      "items": [],
+      "linkText": "",
+      "linkUrl": ""
+    },
+    {
+      "id": "registro",
+      "kind": "registry",
+      "visible": true,
+      "navLabel": "Lista de Bodas",
+      "label": "Lista de Bodas",
+      "title": "Vuestra Generosidad",
+      "subtitle": "Vuestro regalo más importante es vuestra presencia. Si aun así queréis tener un detalle con nosotros, aquí encontraréis una cuenta bancaria para hacer una transferencia.",
+      "body": "",
+      "items": [],
+      "linkText": "",
+      "linkUrl": ""
+    }
+  ]
 };
 
 type Obj = Record<string, unknown>;
@@ -162,6 +239,53 @@ const EMPTY_EVENT: WeddingEvent = {
   venue: '', address: '', mapsUrl: '', dressCode: '', description: ''
 };
 
+const KINDS: SectionKind[] = ['events', 'needToKnow', 'rsvp', 'registry', 'text'];
+const EMPTY_SECTION: SectionConfig = {
+  id: '', kind: 'text', visible: true, navLabel: '', label: '', title: '', subtitle: '',
+  body: '', items: [], linkText: '', linkUrl: ''
+};
+const strList = (v: unknown): string[] =>
+  Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string' && x.trim().length > 0) : [];
+
+/**
+ * Valida la lista de secciones: cada sección propia aparece una sola vez y con su ancla fija;
+ * las de texto necesitan título; si falta alguna sección propia, se añade al final visible.
+ */
+function mergeSections(base: SectionConfig[], inc: unknown): SectionConfig[] {
+  if (!Array.isArray(inc)) return base;
+  const out: SectionConfig[] = [];
+  const seenKinds = new Set<SectionKind>();
+  const ids = new Set<string>();
+  (inc as unknown[]).filter(isObj).forEach((raw, i) => {
+    const kind = raw['kind'] as SectionKind;
+    if (!KINDS.includes(kind)) return;
+    if (kind !== 'text' && seenKinds.has(kind)) return;
+    const def = kind === 'text' ? EMPTY_SECTION : (base.find(b => b.kind === kind) ?? EMPTY_SECTION);
+    const sec: SectionConfig = {
+      ...strings(def, raw),
+      kind,
+      visible: typeof raw['visible'] === 'boolean' ? (raw['visible'] as boolean) : true,
+      items: strList(raw['items'])
+    };
+    if (kind === 'text') {
+      if (!sec.title.trim()) return;
+      let id = /^[a-z0-9-]{1,40}$/.test(sec.id) ? sec.id : `seccion-${i + 1}`;
+      while (ids.has(id) || base.some(b => b.id === id)) id += '-x';
+      sec.id = id;
+    } else {
+      sec.id = def.id;
+      seenKinds.add(kind);
+    }
+    if (!/^https:\/\//.test(sec.linkUrl)) sec.linkUrl = '';
+    ids.add(sec.id);
+    out.push(sec);
+  });
+  for (const d of base) {
+    if (d.kind !== 'text' && !seenKinds.has(d.kind)) out.push(d);
+  }
+  return out;
+}
+
 /** Combina el contenido publicado con el de respaldo, validando tipos campo a campo. */
 export function mergeContent(base: WeddingContent, inc: unknown): WeddingContent {
   if (!isObj(inc)) return base;
@@ -179,6 +303,7 @@ export function mergeContent(base: WeddingContent, inc: unknown): WeddingContent
     : [];
   return {
     v: typeof inc['v'] === 'number' ? inc['v'] : base.v,
+    sections: mergeSections(base.sections, inc['sections']),
     hero: strings(base.hero, inc['hero']),
     events: events.length ? events : base.events,
     needToKnow: cards.length ? cards : base.needToKnow,

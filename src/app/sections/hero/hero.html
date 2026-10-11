@@ -47,12 +47,16 @@
     }
 
     <div class="hero-actions">
-      <button class="btn btn-primary" (click)="scrollToRsvp()" id="btn-hero-rsvp">
-        <app-icon name="mail" [size]="18" /> &nbsp; Confirmar Asistencia
-      </button>
-      <button class="btn btn-outline hero-btn-outline" (click)="scrollToEvents()" id="btn-hero-events">
-        Ver detalles del evento
-      </button>
+      @if (content.isVisible('rsvp')) {
+        <button class="btn btn-primary" (click)="scrollToRsvp()" id="btn-hero-rsvp">
+          <app-icon name="mail" [size]="18" /> &nbsp; Confirmar Asistencia
+        </button>
+      }
+      @if (content.isVisible('events')) {
+        <button class="btn btn-outline hero-btn-outline" (click)="scrollToEvents()" id="btn-hero-events">
+          Ver detalles del evento
+        </button>
+      }
     </div>
   </div>
 

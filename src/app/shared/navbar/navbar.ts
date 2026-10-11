@@ -1,4 +1,5 @@
 import { Component, HostListener, signal, effect } from '@angular/core';
+import { ContentService } from '../../core/services/content.service';
 
 @Component({
   selector: 'app-navbar',
@@ -11,18 +12,17 @@ export class NavbarComponent {
   scrolled = signal(false);
   menuOpen = signal(false);
 
-  constructor() {
+
+  constructor(private content: ContentService) {
     effect(() => {
       document.body.style.overflow = this.menuOpen() ? 'hidden' : '';
     });
   }
 
-  navLinks = [
-    { label: 'El Gran Día', anchor: 'eventos' },
-    { label: 'Lo Que Debes Saber', anchor: 'detalles' },
-    { label: 'Confirmar Asistencia', anchor: 'rsvp' },
-    { label: 'Lista de Bodas', anchor: 'registro' },
-  ];
+  /** Enlaces del menú: las secciones visibles, en su orden. */
+  get navLinks(): { label: string; anchor: string }[] {
+    return this.content.visibleSections().map(s => ({ label: s.navLabel || s.title, anchor: s.id }));
+  }
 
   @HostListener('window:scroll')
   onScroll(): void {

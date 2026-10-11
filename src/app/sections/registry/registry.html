@@ -4,12 +4,12 @@
   <img class="section-cat cat-play-registry" src="assets/brand/cat-black-playing.webp" alt="" aria-hidden="true" />
   <div class="container">
     <div class="section-header" scrollAnimate animClass="fade-up">
-      <span class="label-accent">Lista de Bodas</span>
-      <h2>Vuestra Generosidad</h2>
+      <span class="label-accent">{{ sec.label }}</span>
+      <h2>{{ sec.title }}</h2>
       <div class="sprig-divider" aria-hidden="true"></div>
-      <p class="subtitle">
-        Vuestro regalo más importante es vuestra presencia. Si aun así queréis tener un detalle con nosotros, aquí encontraréis una cuenta bancaria para hacer una transferencia.
-      </p>
+      @if (sec.subtitle) {
+        <p class="subtitle">{{ sec.subtitle }}</p>
+      }
     </div>
 
     <div class="registry-grid">
