@@ -242,10 +242,12 @@ export class ContentEditorService {
       this.ui.toast(`No se pudo publicar (${(e as { code?: string }).code ?? (e as Error).message})`);
       return false;
     }
-    // Comprobación: leer lo publicado como lo lee la web (API pública, sin sesión)
+    // Comprobación: leer lo publicado por la misma API que la web (la web entra con la sesión de
+    // invitado; aquí, con la de la app, que también puede leerlo según firestore.rules)
     let ok = false;
     try {
-      const r = await fetch(this.fb.publicDocUrl('content/published'), { cache: 'no-store' });
+      const token = await this.fb.user()?.getIdToken?.();
+      const r = await fetch(this.fb.publicDocUrl('content/published'), { cache: 'no-store', headers: token ? { Authorization: `Bearer ${token}` } : {} });
       if (r.ok) {
         const j = await r.json() as { fields?: { json?: { stringValue?: string } } };
         ok = j.fields?.json?.stringValue === json;

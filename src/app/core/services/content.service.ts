@@ -1,9 +1,9 @@
-import { Injectable, computed, effect, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { EMPTY } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { Injectable, computed, effect, signal, untracked } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 import { DEFAULT_CONTENT, SectionConfig, SectionKind, WeddingContent, mergeContent } from '../content/wedding-content';
 import { FirebaseConfigService } from './firebase-config.service';
+import { GuestAuthService } from './guest-auth.service';
 import { applyFontLink, changedFontVars, changedThemeVars, fontVars, googleFontsHref, themeVars } from '../content/theme';
 
 interface FirestoreDoc {
@@ -11,8 +11,9 @@ interface FirestoreDoc {
 }
 
 /**
- * Textos de la web. Empieza con el contenido de respaldo y, en cuanto responde Firestore,
- * muestra lo publicado desde la app de gestión (documento content/published).
+ * Textos de la web. Empieza con el contenido de respaldo y, en cuanto el invitado ha entrado
+ * con la contraseña, pide lo publicado desde la app de gestión (documento content/published),
+ * que solo se puede leer con la sesión de invitado.
  */
 @Injectable({ providedIn: 'root' })
 export class ContentService {
@@ -32,7 +33,7 @@ export class ContentService {
     return this.visibleSections().some(s => s.kind === kind);
   }
 
-  constructor(http: HttpClient, cfg: FirebaseConfigService) {
+  constructor(private http: HttpClient, private cfg: FirebaseConfigService, private guest: GuestAuthService) {
     // Colores publicados desde la app de gestión (Temática). Con los de por defecto no se toca nada.
     effect(() => this.applyTheme());
     // Tipografía elegida en Temática: solo se descarga si no es la original (Butler)
@@ -42,19 +43,33 @@ export class ContentService {
       const h = this._data().hero;
       if (typeof document !== 'undefined') document.title = `${h.name1} & ${h.name2} — ${h.dateText}`;
     });
+    // Lo publicado se pide al entrar (o al volver con la sesión guardada)
+    effect(() => {
+      if (this.guest.signedIn()) untracked(() => void this.load());
+    });
+  }
 
-    cfg.config$.pipe(
-      switchMap(c => (c ? http.get<FirestoreDoc>(FirebaseConfigService.docUrl(c, 'content/published')) : EMPTY)),
-      catchError(() => EMPTY)
-    ).subscribe(doc => {
+  private loading = false;
+  private loaded = false;
+
+  private async load(): Promise<void> {
+    if (this.loading || this.loaded) return;
+    this.loading = true;
+    try {
+      const [c, token] = await Promise.all([firstValueFrom(this.cfg.config$), this.guest.token()]);
+      if (!c || !token) return;
+      const doc = await firstValueFrom(this.http.get<FirestoreDoc>(FirebaseConfigService.docUrl(c, 'content/published'), {
+        headers: new HttpHeaders({ Authorization: `Bearer ${token}` })
+      }));
       const json = doc?.fields?.json?.stringValue;
       if (!json) return;
-      try {
-        this._data.set(mergeContent(DEFAULT_CONTENT, JSON.parse(json)));
-      } catch {
-        /* contenido publicado ilegible: se mantiene el de respaldo */
-      }
-    });
+      this._data.set(mergeContent(DEFAULT_CONTENT, JSON.parse(json)));
+      this.loaded = true;
+    } catch {
+      /* sin conexión o contenido ilegible: se mantiene el de respaldo */
+    } finally {
+      this.loading = false;
+    }
   }
 
   private applyTheme(): void {

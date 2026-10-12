@@ -30,13 +30,24 @@ El formulario de la web solo funciona con Firebase configurado (`public/firebase
 2. **Método de inicio de sesión → Google → Habilitar**. Elige tu correo como correo de asistencia y guarda.
 3. **Configuración → Dominios autorizados → Agregar dominio** → `pibloo94.github.io`.
 
+## 3b. Contraseña de la web (cuenta de invitados)
+
+La contraseña que ponen los invitados es la de una cuenta de Firebase. No está en el código: Firebase la comprueba y las reglas solo dejan leer el contenido y enviar el formulario con esa sesión.
+
+1. **Authentication → Método de inicio de sesión → Agregar proveedor nuevo → Correo electrónico/contraseña → Habilitar** (solo la primera opción, sin «Vínculo de correo electrónico») → Guardar.
+2. **Authentication → Usuarios → Agregar usuario**:
+   - Correo: `invitados@boda-daniela-pablo.firebaseapp.com` (no tiene que existir; tiene que ser exactamente este, el de `firestore.rules` y `guest-auth.service.ts`).
+   - Contraseña: la de la web.
+3. **Cambiar la contraseña:** Authentication → Usuarios → la cuenta de invitados → ⋮ → **Borrar cuenta**, y vuelve a crearla (paso 2) con el mismo correo y la contraseña nueva. «Restablecer contraseña» no sirve: enviaría un correo a una dirección que no existe. Las sesiones guardadas dejan de valer y todos tendrán que poner la nueva.
+4. **Desactivar la web un tiempo:** ⋮ → **Inhabilitar cuenta**.
+
 ## 4. Reglas de seguridad
 
 1. **Firestore Database → Reglas**.
 2. Borra lo que haya, pega el contenido de [`firestore.rules`](firestore.rules) y pulsa **Publicar**.
 
 Con estas reglas:
-- Cualquiera puede **crear** una confirmación con el formato correcto, pero nadie más que vosotros puede leerla, cambiarla o borrarla.
+- Solo quien ha puesto la contraseña de la web (paso 3b) puede leer el contenido y **crear** una confirmación con el formato correcto. Nadie más que vosotros puede leerla, cambiarla o borrarla.
 - Los datos de la app solo los leen y escriben las cuentas dadas de alta en la colección `admins` (paso 6).
 
 ## 5. Configuración pública
@@ -90,3 +101,5 @@ La primera vez, la app sube a Firebase los datos que tenga en ese navegador. Si 
 | «Esta cuenta aún no tiene acceso» tras crear el documento | El ID del documento en `admins` no es exactamente tu UID |
 | El formulario da error al enviar | Reglas sin publicar, o `projectId`/`apiKey` mal copiados en `firebase-config.json` |
 | `permission-denied` en la consola del navegador | Reglas antiguas: vuelve a pegar `firestore.rules` y publica |
+| La contraseña correcta da «No se ha podido comprobar» | Correo/contraseña sin habilitar en Authentication (paso 3b) o la clave limitada a otros sitios (paso 5) |
+| La contraseña correcta da «Contraseña incorrecta» | La cuenta de invitados no existe o su correo no es exactamente el del paso 3b |

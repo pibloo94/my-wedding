@@ -68,5 +68,6 @@ Segunda aplicación Angular del mismo proyecto, en `projects/admin`. Se publica 
 ## A tener en cuenta
 
 - **El repositorio es público.** Todo lo que haya en el código (textos, datos bancarios, configuración de Firebase) es visible para cualquiera. Los datos de invitados no están en el código: viven en Firestore, protegidos por las reglas.
-- **La contraseña de acceso se comprueba en el navegador**, comparando su hash SHA-256. Evita que la web se lea por casualidad, pero no protege datos: no publiques nada privado.
-- El acceso se recuerda 30 días en el navegador de cada invitado (`localStorage`).
+- **La contraseña de la web es la de una cuenta de invitados en Firebase** (Authentication). No está en el código; se cambia en la consola (ver [FIREBASE-SETUP.md](FIREBASE-SETUP.md), paso 3b). Sin ella, las reglas no dejan leer el contenido publicado ni enviar el formulario.
+- Los textos de respaldo (`src/app/core/content/wedding-content.ts`) sí van en el código y son públicos: no pongas ahí nada privado.
+- La sesión se recuerda 30 días en el navegador de cada invitado (`localStorage`); si cambiáis la contraseña, todos tienen que volver a ponerla.

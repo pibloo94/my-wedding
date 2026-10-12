@@ -101,6 +101,7 @@ export class FirebaseService {
   }
 
   /** URL pública de un documento, tal como lo lee la web (sin sesión). */
+  /** URL de la API REST de Firestore para un documento (la que usa la web). */
   publicDocUrl(path: string): string {
     const c = this.config!;
     return `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(c.projectId)}/databases/(default)/documents/${path}?key=${encodeURIComponent(c.apiKey)}`;

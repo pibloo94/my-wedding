@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, from, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { FirebaseConfigService, FirebaseWebConfig } from './firebase-config.service';
+import { GuestAuthService } from './guest-auth.service';
 
 /** Persona incluida en una respuesta. Mismo modelo que la app de gestión (docs/MODELO-DATOS.md). */
 export interface RsvpPerson {
@@ -28,7 +29,7 @@ export interface RsvpSubmission {
 
 @Injectable({ providedIn: 'root' })
 export class RsvpService {
-  constructor(private http: HttpClient, private cfg: FirebaseConfigService) {}
+  constructor(private http: HttpClient, private cfg: FirebaseConfigService, private guest: GuestAuthService) {}
 
   submit(rsvp: RsvpSubmission): Observable<unknown> {
     return this.cfg.config$.pipe(
@@ -51,7 +52,13 @@ export class RsvpService {
       source: 'web',
       v: 1
     };
-    return this.http.post(url, { fields: toFirestoreFields(doc) }).pipe(map(() => true));
+    // Solo con la sesión de invitado (firestore.rules): la contraseña protege también el formulario
+    return from(this.guest.token()).pipe(
+      switchMap(token => token
+        ? this.http.post(url, { fields: toFirestoreFields(doc) }, { headers: new HttpHeaders({ Authorization: `Bearer ${token}` }) })
+        : throwError(() => new Error('La sesión ha caducado: vuelve a poner la contraseña'))),
+      map(() => true)
+    );
   }
 }
 

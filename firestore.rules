@@ -3,11 +3,15 @@ rules_version = '2';
 // Reglas de seguridad de Firestore para la boda de Daniela y Pablo.
 // Se pegan en Firebase → Firestore Database → Reglas (ver FIREBASE-SETUP.md).
 //
-//   rsvps/{id}            Respuestas del formulario. Cualquiera puede CREAR (validado); solo los novios leen.
-//   content/published     Contenido público de la web. Cualquiera lee; solo los novios escriben.
+//   rsvps/{id}            Respuestas del formulario. Los invitados (con la contraseña) pueden CREAR (validado); solo los novios leen.
+//   content/published     Contenido de la web. Lo leen los invitados (con la contraseña) y los novios; solo los novios escriben.
 //   content/{otros}       Borradores e historial. Solo los novios.
 //   admin/state/**        Datos de la app de gestión (invitados, mesas, presupuesto…). Solo los novios.
 //   admins/{uid}          Lista de quién tiene acceso. Se crea a mano en la consola; nadie la escribe desde fuera.
+//
+// Invitados: la contraseña de la web es la de la cuenta invitados@boda-daniela-pablo.firebaseapp.com
+// (Authentication → Correo electrónico/contraseña). Debe coincidir con GUEST_EMAIL en
+// src/app/core/services/guest-auth.service.ts.
 
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -15,6 +19,13 @@ service cloud.firestore {
     function isAdmin() {
       return request.auth != null
         && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // Sesión iniciada con la contraseña de la web (no basta con entrar con cualquier cuenta de Google)
+    function isGuest() {
+      return request.auth != null
+        && request.auth.token.firebase.sign_in_provider == 'password'
+        && request.auth.token.email == 'invitados@boda-daniela-pablo.firebaseapp.com';
     }
 
     function str(v, min, max) {
@@ -65,13 +76,13 @@ service cloud.firestore {
     }
 
     match /rsvps/{id} {
-      allow create: if validRsvp(request.resource.data);
+      allow create: if (isGuest() || isAdmin()) && validRsvp(request.resource.data);
       allow read, delete: if isAdmin();
       allow update: if false;
     }
 
     match /content/{docId} {
-      allow read: if docId == 'published' || isAdmin();
+      allow read: if (docId == 'published' && isGuest()) || isAdmin();
       allow write: if isAdmin();
     }
 

@@ -2,6 +2,7 @@ import { Component, inject, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ContentService } from '../../core/services/content.service';
+import { GuestAuthService } from '../../core/services/guest-auth.service';
 
 @Component({
   selector: 'app-password-gate',
@@ -15,27 +16,32 @@ export class PasswordGateComponent {
   /** La contraseña es correcta: la web empieza a cargarse mientras se abre el sobre. */
   unlocked = output<void>();
   protected content = inject(ContentService);
+  private guest = inject(GuestAuthService);
 
   password = signal('');
   error = signal(false);
+  /** Mensaje bajo el campo; se borra al volver a escribir */
+  errorMsg = signal('');
+  checking = signal(false);
   opening = signal(false);
   hiding = signal(false);
-
-  // SHA-256 de la contraseña de acceso (la contraseña no se guarda en el código)
-  private readonly EXPECTED_HASH = '5668d9a200cf1562dbcac36c2cde0cbbae0fec9a0cb367688f4ba910a1eb0d4b';
 
   onInput(value: string) {
     this.password.set(value);
     if (this.error()) this.error.set(false);
+    this.errorMsg.set('');
   }
 
+  /** La contraseña se comprueba en Firebase (cuenta de invitados); no está en el código. */
   async submit() {
-    if (this.opening()) return; // Previene envío múltiple temporalmente
+    if (this.opening() || this.checking() || !this.password()) return;
+    this.checking.set(true);
+    const r = await this.guest.signIn(this.password());
+    this.checking.set(false);
 
-    const hashHex = await this.hashPassword(this.password());
-
-    if (hashHex === this.EXPECTED_HASH) {
+    if (r === 'ok') {
       this.error.set(false);
+      this.errorMsg.set('');
       this.opening.set(true);
       this.unlocked.emit();
 
@@ -47,8 +53,11 @@ export class PasswordGateComponent {
         }, 800);
       }, 3800);
     } else {
+      this.errorMsg.set(r === 'wrong' ? 'Contraseña incorrecta. Inténtalo de nuevo.'
+        : r === 'blocked' ? 'Demasiados intentos. Espera unos minutos y vuelve a probar.'
+        : 'No se ha podido comprobar la contraseña. Revisa la conexión e inténtalo de nuevo.');
       this.error.set(true);
-      // Shake and clear
+      // Shake
       setTimeout(() => this.error.set(false), 2000);
     }
   }
@@ -57,10 +66,4 @@ export class PasswordGateComponent {
     if (event.key === 'Enter') this.submit();
   }
 
-  private async hashPassword(password: string): Promise<string> {
-    const msgBuffer = new TextEncoder().encode(password);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  }
 }
