@@ -20,7 +20,7 @@ export interface RsvpPerson {
 
 export interface RsvpSubmission {
   name: string;
-  /** Correo o teléfono: identifica la respuesta si la misma persona vuelve a enviar el formulario */
+  /** Móvil: identifica la respuesta si la misma persona vuelve a enviar el formulario */
   contact: string;
   attending: 'si' | 'no';
   message: string;

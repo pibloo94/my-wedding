@@ -40,7 +40,7 @@
   @if (expenses().length) {
     <div class="tw">
       <table>
-        <thead><tr><th>Concepto</th><th class="num">Previsto</th><th class="num">Contratado</th><th class="num">Pagado</th><th>Vence</th><th><span class="sr-only">Acciones</span></th></tr></thead>
+        <thead><tr><th>Concepto</th><th class="num">Previsto</th><th class="num">Contratado</th><th class="num">Pagado</th><th>Próximo pago</th><th><span class="sr-only">Acciones</span></th></tr></thead>
         <tbody>
           @for (e of expenses(); track e.id) {
             <tr>
@@ -48,7 +48,7 @@
               <td class="num" data-label="Previsto">{{ eur(e.est) }}</td>
               <td class="num" data-label="Contratado">{{ eur(e.act) }}</td>
               <td class="num" data-label="Pagado">{{ eur(paid(e)) }}@if (+(e.act ?? 0)) {<span class="prog mini"><i [style.width.%]="paidPct(e)"></i></span>}</td>
-              <td data-label="Vence">@if (e.due) {<span class="badge" [class.b-bad]="late(e)">{{ fmtDate(e.due) }}</span>} @else {—}</td>
+              <td data-label="Próximo pago">@if (next(e); as n) {<span class="badge" [class.b-bad]="late(e)">{{ fmtDate(n.date) }}</span>} @else {<button class="btn ghost sm addd" (click)="lists.edit('expenses', e.id)">Poner fecha</button>}</td>
               <td class="acts">
                 <button class="btn ghost sm" (click)="ui.open({ kind: 'payments', id: e.id })" [attr.aria-label]="'Pagos de ' + e.concept"><adm-icon name="wallet" [size]="15" /> {{ e.payments.length || 0 }}</button>
                 <button class="icb" (click)="lists.edit('expenses', e.id)" aria-label="Editar"><adm-icon name="edit" /></button>

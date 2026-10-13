@@ -29,9 +29,7 @@ export function seedMeta(): Meta {
     theme: {
       notes: 'Tipografía de la web: Butler (una sola familia; la jerarquía se construye con peso y tamaño). Estilo: acuarela pintada a mano, flores de azahar, naranjas, montaña y los tres gatos.'
     },
-    plan: defaultPlan(),
-    webStatus: 'publicada',
-    webStatusNote: 'Despliegue: GitHub Actions al hacer push a main.'
+    plan: defaultPlan()
   };
 }
 
@@ -98,9 +96,7 @@ export function normalizeMeta(raw: unknown): Meta {
       ...base.plan,
       ...plan,
       zones: Array.isArray(plan.zones) ? plan.zones : base.plan.zones
-    },
-    webStatus: typeof o['webStatus'] === 'string' ? o['webStatus'] : base.webStatus,
-    webStatusNote: typeof o['webStatusNote'] === 'string' ? o['webStatusNote'] : base.webStatusNote
+    }
   };
 }
 

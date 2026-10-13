@@ -65,13 +65,13 @@
 
           <!-- Contact -->
           <div class="form-group">
-            <label for="rsvp-contact">Correo o teléfono *</label>
-            <input id="rsvp-contact" type="text" formControlName="contact" autocomplete="email"
-                   placeholder="Para poder contactarte si hace falta" [class.ng-invalid]="invalid('contact')" [class.ng-touched]="invalid('contact')">
+            <label for="rsvp-contact">Teléfono móvil *</label>
+            <input id="rsvp-contact" type="tel" inputmode="tel" autocomplete="tel" formControlName="contact"
+                   placeholder="Ej.: 612 345 678" [class.ng-invalid]="invalid('contact')" [class.ng-touched]="invalid('contact')">
             @if (invalid('contact')) {
-              <span class="error-msg">Escribe un correo válido o un teléfono de al menos 9 cifras</span>
+              <span class="error-msg">Escribe un móvil válido (al menos 9 cifras)</span>
             } @else {
-              <span class="form-hint">Si más adelante cambia algo, vuelve a enviar el formulario con el mismo correo o teléfono y nos quedaremos con tu última respuesta.</span>
+              <span class="form-hint">Para poder contactarte si hace falta. Si más adelante cambia algo, vuelve a enviar el formulario con el mismo móvil y nos quedaremos con tu última respuesta.</span>
             }
           </div>
 

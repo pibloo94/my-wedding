@@ -61,6 +61,20 @@ export const usedSeats = (guests: Guest[], tableId: string): number =>
 export const paid = (e: Expense): number =>
   (e.payments || []).filter(p => p.status === 'Pagado').reduce((a, p) => a + Number(p.amount || 0), 0);
 
+/** Lo que falta por pagar de un gasto (sobre lo contratado o, si no hay, lo previsto). */
+export const pendingOf = (e: Expense): number => Math.max(0, (+(e.act ?? 0) || +(e.est ?? 0) || 0) - paid(e));
+
+/**
+ * Próximo pago de un gasto: el pago «Programado» con fecha más cercana o, si no hay, la fecha de
+ * vencimiento del propio gasto mientras quede algo por pagar. null si no hay ninguno.
+ */
+export function nextPayment(e: Expense): { date: string; amount: number } | null {
+  const sched = (e.payments || []).filter(p => p.status !== 'Pagado' && parseDate(p.date)).sort((a, b) => a.date.localeCompare(b.date))[0];
+  if (sched) return { date: sched.date, amount: Number(sched.amount) || 0 };
+  const left = pendingOf(e);
+  return e.due && parseDate(e.due) && left > 0 ? { date: e.due, amount: left } : null;
+}
+
 export const statusClass = (s: string): string => ({ confirmado: 'b-ok', pendiente: 'b-warn', rechazado: 'b-mute' } as Record<string, string>)[s] ?? '';
 
 export interface SeatInfo {

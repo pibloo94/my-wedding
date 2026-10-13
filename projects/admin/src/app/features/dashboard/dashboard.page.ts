@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { RouterLink } from '@angular/router';
 import { StoreService } from '../../core/store.service';
 import { ContentEditorService } from '../../core/content-editor.service';
-import { attending, dueOf, members, monthKey, monthRange, monthStart, paid, seats } from '../../core/domain';
+import { attending, dueOf, members, monthKey, monthRange, monthStart, nextPayment, paid, seats } from '../../core/domain';
 import { dayDiff, eur, fmtDate, fmtLongDate, parseDate, safeUrl, today } from '../../core/util';
 import { IconComponent } from '../../shared/icon.component';
 import { TaskRowComponent } from '../tasks/task-row.component';
@@ -35,8 +35,8 @@ export class DashboardPage {
     const ex = this.store.state().expenses;
     const est = ex.reduce((a, e) => a + (+(e.est ?? 0) || 0), 0), act = ex.reduce((a, e) => a + (+(e.act ?? 0) || 0), 0);
     const pg = ex.reduce((a, e) => a + paid(e), 0), B = +this.config().budget || 0;
-    const pays = ex.filter(e => e.due && (+(e.act ?? 0) || +(e.est ?? 0)) > paid(e)).sort((a, b) => a.due!.localeCompare(b.due!)).slice(0, 4)
-      .map(e => ({ id: e.id, concept: e.concept, due: fmtDate(e.due), left: eur((+(e.act ?? 0) || +(e.est ?? 0)) - paid(e)), late: (parseDate(e.due) ?? today()) < today() }));
+    const pays = ex.map(e => ({ e, n: nextPayment(e) })).filter(x => x.n).sort((a, b) => a.n!.date.localeCompare(b.n!.date)).slice(0, 4)
+      .map(({ e, n }) => ({ id: e.id, concept: e.concept, due: fmtDate(n!.date), left: eur(n!.amount), late: (parseDate(n!.date) ?? today()) < today() }));
     return { est, act, pg, B, ref: B || act || est, pays };
   });
 
@@ -76,8 +76,7 @@ export class DashboardPage {
   protected tableCount = computed(() => this.store.tables().length);
   protected chairs = computed(() => this.store.tables().reduce((a, t) => a + (+t.cap || 0), 0));
   protected web = computed(() => {
-    const s = this.store.state();
-    return { status: s.meta.webStatus, version: this.ct.pubVersion(), pending: this.ct.diff().length };
+    return { version: this.ct.pubVersion(), pending: this.ct.diff().length };
   });
 
   protected pct(a: number, b: number): number { return b ? Math.min(100, a / b * 100) : 0; }

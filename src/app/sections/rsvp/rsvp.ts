@@ -11,14 +11,15 @@ import { ContentService } from '../../core/services/content.service';
 
 type FormState = 'idle' | 'loading' | 'success' | 'error';
 
-/** Correo válido o teléfono con al menos 9 dígitos. */
-function contactValidator(c: AbstractControl): ValidationErrors | null {
+/**
+ * Móvil: identifica cada respuesta (si alguien vuelve a enviar el formulario, vale la última).
+ * Solo cifras, espacios, guiones, paréntesis y «+» delante; de 9 a 15 cifras.
+ */
+function phoneValidator(c: AbstractControl): ValidationErrors | null {
   const v = String(c.value ?? '').trim();
-  if (!v) return null; // de "vacío" se encarga Validators.required
-  const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
-  const digits = v.replace(/\D/g, '');
-  const isPhone = /^[+\d\s().-]+$/.test(v) && digits.length >= 9;
-  return isEmail || isPhone ? null : { contact: true };
+  if (!v) return null; // de «vacío» se encarga Validators.required
+  const digits = v.replace(/\D/g, '').length;
+  return /^\+?[\d\s().-]+$/.test(v) && digits >= 9 && digits <= 15 ? null : { contact: true };
 }
 
 const MAX_KIDS = 8;
@@ -42,7 +43,7 @@ export class RsvpComponent {
   constructor(private fb: FormBuilder, private rsvpSvc: RsvpService, public content: ContentService) {
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(120)]],
-      contact: ['', [Validators.required, Validators.maxLength(120), contactValidator]],
+      contact: ['', [Validators.required, Validators.maxLength(120), phoneValidator]],
       attending: ['si', Validators.required],
       main: this.dietGroup(),
       hasPartner: [false],

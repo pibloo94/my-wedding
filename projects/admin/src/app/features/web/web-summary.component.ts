@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { StoreService } from '../../core/store.service';
+import { ContentEditorService } from '../../core/content-editor.service';
 import { safeUrl } from '../../core/util';
 import { IconComponent } from '../../shared/icon.component';
 
@@ -13,12 +14,9 @@ import { IconComponent } from '../../shared/icon.component';
       <section class="card">
         <h3><adm-icon name="globe" /> Estado</h3>
         <div class="list-row"><div class="t"><div class="tt">Dirección pública</div><div class="sb">@if (url()) {<a [href]="url()" target="_blank" rel="noopener noreferrer">{{ url() }}</a>} @else {—}</div></div></div>
-        <div class="list-row"><div class="t"><div class="tt">Estado (lo marcas tú)</div></div>
-          <select [value]="meta().webStatus" (change)="setStatus($any($event.target).value)" aria-label="Estado de la web">
-            @for (s of statuses; track s) { <option [value]="s" [selected]="s === meta().webStatus">{{ s }}</option> }
-          </select></div>
-        <div class="list-row"><div class="t"><div class="tt">Publicación del código</div><div class="sb">Al hacer push a main, GitHub Actions compila y publica la web y esta app.</div></div></div>
-        <input class="note-in" [value]="meta().webStatusNote" (change)="setNote($any($event.target).value)" aria-label="Nota de estado">
+        <div class="list-row"><div class="t"><div class="tt">Contenido publicado</div><div class="sb">{{ ct.pubVersion() ? 'Versión ' + ct.pubVersion() : 'Aún sin publicar desde la app' }}</div></div></div>
+        <div class="list-row"><div class="t"><div class="tt">Borrador</div><div class="sb">{{ ct.diff().length ? ct.diff().length + ' cambio' + (ct.diff().length === 1 ? '' : 's') + ' sin publicar' : 'Igual que lo publicado' }}</div></div>
+          <a class="btn ghost sm" routerLink="/web/contenido">Abrir</a></div>
       </section>
       <section class="card">
         <h3><adm-icon name="info" /> Qué se hace aquí</h3>
@@ -32,16 +30,15 @@ import { IconComponent } from '../../shared/icon.component';
         <li><b>App de gestión</b>Editáis textos, secciones y colores en el borrador.</li>
         <li><b>Publicar</b>Copia el borrador al contenido público y guarda una versión.</li>
         <li><b>Firestore</b>Base de datos en Madrid. Las reglas solo os dejan escribir a vosotros.</li>
-        <li><b>Web pública</b>Lee lo publicado al cargar; si Firebase no responde, usa sus textos de respaldo.</li>
+        <li><b>Web</b>Tras poner la contraseña, lee lo publicado; si Firebase no responde, usa sus textos de respaldo.</li>
         <li><b>Confirmaciones</b>El formulario escribe en Firestore y las respuestas aparecen en Invitados.</li>
       </ol>
-      <div class="note sage small"><adm-icon name="shield" /><span>Solo el contenido publicado es legible por cualquiera. Invitados, contactos, alergias, mesas, presupuesto y notas solo los podéis leer vosotros.</span></div>
+      <div class="note sage small"><adm-icon name="shield" /><span>El contenido publicado solo lo leen quienes ponen la contraseña de la web. Invitados, contactos, alergias, mesas, presupuesto y notas solo los podéis leer vosotros.</span></div>
     </section>`,
   styles: `
     .card h3 { margin-bottom: 6px; display: flex; gap: 8px; align-items: center; }
     .card h3 adm-icon { color: var(--primary); }
     .card p + p { margin-top: 8px; }
-    .note-in { width: 100%; margin-top: 10px; }
     .flow { list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; counter-reset: s; }
     .flow li { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; font-size: .86rem; counter-increment: s; position: relative; }
     .flow li b { display: block; color: var(--dark); margin-bottom: 2px; }
@@ -50,9 +47,6 @@ import { IconComponent } from '../../shared/icon.component';
 })
 export class WebSummaryComponent {
   private store = inject(StoreService);
-  protected meta = this.store.meta;
+  protected ct = inject(ContentEditorService);
   protected url = computed(() => safeUrl(this.store.config().publicUrl));
-  protected statuses = ['pendiente', 'en revisión', 'publicada'];
-  protected setStatus(v: string): void { this.store.update(s => { s.meta.webStatus = v; }); }
-  protected setNote(v: string): void { this.store.update(s => { s.meta.webStatusNote = v; }); }
 }

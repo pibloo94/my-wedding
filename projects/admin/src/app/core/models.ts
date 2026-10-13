@@ -155,8 +155,6 @@ export interface Meta {
   config: Config;
   theme: ThemeMeta;
   plan: FloorPlan;
-  webStatus: string;
-  webStatusNote: string;
 }
 
 export interface Collections {

@@ -44,7 +44,7 @@ export const FORMS: Partial<Record<CollKey, CollForm>> = {
       { k: 'vendor', l: 'Proveedor', list: () => ctx.vendors },
       { k: 'est', l: 'Previsto (€)', type: 'number' },
       { k: 'act', l: 'Contratado (€)', type: 'number' },
-      { k: 'due', l: 'Próximo vencimiento', type: 'date' },
+      { k: 'due', l: 'Fecha del próximo pago', type: 'date', h: 'Opcional. Si hay varios plazos, añádelos en «Pagos» como «Programado».' },
       { k: 'notes', l: 'Notas', type: 'textarea', full: true }
     ]
   },

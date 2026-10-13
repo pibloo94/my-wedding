@@ -28,6 +28,19 @@
 
   <div class="layout">
     <div class="edit">
+      <!-- Portada -->
+      <details class="card ced" open>
+        <summary><h3><adm-icon name="home" /> Portada</h3></summary>
+        <div class="fgrid">
+          <label class="f">Nombre 1<input [value]="c.hero.name1" (input)="set('hero.name1', $event)" autocomplete="off"></label>
+          <label class="f">Nombre 2<input [value]="c.hero.name2" (input)="set('hero.name2', $event)" autocomplete="off"></label>
+          <label class="f">Fecha visible<input [value]="c.hero.dateText" (input)="set('hero.dateText', $event)"></label>
+          <label class="f">Lugar<input [value]="c.hero.location" (input)="set('hero.location', $event)"></label>
+          <label class="f">Día de la cuenta atrás<input #cd type="date" [value]="countDate()" (change)="setCountdown(cd.value, ct2.value)"></label>
+          <label class="f">Hora de la cuenta atrás<input #ct2 type="time" [value]="countTime()" (change)="setCountdown(cd.value, ct2.value)"><span class="hint">Hora de Madrid.</span></label>
+        </div>
+      </details>
+
       <!-- Secciones -->
       <details class="card ced" open>
         <summary><h3><adm-icon name="list" /> Secciones de la web</h3></summary>
@@ -57,19 +70,6 @@
           </div>
         }
         <button class="btn out sm addb" (click)="add('sections')"><adm-icon name="plus" /> Añadir sección de texto</button>
-      </details>
-
-      <!-- Portada -->
-      <details class="card ced" open>
-        <summary><h3><adm-icon name="home" /> Portada</h3></summary>
-        <div class="fgrid">
-          <label class="f">Nombre 1<input [value]="c.hero.name1" (input)="set('hero.name1', $event)" autocomplete="off"></label>
-          <label class="f">Nombre 2<input [value]="c.hero.name2" (input)="set('hero.name2', $event)" autocomplete="off"></label>
-          <label class="f">Fecha visible<input [value]="c.hero.dateText" (input)="set('hero.dateText', $event)"></label>
-          <label class="f">Lugar<input [value]="c.hero.location" (input)="set('hero.location', $event)"></label>
-          <label class="f">Día de la cuenta atrás<input #cd type="date" [value]="countDate()" (change)="setCountdown(cd.value, ct2.value)"></label>
-          <label class="f">Hora de la cuenta atrás<input #ct2 type="time" [value]="countTime()" (change)="setCountdown(cd.value, ct2.value)"><span class="hint">Hora de Madrid.</span></label>
-        </div>
       </details>
 
       <!-- Programa -->

@@ -4,7 +4,7 @@ import { StoreService } from '../../core/store.service';
 import { UiService } from '../../core/ui.service';
 import { ListsService } from '../../core/lists.service';
 import { Expense } from '../../core/models';
-import { paid } from '../../core/domain';
+import { paid, nextPayment } from '../../core/domain';
 import { PALETTE, eur, fmtDate, parseDate, today } from '../../core/util';
 import { PageHeaderComponent } from '../../shared/page-header.component';
 import { EmptyStateComponent } from '../../shared/empty-state.component';
@@ -54,7 +54,8 @@ export class BudgetPage {
   protected readonly paid = paid;
   protected readonly fmtDate = fmtDate;
   protected pct(a: number): number { return Math.max(0, Math.min(100, a / this.sum().ref * 100)); }
-  protected late(e: Expense): boolean { return !!e.due && (parseDate(e.due) ?? today()) < today() && (+(e.act ?? 0) || +(e.est ?? 0)) > paid(e); }
+  protected next(e: Expense) { return nextPayment(e); }
+  protected late(e: Expense): boolean { const n = nextPayment(e); return !!n && (parseDate(n.date) ?? today()) < today(); }
   protected paidPct(e: Expense): number { return +(e.act ?? 0) ? Math.min(100, paid(e) / +(e.act ?? 1) * 100) : 0; }
   protected meta(e: Expense): string { return [e.cat, e.vendor].filter(Boolean).join(' · '); }
 }

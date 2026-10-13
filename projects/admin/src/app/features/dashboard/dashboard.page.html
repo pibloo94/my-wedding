@@ -75,10 +75,10 @@
       <h3><adm-icon name="wallet" /> Próximos pagos</h3>
       @for (p of money().pays; track p.id) {
         <div class="list-row"><div class="t"><div class="tt">{{ p.concept }}</div><div class="sb" [class.alert]="p.late">{{ p.due }}</div></div><b>{{ p.left }}</b></div>
-      } @empty { <p class="small muted pad">Sin vencimientos. Añade la fecha del próximo pago en cada gasto.</p> }
+      } @empty { <p class="small muted pad">No hay pagos con fecha. En <a routerLink="/presupuesto">Presupuesto</a>, pon la fecha del próximo pago al editar un gasto o añade un pago «Programado» en sus pagos.</p> }
     </section>
     <a class="card kpi webcard" routerLink="/web">
-      <span class="top"><h3><adm-icon name="globe" /> Web de la boda</h3><span class="badge" [class.b-ok]="web().status === 'publicada'" [class.b-warn]="web().status !== 'publicada'">{{ web().status }}</span></span>
+      <span class="top"><h3><adm-icon name="globe" /> Web de la boda</h3><span class="badge" [class.b-ok]="!web().pending" [class.b-warn]="web().pending">{{ web().pending ? 'Borrador' : 'Al día' }}</span></span>
       <span class="d">{{ web().version ? 'Versión ' + web().version + ' publicada' : 'Sin publicaciones desde la app' }}</span>
       <span class="xs" [class.alert]="web().pending" [class.muted]="!web().pending">{{ web().pending ? web().pending + ' cambio' + (web().pending === 1 ? '' : 's') + ' sin publicar' : 'Todo publicado' }}</span>
     </a>
