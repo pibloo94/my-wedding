@@ -46,8 +46,12 @@ No hace falta tocar nada de esto; está aquí para saber dónde mirar.
 | `npm start` | web en dev |
 | `npm run start:admin` | app en dev |
 | `npm run build` | web y app en prod (lo mismo que publica GitHub) |
+| `npm run start:prod` | web **en local contra prod** (datos reales; etiqueta roja «PROD · datos reales») |
+| `npm run start:admin:prod` | app **en local contra prod** (datos reales; etiqueta roja «PROD») |
 | `ng build -c development` | web compilada en dev (para probar el resultado compilado) |
 | `ng build admin -c development` | app compilada en dev |
+
+`start:prod` y `start:admin:prod` usan la configuración `prod-data` de `angular.json` (como `development`, pero con el `firebase-config.json` de prod). Sirven para revisar algo con los datos reales sin publicar; todo lo que cambies ahí es de verdad, así que úsalos lo justo.
 
 Los valores de los `firebase-config.json` **no son secretos**: Google los diseña para ir en el navegador. Lo que protege los datos son las reglas y las cuentas.
 

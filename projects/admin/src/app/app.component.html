@@ -1,5 +1,6 @@
 @if (!open()) {
   @if (fb.isDev()) { <div class="env-badge fixed" role="status">DEV · datos de prueba</div> }
+  @else if (fb.isLocalProd()) { <div class="env-badge fixed prod" role="status">PROD · datos reales</div> }
   <adm-gate />
 } @else {
   <div class="app">
@@ -9,6 +10,7 @@
         <span class="nm">{{ config().n1 }} &amp; {{ config().n2 }}</span>
         <span class="dt">{{ dateText() }}</span>
         @if (fb.isDev()) { <span class="env-badge" role="status" title="Entorno de pruebas: boda-daniela-pablo-dev">DEV<span class="full"> · datos de prueba</span></span> }
+        @else if (fb.isLocalProd()) { <span class="env-badge prod" role="status" title="En local contra el proyecto real: los cambios son de verdad">PROD<span class="full"> · datos reales</span></span> }
       </a>
       <nav class="nav">
         @for (n of nav; track n.path) {
@@ -37,6 +39,7 @@
         <img src="assets/brand/crest.webp" alt="">
         <div class="nm">{{ config().n1 }} &amp; {{ config().n2 }}<small>{{ sectionLabel() }}</small></div>
         @if (fb.isDev()) { <span class="env-badge" role="status" title="Entorno de pruebas">DEV</span> }
+        @else if (fb.isLocalProd()) { <span class="env-badge prod" role="status" title="En local contra el proyecto real">PROD</span> }
         <span class="msync" [class.err]="store.syncStatus() === 'Error al guardar' || store.syncStatus() === 'Sin conexión'" [title]="store.syncStatus()"></span>
         @if (publicUrl()) {
           <a class="icb" [href]="publicUrl()" target="_blank" rel="noopener noreferrer" aria-label="Abrir la web pública"><adm-icon name="globe" /></a>

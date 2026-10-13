@@ -40,7 +40,10 @@ export class App implements OnInit {
 
   private guest = inject(GuestAuthService);
   /** Entorno de pruebas (proyecto boda-daniela-pablo-dev): se marca con una etiqueta */
-  isDev = toSignal(inject(FirebaseConfigService).config$.pipe(map(c => c?.env === 'dev')), { initialValue: false });
+  private cfgEnv = toSignal(inject(FirebaseConfigService).config$.pipe(map(c => c?.env ?? null)), { initialValue: null });
+  isDev = () => this.cfgEnv() === 'dev';
+  /** En el ordenador contra los datos reales (npm run start:prod): aviso en rojo */
+  isLocalProd = () => this.cfgEnv() === 'prod' && typeof location !== 'undefined' && ['localhost', '127.0.0.1'].includes(location.hostname);
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object, public content: ContentService) {
     // Si Firebase deja de aceptar la sesión (p. ej. se cambió la contraseña), se vuelve a pedir

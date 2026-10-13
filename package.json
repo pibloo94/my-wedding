@@ -5,6 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "start:admin": "ng serve admin",
+    "start:prod": "ng serve -c prod-data",
+    "start:admin:prod": "ng serve admin -c prod-data",
     "build": "ng build",
     "postbuild": "ng build admin",
     "build:web": "ng build",

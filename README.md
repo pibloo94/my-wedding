@@ -12,6 +12,8 @@ Hecha con Angular 20 (componentes standalone) y SCSS. Se publica en GitHub Pages
 npm install
 npm start              # web → http://localhost:4200/ (Firebase de pruebas, etiqueta «DEV»)
 npm run start:admin    # app de gestión → http://localhost:4300/ (Firebase de pruebas, etiqueta «DEV»)
+npm run start:prod     # web en local contra el Firebase real (etiqueta roja «PROD»)
+npm run start:admin:prod  # app de gestión en local contra el Firebase real
 npm run build          # compila la web y, a continuación, la app (postbuild) en dist/wedding-app/browser/admin (Firebase real)
 ```
 

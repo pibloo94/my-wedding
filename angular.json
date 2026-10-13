@@ -94,6 +94,11 @@
                   "output": "/"
                 }
               ]
+            },
+            "prod-data": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
             }
           },
           "defaultConfiguration": "production"
@@ -106,6 +111,9 @@
             },
             "development": {
               "buildTarget": "wedding-app:build:development"
+            },
+            "prod-data": {
+              "buildTarget": "wedding-app:build:prod-data"
             }
           },
           "defaultConfiguration": "development"
@@ -255,6 +263,11 @@
                   "output": "assets/brand"
                 }
               ]
+            },
+            "prod-data": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
             }
           },
           "defaultConfiguration": "production"
@@ -270,6 +283,9 @@
             },
             "development": {
               "buildTarget": "admin:build:development"
+            },
+            "prod-data": {
+              "buildTarget": "admin:build:prod-data"
             }
           },
           "defaultConfiguration": "development"

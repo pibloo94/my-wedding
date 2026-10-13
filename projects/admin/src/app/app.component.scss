@@ -92,5 +92,6 @@ main { padding: 34px clamp(18px, 3.6vw, 52px) 90px; max-width: 1240px; width: 10
   display: inline-block; padding: 3px 9px; border-radius: 20px; background: #1F6FB2; color: #fff;
   font: 600 11px/1.4 var(--sans); letter-spacing: .06em; white-space: nowrap; flex: none;
 }
+.env-badge.prod { background: #B3261E; }
 .env-badge.fixed { position: fixed; right: 10px; bottom: 10px; z-index: 100; pointer-events: none; box-shadow: 0 2px 8px rgba(0, 0, 0, .2); }
 @media (max-width: 1024px) { .brand .env-badge .full { display: none; } }

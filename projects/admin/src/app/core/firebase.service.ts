@@ -35,6 +35,8 @@ export class FirebaseService {
   readonly error = signal('');
   /** Entorno de pruebas: se marca con una etiqueta en toda la app */
   readonly isDev = signal(false);
+  /** En el ordenador contra el proyecto real (npm run start:admin:prod): aviso en rojo */
+  readonly isLocalProd = signal(false);
 
   private app?: FirebaseApp;
   private auth?: Auth;
@@ -55,6 +57,7 @@ export class FirebaseService {
     try {
       this.config = cfg;
       this.isDev.set(cfg.env === 'dev');
+      this.isLocalProd.set(cfg.env !== 'dev' && ['localhost', '127.0.0.1'].includes(location.hostname));
       this.app = initializeApp(cfg);
       this.auth = getAuth(this.app);
       // Caché persistente: lo que guardas queda en el navegador aunque se corte la conexión

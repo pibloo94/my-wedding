@@ -1,5 +1,7 @@
 @if (isDev()) {
   <div class="env-badge" role="status">DEV · datos de prueba</div>
+} @else if (isLocalProd()) {
+  <div class="env-badge prod" role="status">PROD · datos reales</div>
 }
 
 @if (!authenticated()) {
