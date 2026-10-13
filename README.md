@@ -10,10 +10,12 @@ Hecha con Angular 20 (componentes standalone) y SCSS. Se publica en GitHub Pages
 
 ```bash
 npm install
-npm start              # web → http://localhost:4200/
-npm run start:admin    # app de gestión → http://localhost:4300/
-npm run build          # compila la web y, a continuación, la app (postbuild) en dist/wedding-app/browser/admin
+npm start              # web → http://localhost:4200/ (Firebase de pruebas, etiqueta «DEV»)
+npm run start:admin    # app de gestión → http://localhost:4300/ (Firebase de pruebas, etiqueta «DEV»)
+npm run build          # compila la web y, a continuación, la app (postbuild) en dist/wedding-app/browser/admin (Firebase real)
 ```
+
+En local se trabaja contra el proyecto de pruebas `boda-daniela-pablo-dev`; la web publicada usa el real. Ver [docs/ENTORNOS.md](docs/ENTORNOS.md).
 
 ## Publicación
 

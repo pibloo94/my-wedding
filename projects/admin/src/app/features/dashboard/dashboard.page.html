@@ -1,4 +1,13 @@
 <h1 class="sr-only">Inicio</h1>
+@if (setup.showBanner()) {
+  <div class="note setup-note">
+    <adm-icon name="info" />
+    <div class="t"><b>Configuración inicial: {{ setup.progress().done }} de {{ setup.progress().total }} pasos</b>
+      <span class="small">Falta preparar algo en Firebase para este entorno{{ setup.isDev() ? ' (dev)' : '' }}. La guía te dice qué y dónde.</span></div>
+    <a class="btn pri sm" routerLink="/guia">Abrir guía</a>
+    <button class="icb" (click)="setup.dismiss()" aria-label="Ocultar aviso"><adm-icon name="x" /></button>
+  </div>
+}
 <section class="card hero">
   <div class="mnt" aria-hidden="true"></div>
   <div class="in">

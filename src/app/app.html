@@ -1,3 +1,7 @@
+@if (isDev()) {
+  <div class="env-badge" role="status">DEV · datos de prueba</div>
+}
+
 @if (!authenticated()) {
   <app-password-gate (unlocked)="siteReady.set(true)" (authenticated)="onAuthenticated()" />
 }

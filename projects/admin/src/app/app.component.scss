@@ -1,11 +1,12 @@
 .app { display: grid; grid-template-columns: var(--side) minmax(0, 1fr); min-height: 100vh; }
 
 .side {
-  position: sticky; top: 0; height: 100vh; overflow: auto; background: var(--sage-deep); color: var(--sand);
+  position: sticky; top: 0; height: 100vh; overflow: hidden auto; overscroll-behavior: contain; background: var(--sage-deep); color: var(--sand);
   display: flex; flex-direction: column; padding: 26px 16px 18px; isolation: isolate;
 }
 .side::after {
-  content: ''; position: absolute; inset: auto -40px -30px auto; width: 220px; height: 220px;
+  /* Fija a la ventana: no cuenta para el tamaño de la barra, así no crea barras de desplazamiento */
+  content: ''; position: fixed; left: calc(var(--side) - 220px); bottom: -30px; width: 220px; height: 220px;
   background: url('assets/brand/botanical-corner.webp') no-repeat center / contain; opacity: .1; transform: scale(-1, -1); z-index: -1; pointer-events: none;
 }
 .brand {
@@ -25,7 +26,7 @@
 .nav .cnt { margin-left: auto; font-size: .7rem; background: rgba(255, 255, 255, .14); padding: 1px 8px; border-radius: 20px; }
 .nav a.on .cnt { background: var(--bg-alt); }
 .foot { margin-top: auto; padding-top: 14px; border-top: 1px solid rgba(231, 220, 196, .18); font-size: .76rem; line-height: 1.45; }
-.foot a { color: #fff; display: flex; align-items: center; gap: 8px; text-decoration: none; font-size: .9rem; margin-bottom: 10px; }
+.foot a { color: #fff; display: flex; min-width: 0; align-items: center; gap: 8px; text-decoration: none; font-size: .9rem; margin-bottom: 10px; }
 .foot .tx { display: flex; flex-direction: column; opacity: .9; overflow-wrap: anywhere; }
 .foot .sync.err { color: #F3C9B5; font-weight: 600; }
 .out-btn { color: var(--sand) !important; padding: 6px 0 !important; margin-top: 4px; }
@@ -43,6 +44,7 @@ main { padding: 34px clamp(18px, 3.6vw, 52px) 90px; max-width: 1240px; width: 10
 
 /* Tableta: barra lateral solo con iconos */
 @media (max-width: 1024px) {
+  .side::after { display: none; }
   .side { padding: 20px 10px; align-items: center; }
   .brand { padding: 0 0 14px; }
   .brand .nm, .brand .dt { display: none; }
@@ -83,3 +85,12 @@ main { padding: 34px clamp(18px, 3.6vw, 52px) 90px; max-width: 1240px; width: 10
   .tabbar .on { color: var(--primary); font-weight: 600; }
   main { padding: 18px 16px calc(var(--bottom) + 28px); }
 }
+
+/* Etiqueta del entorno de pruebas (solo con env/dev/firebase-config.json): en la cabecera del menú
+   y de la barra móvil; flotante solo en la pantalla de entrada */
+.env-badge {
+  display: inline-block; padding: 3px 9px; border-radius: 20px; background: #1F6FB2; color: #fff;
+  font: 600 11px/1.4 var(--sans); letter-spacing: .06em; white-space: nowrap; flex: none;
+}
+.env-badge.fixed { position: fixed; right: 10px; bottom: 10px; z-index: 100; pointer-events: none; box-shadow: 0 2px 8px rgba(0, 0, 0, .2); }
+@media (max-width: 1024px) { .brand .env-badge .full { display: none; } }

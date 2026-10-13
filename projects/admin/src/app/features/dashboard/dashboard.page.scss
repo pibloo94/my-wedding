@@ -63,3 +63,6 @@ a.kpi:hover { box-shadow: var(--shadow); color: inherit; }
   .tl a { padding: 12px 8px 8px; }
   .flush { margin: 8px -16px -8px; }
 }
+
+.setup-note { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.setup-note .t { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 2px; }

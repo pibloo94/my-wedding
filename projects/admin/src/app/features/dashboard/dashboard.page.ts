@@ -6,6 +6,7 @@ import { attending, dueOf, members, monthKey, monthRange, monthStart, nextPaymen
 import { dayDiff, eur, fmtDate, fmtLongDate, parseDate, safeUrl, today } from '../../core/util';
 import { IconComponent } from '../../shared/icon.component';
 import { TaskRowComponent } from '../tasks/task-row.component';
+import { SetupService } from '../guide/setup.service';
 
 @Component({
   selector: 'adm-dashboard-page',
@@ -17,6 +18,7 @@ import { TaskRowComponent } from '../tasks/task-row.component';
 export class DashboardPage {
   private store = inject(StoreService);
   private ct = inject(ContentEditorService);
+  protected setup = inject(SetupService);
   protected config = this.store.config;
   protected publicUrl = computed(() => safeUrl(this.config().publicUrl));
   protected days = computed(() => dayDiff(this.store.wedding(), today()));

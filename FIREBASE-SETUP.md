@@ -91,6 +91,10 @@ La primera vez, la app sube a Firebase los datos que tenga en ese navegador. Si 
 2. En la app → **Invitados**, debe aparecer en unos segundos («1 respuesta nueva de la web»).
 3. Bórrala si quieres: icono de papelera en la invitación, y en Firestore → `rsvps`.
 
+## 8. Proyecto de pruebas (dev)
+
+`npm start` y `npm run start:admin` usan otro proyecto, `boda-daniela-pablo-dev`, para no tocar los datos reales. Cómo prepararlo y cómo trabajar con los dos entornos: [docs/ENTORNOS.md](docs/ENTORNOS.md).
+
 ---
 
 ### Problemas habituales

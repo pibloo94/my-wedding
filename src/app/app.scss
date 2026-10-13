@@ -13,3 +13,19 @@
     pointer-events: auto;
   }
 }
+
+// Etiqueta del entorno de pruebas (solo con env/dev/firebase-config.json)
+.env-badge {
+  position: fixed;
+  left: 10px;
+  bottom: 10px;
+  z-index: 10000;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: #1F6FB2;
+  color: #fff;
+  font: 600 11px/1.4 system-ui, sans-serif;
+  letter-spacing: .06em;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
+}

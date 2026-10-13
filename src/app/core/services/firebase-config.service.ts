@@ -7,6 +7,8 @@ import { catchError, map, shareReplay } from 'rxjs/operators';
 export interface FirebaseWebConfig {
   apiKey: string;
   projectId: string;
+  /** 'dev' en el proyecto de pruebas (env/dev/firebase-config.json); sin él, prod */
+  env: 'dev' | 'prod';
 }
 
 @Injectable({ providedIn: 'root' })
@@ -16,7 +18,7 @@ export class FirebaseConfigService {
 
   constructor(http: HttpClient) {
     this.config$ = http.get<Partial<FirebaseWebConfig>>('firebase-config.json').pipe(
-      map(c => (c?.apiKey && c?.projectId ? { apiKey: c.apiKey, projectId: c.projectId } : null)),
+      map(c => (c?.apiKey && c?.projectId ? { apiKey: c.apiKey, projectId: c.projectId, env: c.env === 'dev' ? 'dev' as const : 'prod' as const } : null)),
       catchError(() => of(null)),
       shareReplay(1)
     );

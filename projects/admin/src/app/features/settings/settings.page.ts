@@ -5,6 +5,7 @@ import { Config } from '../../core/models';
 import { seedState } from '../../core/seed';
 import { fmtDate, isoDate, parseDate, today } from '../../core/util';
 import { RouterLink } from '@angular/router';
+import { SetupService } from '../guide/setup.service';
 import { downloadText, pickTextFile } from '../../core/files';
 import { PageHeaderComponent } from '../../shared/page-header.component';
 import { IconComponent } from '../../shared/icon.component';
@@ -43,6 +44,11 @@ import { IconComponent } from '../../shared/icon.component';
         <label class="f full">Carpeta local del proyecto<input [value]="c.localPath" (change)="set('localPath', $event)"><span class="hint">Solo como referencia; la app no accede a ella.</span></label>
       </div>
     </section>
+    <section class="card mt guide">
+      <h3><adm-icon name="info" /> Guía de configuración y entornos</h3>
+      <p class="small">Qué hay que preparar en Firebase para cada entorno (dev y prod), con enlaces a la consola, valores para copiar y comprobaciones. {{ setup.complete() ? 'Este entorno está configurado.' : 'Faltan ' + (setup.progress().total - setup.progress().done) + ' pasos en este entorno.' }}</p>
+      <a class="btn out sm" routerLink="/guia">Abrir la guía</a>
+    </section>
     <section class="sec">
       <div class="sec-h"><h2>Copias de seguridad</h2></div>
       <div class="note sage small"><adm-icon name="shield" /><span>{{ store.cloud() ? 'Los datos se guardan en Firebase y los veis los dos en cualquier dispositivo. Si se corta la conexión, se guardan en este navegador y se suben al volver.' : 'Los datos se guardan solo en este navegador y este equipo.' }} Haz una copia de vez en cuando y guárdala en un lugar seguro: contiene datos personales.</span></div>
@@ -53,10 +59,11 @@ import { IconComponent } from '../../shared/icon.component';
         <button class="btn ghost danger" (click)="reset()"><adm-icon name="trash" /> Borrar todo</button>
       </div>
     </section>`,
-  styles: `.facts { display: flex; flex-direction: column; gap: 4px; } .facts .fl { font-size: .8rem; color: var(--muted); } .facts b { font-weight: 600; } .card h3 { display: flex; gap: 8px; align-items: center; } .card h3 adm-icon { color: var(--primary); } .mt { margin-top: 16px; }`
+  styles: `.guide p { margin: 6px 0 10px; } .facts { display: flex; flex-direction: column; gap: 4px; } .facts .fl { font-size: .8rem; color: var(--muted); } .facts b { font-weight: 600; } .card h3 { display: flex; gap: 8px; align-items: center; } .card h3 adm-icon { color: var(--primary); } .mt { margin-top: 16px; }`
 })
 export class SettingsPage {
   protected store = inject(StoreService);
+  protected setup = inject(SetupService);
   protected fmtDate = fmtDate;
   private ui = inject(UiService);
 

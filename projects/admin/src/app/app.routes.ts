@@ -28,6 +28,7 @@ export const routes: Routes = [
   { path: 'tematica', title: 'Temática', loadComponent: () => import('./features/theme/theme.page').then(m => m.ThemePage) },
   { path: 'web', title: 'Web de la boda', loadComponent: () => import('./features/web/web.page').then(m => m.WebPage) },
   { path: 'web/:tab', title: 'Web de la boda', loadComponent: () => import('./features/web/web.page').then(m => m.WebPage) },
+  { path: 'guia', title: 'Guía de configuración', loadComponent: () => import('./features/guide/guide.page').then(m => m.GuidePage) },
   { path: 'configuracion', title: 'Configuración', loadComponent: () => import('./features/settings/settings.page').then(m => m.SettingsPage) },
   { path: '**', redirectTo: 'inicio' }
 ];

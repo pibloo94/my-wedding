@@ -17,6 +17,7 @@ import { IconComponent } from '../shared/icon.component';
         @for (n of items; track n.path) {
           <a [routerLink]="'/' + n.path" (click)="done.emit()"><span class="ic"><adm-icon [name]="n.icon" /></span>{{ n.label }}<adm-icon name="chev" class="chev" /></a>
         }
+        <a routerLink="/guia" (click)="done.emit()"><span class="ic"><adm-icon name="info" /></span>Guía de configuración<adm-icon name="chev" class="chev" /></a>
         @if (publicUrl()) {
           <a [href]="publicUrl()" target="_blank" rel="noopener noreferrer"><span class="ic"><adm-icon name="ext" /></span>Abrir la web pública</a>
         }

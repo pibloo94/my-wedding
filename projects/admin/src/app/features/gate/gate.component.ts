@@ -3,13 +3,20 @@ import { FirebaseService } from '../../core/firebase.service';
 import { StoreService } from '../../core/store.service';
 import { UiService } from '../../core/ui.service';
 import { IconComponent } from '../../shared/icon.component';
+import { SetupGuideComponent } from '../guide/setup-guide.component';
 
 /** Pantalla de entrada: conexión, inicio de sesión con Google y alta pendiente. */
 @Component({
   selector: 'adm-gate',
-  imports: [IconComponent],
+  imports: [IconComponent, SetupGuideComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
+    @if (guide()) {
+      <div class="gwide">
+        <div class="gh"><h1>Guía de configuración</h1><button class="btn out sm" (click)="guide.set(false)"><adm-icon name="x" [size]="15" /> Cerrar</button></div>
+        <adm-setup-guide />
+      </div>
+    } @else {
     <div class="gcard">
       <img src="assets/brand/crest.webp" alt="">
       <h1>Daniela &amp; Pablo</h1>
@@ -37,7 +44,11 @@ import { IconComponent } from '../../shared/icon.component';
           <p class="muted loading">{{ fb.state() === 'ready' || fb.state() === 'local' ? 'Cargando los datos…' : 'Conectando…' }}</p>
         }
       }
-    </div>`,
+      @if (fb.state() !== 'loading' && fb.state() !== 'ready') {
+        <button class="btn ghost sm guide-btn" (click)="guide.set(true)"><adm-icon name="info" [size]="15" /> Guía de configuración</button>
+      }
+    </div>
+    }`,
   styles: `
     :host { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 24px 16px; background: linear-gradient(180deg, var(--bg), var(--bg-alt)); overflow: auto; }
     .gcard { max-width: 460px; width: 100%; text-align: center; background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 34px 26px; box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; gap: 10px; }
@@ -45,13 +56,19 @@ import { IconComponent } from '../../shared/icon.component';
     .kicker { color: var(--primary); font-weight: 600; font-size: .8rem; letter-spacing: .08em; margin-bottom: 6px; }
     .uid { word-break: break-all; font-family: ui-monospace, Menlo, monospace; background: var(--bg-alt); border-radius: 10px; padding: 9px 12px; width: 100%; }
     .acts { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-    .loading { font-family: var(--serif); font-style: italic; }`
+    .loading { font-family: var(--serif); font-style: italic; }
+    .guide-btn { margin-top: 8px; }
+    .gwide { max-width: 860px; width: 100%; align-self: start; display: flex; flex-direction: column; gap: 14px; }
+    .gh { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .gh h1 { font-size: 1.8rem; }`
 })
 export class GateComponent {
   protected fb = inject(FirebaseService);
   protected store = inject(StoreService);
   private ui = inject(UiService);
   protected busy = signal(false);
+  /** Guía de configuración (para la primera vez: aún sin acceso a la app) */
+  protected guide = signal(false);
 
   protected async signIn(): Promise<void> {
     this.busy.set(true);

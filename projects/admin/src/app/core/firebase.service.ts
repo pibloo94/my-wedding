@@ -12,6 +12,8 @@ export interface FirebaseWebConfig {
   authDomain?: string;
   projectId: string;
   appId?: string;
+  /** 'dev' en el proyecto de pruebas (env/dev/firebase-config.json); sin él, prod */
+  env?: string;
 }
 
 /**
@@ -31,6 +33,8 @@ export class FirebaseService {
   readonly state = signal<SessionState>('loading');
   readonly user = signal<User | null>(null);
   readonly error = signal('');
+  /** Entorno de pruebas: se marca con una etiqueta en toda la app */
+  readonly isDev = signal(false);
 
   private app?: FirebaseApp;
   private auth?: Auth;
@@ -50,6 +54,7 @@ export class FirebaseService {
     }
     try {
       this.config = cfg;
+      this.isDev.set(cfg.env === 'dev');
       this.app = initializeApp(cfg);
       this.auth = getAuth(this.app);
       // Caché persistente: lo que guardas queda en el navegador aunque se corte la conexión

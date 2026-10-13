@@ -11,6 +11,9 @@ import { PasswordGateComponent } from './shared/password-gate/password-gate';
 import { TextSectionComponent } from './sections/text-section/text-section';
 import { ContentService } from './core/services/content.service';
 import { GuestAuthService } from './core/services/guest-auth.service';
+import { FirebaseConfigService } from './core/services/firebase-config.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -36,6 +39,8 @@ export class App implements OnInit {
   siteReady = signal(false);
 
   private guest = inject(GuestAuthService);
+  /** Entorno de pruebas (proyecto boda-daniela-pablo-dev): se marca con una etiqueta */
+  isDev = toSignal(inject(FirebaseConfigService).config$.pipe(map(c => c?.env === 'dev')), { initialValue: false });
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object, public content: ContentService) {
     // Si Firebase deja de aceptar la sesión (p. ej. se cambió la contraseña), se vuelve a pedir
