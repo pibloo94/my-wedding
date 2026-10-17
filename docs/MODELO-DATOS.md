@@ -6,11 +6,11 @@ La web y la app usan los mismos nombres de campo. Este documento es la referenci
 
 | Ruta | Quién escribe | Quién lee | Qué guarda |
 |---|---|---|---|
-| `rsvps/{id}` | Cualquiera (solo crear, validado por reglas) | Los novios | Una respuesta del formulario por documento |
+| `rsvps/{id}` | Invitados con la contraseña de la web, o los novios (solo crear, validado por reglas) | Los novios | Una respuesta del formulario por documento |
 | `admin/state` | Los novios | Los novios | Configuración, paleta, estado de la web |
 | `admin/state/{colección}/{id}` | Los novios | Los novios | `guests`, `tables`, `expenses`, `vendors`, `tasks`, `inspo`, `webResources`, `webLog` (las antiguas `day`, `logistics`, `webPlan`, `webChecks`, `webTexts` y `webInfo` ya no se usan; sus datos siguen en Firestore) |
 | `admins/{uid}` | Nadie desde fuera (se crea en la consola) | El propio usuario | Quién tiene acceso a la app |
-| `content/published` | Los novios | Cualquiera | Contenido publicado de la web: `{ json, version, publishedAt, by }` |
+| `content/published` | Los novios | Invitados con la contraseña de la web, y los novios | Contenido publicado de la web: `{ json, version, publishedAt, by }` |
 | `admin/contentDraft2` | Los novios | Los novios | Borrador del contenido, compartido entre los dos. `admin/contentDraft` es el de la versión anterior de la app: solo se lee la primera vez |
 | `admin/contentHistory/items/v0001…` | Los novios | Los novios | Una copia por publicación (para volver atrás) |
 
@@ -19,7 +19,7 @@ La web y la app usan los mismos nombres de campo. Este documento es la referenci
 | Campo | Tipo | Formulario de la web | Notas |
 |---|---|---|---|
 | `name` | texto (2–120) | Nombre completo | |
-| `contact` | texto (5–120) | Correo o teléfono | Clave para unir respuestas repetidas |
+| `contact` | texto (5–120) | Móvil (único dato de contacto del formulario) | Clave para unir respuestas repetidas. Las respuestas antiguas pueden traer un correo |
 | `attending` | `si` / `no` | ¿Confirmas tu asistencia? | |
 | `message` | texto (≤1000) | Mensaje para los novios | |
 | `people` | lista (1–10) | Tú + acompañante + niños | Ver tabla siguiente |

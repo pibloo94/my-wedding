@@ -12,7 +12,8 @@
     "build:web": "ng build",
     "build:admin": "ng build admin",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "docs:check": "node scripts/check-docs.mjs"
   },
   "prettier": {
     "printWidth": 100,

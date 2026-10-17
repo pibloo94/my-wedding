@@ -29,7 +29,8 @@ No inventes métricas de rendimiento. Distingue entre problemas observados, hip�
   - Indica siempre qué se midió y cómo.
 - **Imágenes**
   - Las ilustraciones son acuarelas en WebP.
-  - `crest.png` (~1,5 MB) existe solo como imagen para compartir (`og:image`). No la uses en la página; si se toca, mejor reducirla a ~1200 px de ancho.
+  - `crest.png` (~1,5 MB) es el original del que `scripts/process_assets.py` genera `crest.webp` y `crest-shield.webp`. No se usa en la página y no se borra: se necesita para regenerar esas imágenes.
+  - La imagen para compartir (`og:image` y `twitter:image`, en `src/index.html`) es `og-image.jpg`, de 1200×630.
   - El escudo de la portada ya lleva `width`/`height` y `fetchpriority="high"`: no lo cargues en diferido.
 - **Contenido dinámico**
   - Los textos y colores publicados llegan de Firestore (REST) después de cargar. Mientras tanto se pintan los de respaldo (`wedding-content.ts`).

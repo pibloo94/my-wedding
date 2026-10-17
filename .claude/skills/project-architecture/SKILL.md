@@ -78,10 +78,10 @@ No realices migraciones destructivas ni cambios irreversibles sin explicar su im
 
 | Ruta | Quién | Qué |
 |---|---|---|
-| `content/published` | lectura pública, escritura admins | Contenido de la web (`json` + `version`) |
-| `admin/contentDraft`, `admin/contentHistory/items/*` | admins | Borrador compartido e historial |
+| `content/published` | lectura: invitados (sesión con la contraseña de la web) y admins; escritura: admins | Contenido de la web (`json` + `version`) |
+| `admin/contentDraft2`, `admin/contentHistory/items/*` | admins | Borrador compartido (versionado) e historial. `admin/contentDraft` es el de la versión anterior y solo se lee la primera vez |
 | `admin/state` + subcolecciones | admins | Datos privados de la app (invitados, mesas, presupuesto…) |
-| `rsvps/*` | crear: cualquiera (validado); leer y borrar: admins | Respuestas del formulario |
+| `rsvps/*` | crear: invitados con la contraseña de la web y admins (validado); leer y borrar: admins | Respuestas del formulario |
 | `admins/{uid}` | solo consola | Quién tiene acceso |
 
 - **Fuentes de verdad:** reglas en `firestore.rules`; campos en `docs/MODELO-DATOS.md`. Si cambias un campo, actualiza las dos apps, las reglas si aplica y ese documento.

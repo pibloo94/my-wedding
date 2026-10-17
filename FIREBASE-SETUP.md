@@ -4,7 +4,7 @@ Firebase guarda tres cosas:
 
 - **Confirmaciones del formulario:** colección `rsvps`.
 - **Datos de la app de gestión:** invitados, mesas, presupuesto, tareas…
-- **Contenido publicado de la web:** colección `content`, en la fase 4.
+- **Contenido publicado de la web:** colección `content`, que se edita y publica desde la app de gestión.
 
 Todo cabe en el plan gratuito (Spark). Tiempo estimado: unos 20 minutos.
 
