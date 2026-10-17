@@ -8,7 +8,7 @@
     "start:prod": "ng serve -c prod-data",
     "start:admin:prod": "ng serve admin -c prod-data",
     "build": "ng build",
-    "postbuild": "ng build admin",
+    "postbuild": "ng build admin && node scripts/check-bundle.mjs",
     "build:web": "ng build",
     "build:admin": "ng build admin",
     "watch": "ng build --watch --configuration development",

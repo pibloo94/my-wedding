@@ -12,7 +12,8 @@ import RULES from '../../../../../../firestore.rules';
 /**
  * Guía de configuración del entorno: estado de lo que se puede comprobar desde aquí, los pasos de
  * la consola de Firebase con enlaces y valores para copiar, y el documento completo
- * (docs/ENTORNOS.md). Se puede abrir sin acceso a la app (desde la pantalla de entrada).
+ * (docs/ENTORNOS.md). Solo se carga después de entrar (ruta /guia, en diferido). No la importes
+ * desde la pantalla de entrada: antes del login va features/gate/access-help.component.ts.
  */
 @Component({
   selector: 'adm-setup-guide',

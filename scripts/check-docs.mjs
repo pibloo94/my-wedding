@@ -145,7 +145,21 @@ function checkSkills() {
   for (const l of listed) if (!dirs.includes(l)) err(`CLAUDE.md lista la skill «${l}», que no existe en .claude/skills`);
 }
 
-// 7. Avisos de frescura: el código cambió después que el documento que lo describe
+// 7. docs/ACCESO.md se ve antes de entrar en la app: no puede llevar datos concretos del proyecto
+function checkPublicAccessDoc() {
+  const doc = need('docs/ACCESO.md');
+  if (!doc) return;
+  const ts = exists('src/app/core/services/guest-auth.service.ts') ? read('src/app/core/services/guest-auth.service.ts') : '';
+  const banned = [
+    ts.match(/GUEST_EMAIL\s*=\s*'([^']+)'/)?.[1],
+    'boda-daniela-pablo', 'firebaseapp.com', 'github.io', 'localhost', 'firestore.rules', '`admins`', 'admins/',
+  ].filter(Boolean);
+  for (const b of banned) {
+    if (doc.includes(b)) err(`docs/ACCESO.md se ve antes de entrar y menciona «${b}»: deja ese dato en docs/ENTORNOS.md`);
+  }
+}
+
+// 8. Avisos de frescura: el código cambió después que el documento que lo describe
 function git(args) {
   try {
     return execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
@@ -182,6 +196,7 @@ checkNpmScripts(docs);
 checkPaths(docs);
 checkConfigs();
 checkSkills();
+checkPublicAccessDoc();
 checkFreshness();
 
 for (const w of warnings) console.log(`AVISO  ${w}`);

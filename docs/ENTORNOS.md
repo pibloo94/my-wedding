@@ -2,7 +2,9 @@
 
 La web y la app de gestión funcionan contra dos proyectos de Firebase separados.
 
-> **En la app de gestión:** «Guía de configuración» en el pie del menú lateral (en el móvil, en «Más»), en Configuración y, antes de tener acceso, en el botón «Guía de configuración» de la pantalla de entrada. Muestra en qué entorno estás, comprueba lo que puede (configuración, sesión, acceso, contenido publicado, contraseña de invitados) y lleva los pasos de la sección 2 con enlaces a la consola y valores para copiar. Ese mismo documento se puede leer completo dentro de la guía. Los pasos guiados están en `projects/admin/src/app/features/guide/setup-steps.ts`: si cambias uno, cambia también este documento.
+> **En la app de gestión, después de entrar:** «Guía de configuración» en el pie del menú lateral (en el móvil, en «Más») y en Configuración. Muestra en qué entorno estás, comprueba lo que puede (configuración, sesión, acceso, contenido publicado, contraseña de invitados) y lleva los pasos de la sección 2 con enlaces a la consola y valores para copiar. Este documento se puede leer completo dentro de la guía. Los pasos guiados están en `projects/admin/src/app/features/guide/setup-steps.ts`: si cambias uno, cambia también este documento.
+>
+> **Antes de entrar**, la pantalla de entrada solo ofrece «¿Primera vez? Cómo acceder»: lo mínimo para conseguir entrar, sin datos concretos del proyecto ([`ACCESO.md`](ACCESO.md), `projects/admin/src/app/features/gate/access-help.component.ts`). Nada de la guía completa, las reglas ni este documento se descarga antes del login: `scripts/check-bundle.mjs` lo comprueba al compilar.
 
 
 | | **prod** (real) | **dev** (pruebas) |

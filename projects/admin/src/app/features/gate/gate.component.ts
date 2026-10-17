@@ -3,18 +3,18 @@ import { FirebaseService } from '../../core/firebase.service';
 import { StoreService } from '../../core/store.service';
 import { UiService } from '../../core/ui.service';
 import { IconComponent } from '../../shared/icon.component';
-import { SetupGuideComponent } from '../guide/setup-guide.component';
+import { AccessHelpComponent } from './access-help.component';
 
 /** Pantalla de entrada: conexión, inicio de sesión con Google y alta pendiente. */
 @Component({
   selector: 'adm-gate',
-  imports: [IconComponent, SetupGuideComponent],
+  imports: [IconComponent, AccessHelpComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (guide()) {
       <div class="gwide">
-        <div class="gh"><h1>Guía de configuración</h1><button class="btn out sm" (click)="guide.set(false)"><adm-icon name="x" [size]="15" /> Cerrar</button></div>
-        <adm-setup-guide />
+        <div class="gh"><h1>Cómo acceder</h1><button class="btn out sm" (click)="guide.set(false)"><adm-icon name="x" [size]="15" /> Cerrar</button></div>
+        <adm-access-help />
       </div>
     } @else {
     <div class="gcard">
@@ -28,7 +28,7 @@ import { SetupGuideComponent } from '../guide/setup-guide.component';
         }
         @case ('noaccess') {
           <p>La cuenta <b>{{ fb.user()?.email }}</b> aún no tiene acceso.</p>
-          <p class="small muted">Para darla de alta: consola de Firebase → Firestore → colección <code>admins</code> → nuevo documento cuyo ID sea este:</p>
+          <p class="small muted">Pásale este ID a quien administra la app para que te dé de alta:</p>
           <div class="uid">{{ fb.user()?.uid }}</div>
           <div class="acts">
             <button class="btn out sm" (click)="copyUid()">Copiar ID</button>
@@ -45,7 +45,7 @@ import { SetupGuideComponent } from '../guide/setup-guide.component';
         }
       }
       @if (fb.state() !== 'loading' && fb.state() !== 'ready') {
-        <button class="btn ghost sm guide-btn" (click)="guide.set(true)"><adm-icon name="info" [size]="15" /> Guía de configuración</button>
+        <button class="btn ghost sm guide-btn" (click)="guide.set(true)"><adm-icon name="info" [size]="15" /> ¿Primera vez? Cómo acceder</button>
       }
     </div>
     }`,
@@ -67,7 +67,7 @@ export class GateComponent {
   protected store = inject(StoreService);
   private ui = inject(UiService);
   protected busy = signal(false);
-  /** Guía de configuración (para la primera vez: aún sin acceso a la app) */
+  /** Ayuda mínima para conseguir entrar (la guía completa solo después de entrar, en /guia) */
   protected guide = signal(false);
 
   protected async signIn(): Promise<void> {
